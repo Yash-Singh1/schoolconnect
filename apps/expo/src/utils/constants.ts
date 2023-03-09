@@ -12,4 +12,4 @@ export const discovery = {
 };
 export const baseURL = Constants.expoConfig?.extra!.dev
   ? "http://localhost:3000/"
-  : "";
+  : "https://schoolconnect-mu.vercel.app/";
