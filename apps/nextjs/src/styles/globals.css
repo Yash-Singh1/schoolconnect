@@ -1,3 +1,5 @@
-@tailwind base;
+/* Base overrides the kumiko styles, so we disable it */
+/* @tailwind base; */
+
 @tailwind components;
 @tailwind utilities;

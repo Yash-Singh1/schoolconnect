@@ -15,6 +15,9 @@
     "@acme/api": "*",
     "@acme/db": "*",
     "@acme/tailwind-config": "*",
+    "@mdx-js/loader": "^2.3.0",
+    "@mdx-js/react": "^2.3.0",
+    "@next/mdx": "^13.2.3",
     "@tanstack/react-query": "^4.24.10",
     "@trpc/client": "^10.14.0",
     "@trpc/next": "^10.14.0",
@@ -25,6 +28,8 @@
     "next-auth": "^4.20.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "remark-gfm": "^3.0.1",
+    "remark-remove-comments": "^1.0.1",
     "superjson": "1.9.1",
     "zod": "^3.20.6"
   },
