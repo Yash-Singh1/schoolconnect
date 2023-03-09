@@ -1,6 +1,6 @@
 // Landing page for mobile application
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
@@ -54,14 +54,14 @@ const Announcements = () => {
 
   const recentEventsQuery = api.events.all.useQuery({
     token,
-    // upOnly: true,
     take: 10,
+    upOnly: true,
   });
 
   const recentPostsQuery = api.post.all.useQuery({
     token,
     take: 10,
-    // upOnly: true,
+    upOnly: true,
   });
 
   const recentAnnouncements = useMemo(() => {

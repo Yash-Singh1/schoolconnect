@@ -2,6 +2,7 @@
 
 import { type useNavigation, type useRouter } from "expo-router";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- any type is required for this generic to work properly
 type GetReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
 
 export function resetStack(

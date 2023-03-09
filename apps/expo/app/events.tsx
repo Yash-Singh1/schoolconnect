@@ -1,7 +1,7 @@
 // Events page, displays calendar with posted events
 
 import { useEffect, useMemo, useState } from "react";
-import { Modal, Text, TouchableOpacity, View } from "react-native";
+import { Modal, Text, TouchableOpacity, View, type ImageURISource } from "react-native";
 import {
   AgendaList,
   CalendarProvider,
@@ -166,8 +166,8 @@ const Events: React.FC = () => {
               <ExpandableCalendar
                 firstDay={1}
                 markedDates={markedDates || {}}
-                leftArrowImageSource={previousIcon}
-                rightArrowImageSource={nextIcon}
+                leftArrowImageSource={previousIcon as ImageURISource}
+                rightArrowImageSource={nextIcon as ImageURISource}
               />
               <AgendaList
                 sections={eventsGrouped}
