@@ -5,14 +5,12 @@ import { ZodError } from "zod";
 
 import { prisma } from "@acme/db";
 
-import { getGitHubUser } from "./utils/getGitHubUser";
-
 // Helper function for generating context
 const createInnerTRPCContext = (req: CreateNextContextOptions["req"]) => {
   return {
     prisma,
     search: req.query,
-    body: req.body,
+    body: req.body as { 0: { json: { token: string } } } | undefined,
   };
 };
 
@@ -22,7 +20,7 @@ const createInnerTRPCContext = (req: CreateNextContextOptions["req"]) => {
  * This function initializes the context for each request
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = async (opts: CreateNextContextOptions) => {
+export const createTRPCContext = (opts: CreateNextContextOptions) => {
   const { req } = opts;
 
   return createInnerTRPCContext(req);

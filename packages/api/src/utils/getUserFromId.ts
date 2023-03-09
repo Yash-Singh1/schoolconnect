@@ -1,6 +1,7 @@
 import { type createTRPCContext } from "../trpc";
 
-type GetReturnType<T> = T extends (...args: any[]) => Promise<infer R>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- any is required for this generic to work
+type GetReturnType<T> = T extends (...args: any[]) => infer R
   ? R
   : never;
 
