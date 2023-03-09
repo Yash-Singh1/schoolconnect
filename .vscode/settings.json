@@ -1,0 +1,14 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.rules.customizations": [{ "rule": "*", "severity": "warn" }],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "search.exclude": {
+    "**/node_modules": false
+  },
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  }
+}

@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// This contains the schema of my entire database structure
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
+}
+
+model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? // @db.Text
+    access_token      String? // @db.Text
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? // @db.Text
+    session_state     String?
+    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+    id            String    @id @default(cuid())
+    name          String?
+    email         String?   @unique
+    emailVerified DateTime?
+    role          String    @default("student")
+    createdAt     DateTime  @default(now())
+    schoolId      String
+    school        School    @relation(fields: [schoolId], references: [id])
+    image         String?
+    accounts      Account[]
+    sessions      Session[]
+    classesOwned  Class[]   @relation("owned")
+    classesIn     Class[]   @relation("members")
+    posts         Post[]
+    classId       String?
+}
+
+model School {
+    id      String  @id @default(cuid())
+    domain  String  @unique @default("gmail.com")
+    name    String  @unique
+    members User[]
+    classes Class[]
+    events  Event[]
+}
+
+model Class {
+    id          String  @id @default(cuid())
+    name        String
+    description String?
+    banner      String? // Generated URL will be stored as a string for simplicity
+    schoolId    String
+    school      School  @relation(fields: [schoolId], references: [id])
+    ownerId     String
+    owner       User    @relation("owned", fields: [ownerId], references: [id])
+    members     User[]  @relation("members")
+    events      Event[]
+    posts       Post[]
+}
+
+model Event {
+    id          String   @id @default(cuid())
+    name        String
+    description String
+    start       DateTime
+    end         DateTime
+    Class       Class?   @relation(fields: [classId], references: [id])
+    classId     String?
+    School      School?  @relation(fields: [schoolId], references: [id])
+    schoolId    String?
+}
+
+model Post {
+    id        String   @id @default(cuid())
+    title     String
+    content   String
+    authorId  String
+    author    User     @relation(fields: [authorId], references: [id])
+    image     String?
+    classId   String
+    class     Class    @relation(fields: [classId], references: [id])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    reported  Boolean? @default(false)
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+}

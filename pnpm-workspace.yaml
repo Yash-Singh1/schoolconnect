@@ -1,0 +1,8 @@
+# Configuration for monorepo packages for pnpm
+
+packages:
+  - apps/expo
+  - apps/nextjs
+  - packages/api
+  - packages/db
+  - packages/config/*

@@ -1,0 +1,40 @@
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import {
+  faCalendar,
+  faCheck,
+  faChevronRight,
+  faCircleNotch,
+  faClock,
+  faEnvelope,
+  faGear,
+  faPeopleRoof,
+  faPersonChalkboard,
+  faPhone,
+  faPlus,
+  faSchool,
+  faSquareXmark,
+  faUser,
+  faUserSecret,
+  faUsers,
+} from "@fortawesome/free-solid-svg-icons";
+
+library.add(
+  faUser,
+  faPlus,
+  faClock,
+  faChevronRight,
+  faSchool,
+  faUsers,
+  faCalendar,
+  faPersonChalkboard,
+  faUserSecret,
+  faPeopleRoof,
+  faPhone,
+  faCheck,
+  faEnvelope,
+  faGear,
+  faGithub,
+  faSquareXmark,
+  faCircleNotch,
+);
