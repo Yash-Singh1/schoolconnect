@@ -69,6 +69,7 @@ importers:
       react-native-safe-area-context: 4.5.0
       react-native-screens: ~3.20.0
       react-native-svg: 13.4.0
+      react-native-webview: ^11.26.1
       superjson: 1.9.1
       tailwindcss: ^3.2.7
       typescript: ^4.9.5
@@ -105,6 +106,7 @@ importers:
       react-native-safe-area-context: 4.5.0_yqouayos4dnow7nnkhah4yzuzq
       react-native-screens: 3.20.0_yqouayos4dnow7nnkhah4yzuzq
       react-native-svg: 13.4.0_yqouayos4dnow7nnkhah4yzuzq
+      react-native-webview: 11.26.1_yqouayos4dnow7nnkhah4yzuzq
       superjson: 1.9.1
     devDependencies:
       '@acme/api': link:../../packages/api
@@ -193,6 +195,7 @@ importers:
       '@trpc/server': ^10.14.0
       '@types/simple-oauth2': 4.1.1
       '@types/uuid': ^9.0.1
+      dayjs: ^1.11.7
       eslint: ^8.34.0
       eslint-config-acme: 0.0.0
       simple-oauth2: ^4.3.0
@@ -204,6 +207,7 @@ importers:
       '@acme/db': link:../db
       '@trpc/client': 10.14.0_@trpc+server@10.14.0
       '@trpc/server': 10.14.0
+      dayjs: 1.11.7
       simple-oauth2: 4.3.0
       superjson: 1.9.1
       uuid: 9.0.0
@@ -3174,7 +3178,7 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
-      '@tanstack/react-query': 4.24.10_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query': 4.24.10_bblof3d6od7kdqr2urb3dykbey
       '@trpc/client': 10.14.0_@trpc+server@10.14.0
       '@trpc/server': 10.14.0
       react: 18.2.0
@@ -9711,6 +9715,18 @@ packages:
 
   /react-native-swipe-gestures/1.0.5:
     resolution: {integrity: sha512-Ns7Bn9H/Tyw278+5SQx9oAblDZ7JixyzeOczcBK8dipQk2pD7Djkcfnf1nB/8RErAmMLL9iXgW0QHqiII8AhKw==}
+    dev: false
+
+  /react-native-webview/11.26.1_yqouayos4dnow7nnkhah4yzuzq:
+    resolution: {integrity: sha512-hC7BkxOpf+z0UKhxFSFTPAM4shQzYmZHoELa6/8a/MspcjEP7ukYKpuSUTLDywQditT8yI9idfcKvfZDKQExGw==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+    dependencies:
+      escape-string-regexp: 2.0.0
+      invariant: 2.2.4
+      react: 18.2.0
+      react-native: 0.71.3_oo5no556diumlvgcr27pvljqai
     dev: false
 
   /react-native/0.71.3_oo5no556diumlvgcr27pvljqai:
