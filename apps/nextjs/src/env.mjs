@@ -1,3 +1,5 @@
+// Handle and validate environment variables
+
 import { z } from "zod";
 
 /**

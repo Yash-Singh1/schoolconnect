@@ -1,9 +1,7 @@
 import { type createTRPCContext } from "../trpc";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any is required for this generic to work
-type GetReturnType<T> = T extends (...args: any[]) => infer R
-  ? R
-  : never;
+type GetReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
 
 // Gets a user given their ID
 export async function getUserFromId(

@@ -1,7 +1,13 @@
 // Events page, displays calendar with posted events
 
 import { useEffect, useMemo, useState } from "react";
-import { Modal, Text, TouchableOpacity, View, type ImageURISource } from "react-native";
+import {
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
+  type ImageURISource,
+} from "react-native";
 import {
   AgendaList,
   CalendarProvider,

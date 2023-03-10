@@ -1,7 +1,8 @@
+// Tailwind config for Next.js imported from @acme/tailwind-config
+
 /** @type {import("tailwindcss").Config} */
 const config = {
   content: ["./src/**/*.tsx"],
-  // @ts-ignore
   presets: [require("@acme/tailwind-config")],
 };
 

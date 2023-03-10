@@ -27,7 +27,7 @@ const defineConfig = (): ExpoConfig => ({
       foregroundImage: "./assets/icon.png",
       backgroundColor: "#101010",
     },
-    package: "com.expo.schoolconnect"
+    package: "com.expo.schoolconnect",
   },
   extra: {
     eas: {

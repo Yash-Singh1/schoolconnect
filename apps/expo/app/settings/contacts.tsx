@@ -1,11 +1,6 @@
 // Contacts and links to support tracker, email, and documentation
 
-import {
-  Linking,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { Linking, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -32,7 +27,8 @@ const Settings: React.FC = () => {
                 void Linking.openURL("mailto:schoolconnect@yashsingh.us")
               }
             >
-              <FontAwesomeIcon icon="envelope" color="white" size={24} /> Email<Text> </Text>
+              <FontAwesomeIcon icon="envelope" color="white" size={24} /> Email
+              <Text> </Text>
             </Text>
             <Text
               className="text-2xl font-bold text-white"

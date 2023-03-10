@@ -80,16 +80,15 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
       });
     }
   } else {
-    input = (ctx.body as { 0: { json: { token: string } } })[0].json;
+    input = ctx.body![0].json;
   }
   const { token } = input;
-  // MIGRATE: Switch token to custom auth token
+
   const userFound = await ctx.prisma.user.findFirst({
     where: {
       accounts: {
         some: {
           provider: "github",
-          // access_token: token,
         },
       },
       sessions: {
@@ -110,22 +109,7 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
       },
     });
   }
-  // if (userFound) {
-  //   const userInfo = await getGitHubUser(token);
-  //   if (userInfo.email) {
-  //     return next({
-  //       ctx: {
-  //         ...ctx,
-  //         user: userFound,
-  //         github: userInfo,
-  //       },
-  //     });
-  //   }
-  //   throw new TRPCError({
-  //     code: "UNAUTHORIZED",
-  //     message: "GitHub email not found",
-  //   });
-  // }
+
   throw new TRPCError({
     code: "UNAUTHORIZED",
     message: "User not found in database",

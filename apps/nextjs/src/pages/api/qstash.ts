@@ -3,9 +3,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { verifySignature } from "@upstash/qstash/nextjs";
 
+import { appRouter } from "@acme/api";
+
 function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log("api route hit");
-  res.status(200).json({ name: "John Doe" });
+  res.json({ message: "Hello World" });
 }
 
 export default verifySignature(handler);
