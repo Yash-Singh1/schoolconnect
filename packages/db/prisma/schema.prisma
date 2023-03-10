@@ -43,6 +43,7 @@ model User {
     name          String?
     email         String?   @unique
     emailVerified DateTime?
+    password     String?
     role          String    @default("student")
     createdAt     DateTime  @default(now())
     schoolId      String

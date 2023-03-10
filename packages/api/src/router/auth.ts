@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import * as bcrypt from "bcryptjs";
 import { AuthorizationCode, type AccessToken } from "simple-oauth2";
 import { z } from "zod";
 
@@ -67,6 +68,7 @@ export const authRouter = createTRPCRouter({
         code: z.string().min(1),
         schoolId: z.string().min(1),
         role: z.string().min(1),
+        email: z.string().min(1).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -76,6 +78,57 @@ export const authRouter = createTRPCRouter({
           code: "UNAUTHORIZED",
           message: "Admin account creation disabled within UI",
         });
+      }
+
+      const newSession = generateNextSession();
+
+      if (input.email) {
+        const userFound = await ctx.prisma.user.findFirst({
+          where: {
+            email: input.email,
+          },
+        });
+
+        if (userFound) {
+          if (userFound.password) {
+            if (await bcrypt.compare(userFound.password, code)) {
+              await ctx.prisma.session.create({
+                data: {
+                  ...newSession,
+                  userId: userFound.id,
+                },
+              });
+              return newSession.sessionToken;
+            } else {
+              throw new TRPCError({
+                code: "UNAUTHORIZED",
+                message: "Invalid password",
+              });
+            }
+          } else {
+            throw new TRPCError({
+              code: "UNAUTHORIZED",
+              message: "User doesn't have password linked to account",
+            });
+          }
+        }
+      } else {
+        await ctx.prisma.user.create({
+          data: {
+            name: "Anonymous",
+            email: input.email,
+            password: await bcrypt.hash(code, 10),
+            role: "student",
+            schoolId,
+            sessions: {
+              create: {
+                ...newSession,
+              },
+            },
+          },
+        });
+
+        return newSession.sessionToken;
       }
       const { userInfo, accessToken } = await retrieveAuthToken(code);
       if (!userInfo.email) {
@@ -100,8 +153,6 @@ export const authRouter = createTRPCRouter({
           },
         },
       });
-
-      const newSession = generateNextSession();
 
       if (!userFound && !accountFound) {
         userFound = await ctx.prisma.user.create({
