@@ -43,7 +43,7 @@ model User {
     name          String?
     email         String?   @unique
     emailVerified DateTime?
-    password     String?
+    password      String?
     role          String    @default("student")
     createdAt     DateTime  @default(now())
     schoolId      String
@@ -54,7 +54,16 @@ model User {
     classesOwned  Class[]   @relation("owned")
     classesIn     Class[]   @relation("members")
     posts         Post[]
+    devices       Device[]
     classId       String?
+}
+
+// Devices registered for notifications
+model Device {
+    id        String @id @default(cuid())
+    userId    String
+    user      User   @relation(fields: [userId], references: [id])
+    pushToken String
 }
 
 model School {

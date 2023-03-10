@@ -70,4 +70,7 @@ export const userRouter = createTRPCRouter({
         },
       });
     }),
+
+  // TODO: registerDevice mutation
+  // TODO: unregisterDevice mutation
 });
