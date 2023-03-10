@@ -39,7 +39,7 @@ const Settings: React.FC = () => {
               }
             >
               <FontAwesomeIcon
-                icon={['fab', 'github']}
+                icon={["fab", "github"]}
                 color="white"
                 size={24}
               />{" "}

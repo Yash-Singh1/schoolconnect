@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { Class } from "@acme/db";
+import { type Class } from "@acme/db";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { registerSchedule } from "../utils/registerSchedule";

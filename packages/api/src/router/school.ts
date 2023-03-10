@@ -35,8 +35,9 @@ export const schoolRouter = createTRPCRouter({
           .regex(
             /^https:\/\/(www\.facebook\.com\/people\/.*?\/(\d)+?\/?|www\.instagram\.com\/.*?\/?|twitter\.com\/.*?\/?)(\?.*?)?(#.*?)?$/,
             {
-              message: "Invalid Social Media URL. Note: Only Facebook, Instagram, and Twitter are supported."
-            }
+              message:
+                "Invalid Social Media URL. Note: Only Facebook, Instagram, and Twitter are supported.",
+            },
           ),
       }),
     )

@@ -31,7 +31,7 @@ const Settings: React.FC = () => {
             <View className="flex flex-row items-center">
               <View className="mr-2 rounded-full bg-[#1c1c1e] p-1">
                 <FontAwesomeIcon
-                  icon={['fab', 'github']}
+                  icon={["fab", "github"]}
                   size={50}
                   color="white"
                 />

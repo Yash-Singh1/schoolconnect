@@ -8,10 +8,7 @@ dayjs.locale("en");
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export async function registerSchedule(
-  time: Date,
-  postId: string,
-) {
+export async function registerSchedule(time: Date, postId: string) {
   // QStash uses UTC time for cron jobs
   time = dayjs(time).utc().toDate();
 
@@ -19,7 +16,7 @@ export async function registerSchedule(
   myHeaders.append("Content-Type", "application/json");
   myHeaders.append("Upstash-Content-Based-Deduplication", "true");
   myHeaders.append("Upstash-Retries", "0");
-  // TODO: Authentication token
+  myHeaders.append("Authorization", `Bearer ${process.env.QSTASH_TOKEN}`);
 
   // Convert date to cron expression format
   myHeaders.append(

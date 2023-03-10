@@ -42,6 +42,7 @@
     "VERCEL_URL",
     "IMGBB_API_KEY",
     "DEV",
-    "EAS_PROJECT_ID"
+    "EAS_PROJECT_ID",
+    "QSTASH_TOKEN"
   ]
 }

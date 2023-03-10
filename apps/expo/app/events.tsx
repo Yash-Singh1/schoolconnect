@@ -140,8 +140,8 @@ const Events: React.FC = () => {
     // Some messy manipulation of API data to get it into the format the calendar API wants
     const hs = eventsQuery.data.reduce<Record<string, DataEntry[]>>(
       (acc, event, eventIdx) => {
-        const date = event!.start.toISOString().split("T")[0] as string;
-        const hr = event!.start.getHours();
+        const date = event.start.toISOString().split("T")[0] as string;
+        const hr = event.start.getHours();
         if (!acc[date]) acc[date] = [];
         acc[date]!.push({
           hour: `${hr > 12 ? hr - 12 : hr}${hr >= 12 ? "pm" : "am"}`,

@@ -83,17 +83,19 @@ const Landing = () => {
               <Text className="ml-2 text-lg font-bold text-white">News</Text>
             </TouchableOpacity>
 
-            {socialMedia ? <TouchableOpacity
-              className="flex flex-row items-center pb-1 px-1 border-b-pink-400"
-              activeOpacity={0.5}
-              onPress={() => setTab("social")}
-              style={{ borderBottomWidth: tab === "social" ? 1 : 0 }}
-            >
-              <FontAwesomeIcon icon={socialMedia.icon} color="white" />
-              <Text className="ml-2 text-lg font-bold text-white">
-                {socialMedia.name}
-              </Text>
-            </TouchableOpacity> : null}
+            {socialMedia ? (
+              <TouchableOpacity
+                className="flex flex-row items-center pb-1 px-1 border-b-pink-400"
+                activeOpacity={0.5}
+                onPress={() => setTab("social")}
+                style={{ borderBottomWidth: tab === "social" ? 1 : 0 }}
+              >
+                <FontAwesomeIcon icon={socialMedia.icon} color="white" />
+                <Text className="ml-2 text-lg font-bold text-white">
+                  {socialMedia.name}
+                </Text>
+              </TouchableOpacity>
+            ) : null}
 
             {selfQuery.data.role === "admin" ? (
               <TouchableOpacity

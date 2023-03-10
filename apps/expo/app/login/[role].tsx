@@ -62,7 +62,7 @@ const Login: React.FC = () => {
           className="mt-2 -mr-4 flex w-full flex-row items-center justify-center gap-x-4 rounded-lg bg-[#444444] p-1 py-2"
           onPress={() => void promptAsync()}
         >
-          <FontAwesomeIcon icon={['fab', 'github']} size={50} color="#fff" />
+          <FontAwesomeIcon icon={["fab", "github"]} size={50} color="#fff" />
           <Text className="text-center text-lg uppercase text-white">
             Login with GitHub
           </Text>
