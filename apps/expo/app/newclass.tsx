@@ -61,7 +61,7 @@ const NewClass: React.FC = () => {
         />
         {createClass?.error?.data?.zodError?.fieldErrors?.name && (
           <Text className="ml-8 mb-1 w-full text-left text-red-500">
-            {createClass.error.data.zodError.fieldErrors.name}
+            {createClass.error.data.zodError.fieldErrors.name[0]}
           </Text>
         )}
         <TextInput
@@ -74,7 +74,7 @@ const NewClass: React.FC = () => {
         />
         {createClass?.error?.data?.zodError?.fieldErrors?.description && (
           <Text className="ml-8 mb-1 w-full text-left text-red-500">
-            {createClass.error.data.zodError.fieldErrors.description}
+            {createClass.error.data.zodError.fieldErrors.description[0]}
           </Text>
         )}
         <View

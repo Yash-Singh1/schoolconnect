@@ -39,8 +39,7 @@ const Settings: React.FC = () => {
               }
             >
               <FontAwesomeIcon
-                // @ts-expect-error -- TODO: Left out brands description in typing for intellisense
-                icon="fa-brands fa-github"
+                icon={['fab', 'github']}
                 color="white"
                 size={24}
               />{" "}

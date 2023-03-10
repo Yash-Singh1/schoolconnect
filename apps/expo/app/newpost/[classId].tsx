@@ -70,7 +70,7 @@ const NewPost: React.FC = () => {
         />
         {createPost?.error?.data?.zodError?.fieldErrors?.title && (
           <Text className="ml-8 mb-1 w-full text-left text-red-500">
-            {createPost.error.data.zodError.fieldErrors.title}
+            {createPost.error.data.zodError.fieldErrors.title[0]}
           </Text>
         )}
         <TextInput
@@ -86,7 +86,7 @@ const NewPost: React.FC = () => {
         />
         {createPost?.error?.data?.zodError?.fieldErrors?.content && (
           <Text className="ml-8 mb-1 w-full text-left text-red-500">
-            {createPost.error.data.zodError.fieldErrors.content}
+            {createPost.error.data.zodError.fieldErrors.content[0]}
           </Text>
         )}
         <View

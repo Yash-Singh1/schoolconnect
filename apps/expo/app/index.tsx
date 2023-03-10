@@ -1,8 +1,16 @@
 // Landing page for mobile application
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Dimensions, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { WebView } from "react-native-webview";
 import { Stack, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -14,7 +22,7 @@ import LoadingWrapper from "../src/components/LoadingWrapper";
 import { Navbar } from "../src/components/Navbar";
 import { tokenAtom } from "../src/store/";
 import { api } from "../src/utils/api";
-import { TOKEN_KEY } from "../src/utils/constants";
+import { TOKEN_KEY, supportedSocialMedia } from "../src/utils/constants";
 
 // Main landing page when logged in
 const Landing = () => {
@@ -24,11 +32,40 @@ const Landing = () => {
     token,
   });
 
-  return selfQuery.data ? (
+  const schoolQuery = api.school.get.useQuery({
+    token,
+  });
+
+  const socialMedia = useMemo(() => {
+    if (!schoolQuery.data || !schoolQuery.data.social) return null;
+    for (const key of Object.keys(supportedSocialMedia)) {
+      if (
+        schoolQuery.data.social.startsWith(
+          supportedSocialMedia[key as keyof typeof supportedSocialMedia].start,
+        )
+      ) {
+        return supportedSocialMedia[key as keyof typeof supportedSocialMedia];
+      }
+    }
+  }, [schoolQuery.data]);
+
+  const utils = api.useContext();
+  const editSocialMutation = api.school.editSocial.useMutation({
+    onSuccess() {
+      setProfileURL("");
+      setTab("social");
+      void utils.school.invalidate();
+    },
+  });
+
+  const [tab, setTab] = useState<"news" | "social" | "edit">("news");
+  const [profileURL, setProfileURL] = useState("");
+
+  return selfQuery.data && schoolQuery.data ? (
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "Home Page" }} />
       <View className="flex h-full w-full flex-col content-center items-center justify-end self-center">
-        <View className="h-[88%] w-full p-4">
+        <View className="h-[88%] w-full p-2">
           <Text className="mx-auto pb-2 text-center text-2xl font-bold text-white android:font-medium">
             Welcome{" "}
             <Text className="text-pink-400">
@@ -36,10 +73,88 @@ const Landing = () => {
             </Text>
             !<Text className="hidden"> </Text>
           </Text>
-          <Text className="w-full pb-2 text-left text-xl font-bold text-white">
-            Recent Announcements
-          </Text>
-          <Announcements />
+          <View className="flex flex-row gap-x-4">
+            <TouchableOpacity
+              className="flex flex-row items-center pb-1 px-1 border-b-pink-400"
+              activeOpacity={0.5}
+              onPress={() => setTab("news")}
+              style={{ borderBottomWidth: tab === "news" ? 1 : 0 }}
+            >
+              <FontAwesomeIcon icon="newspaper" color="white" />
+              <Text className="ml-2 text-lg font-bold text-white">News</Text>
+            </TouchableOpacity>
+
+            {socialMedia ? <TouchableOpacity
+              className="flex flex-row items-center pb-1 px-1 border-b-pink-400"
+              activeOpacity={0.5}
+              onPress={() => setTab("social")}
+              style={{ borderBottomWidth: tab === "social" ? 1 : 0 }}
+            >
+              <FontAwesomeIcon icon={socialMedia.icon} color="white" />
+              <Text className="ml-2 text-lg font-bold text-white">
+                {socialMedia.name}
+              </Text>
+            </TouchableOpacity> : null}
+
+            {selfQuery.data.role === "admin" ? (
+              <TouchableOpacity
+                className="flex flex-row items-center pb-1 px-1 border-b-pink-400"
+                activeOpacity={0.5}
+                onPress={() => setTab("edit")}
+                style={{ borderBottomWidth: tab === "edit" ? 1 : 0 }}
+              >
+                <FontAwesomeIcon icon="pen" color="white" />
+                <Text className="ml-2 text-lg font-bold text-white">
+                  Social
+                </Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
+          {tab === "news" ? (
+            <>
+              <Text className="w-full pb-2 text-left text-xl font-bold text-white mt-2">
+                Recent Announcements
+              </Text>
+              <Announcements />
+            </>
+          ) : tab === "social" ? (
+            <WebView
+              className="mt-2"
+              source={{
+                uri: schoolQuery.data.social!,
+              }}
+            />
+          ) : (
+            <View className="mt-2">
+              <TextInput
+                className="mx-4 mt-2 mb-1 rounded bg-white/10 p-2 text-white"
+                placeholder="URL to Social Media Profile"
+                placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                value={profileURL}
+                onChangeText={setProfileURL}
+              />
+              {editSocialMutation?.error?.data?.zodError?.fieldErrors
+                ?.social && (
+                <Text className="mt-1 mx-4 mb-1 w-full text-left text-red-500">
+                  {editSocialMutation.error.data.zodError.fieldErrors.social[0]}
+                </Text>
+              )}
+              <Text
+                onPress={() => {
+                  editSocialMutation.mutate({
+                    token,
+                    social: profileURL,
+                  });
+                }}
+                className="mt-2 mx-4 rounded-lg bg-blue-500 p-1 text-center text-lg font-semibold uppercase text-white"
+              >
+                Submit
+              </Text>
+              <Text className="mt-2 text-white mx-4">
+                As of now, we only support Instagram, Facebook, and Twitter
+              </Text>
+            </View>
+          )}
         </View>
         <Navbar />
       </View>

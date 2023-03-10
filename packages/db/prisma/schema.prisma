@@ -63,6 +63,7 @@ model School {
     members User[]
     classes Class[]
     events  Event[]
+    social  String?
 }
 
 model Class {

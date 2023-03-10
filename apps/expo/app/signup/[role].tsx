@@ -118,8 +118,7 @@ const Signup = () => {
             onPress={() => void promptAsync()}
           >
             <FontAwesomeIcon
-              // @ts-expect-error -- TODO: Contribute icon options to react native fontawesome typings
-              icon="fa-brands fa-github"
+              icon={['fab', 'github']}
               size={50}
               color="#fff"
             />

@@ -1,5 +1,10 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import {
+  faFacebook,
+  faGithub,
+  faInstagram,
+  faTwitter,
+} from "@fortawesome/free-brands-svg-icons";
 import {
   faCalendar,
   faCheck,
@@ -8,6 +13,8 @@ import {
   faClock,
   faEnvelope,
   faGear,
+  faNewspaper,
+  faPen,
   faPeopleRoof,
   faPersonChalkboard,
   faPhone,
@@ -21,12 +28,16 @@ import {
 
 library.add(
   faUser,
+  faNewspaper,
   faPlus,
   faClock,
   faChevronRight,
   faSchool,
   faUsers,
   faCalendar,
+  faTwitter,
+  faInstagram,
+  faFacebook,
   faPersonChalkboard,
   faUserSecret,
   faPeopleRoof,
@@ -37,4 +48,5 @@ library.add(
   faGithub,
   faSquareXmark,
   faCircleNotch,
+  faPen,
 );
