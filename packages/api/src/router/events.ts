@@ -139,7 +139,18 @@ export const eventsRouter = createTRPCRouter({
       });
 
       console.log("over here");
-      console.log(await registerSchedule(input.start, event.id));
+      const schedule = await registerSchedule(input.start, event.id);
+
+      if ("scheduleId" in schedule) {
+        await ctx.prisma.event.update({
+          where: {
+            id: event.id,
+          },
+          data: {
+            scheduleId: schedule.scheduleId,
+          },
+        });
+      }
 
       return event;
     }),

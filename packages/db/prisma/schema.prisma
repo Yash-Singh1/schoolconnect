@@ -96,6 +96,7 @@ model Event {
     description String
     start       DateTime
     end         DateTime
+    scheduleId  String?
     Class       Class?   @relation(fields: [classId], references: [id])
     classId     String?
     School      School?  @relation(fields: [schoolId], references: [id])

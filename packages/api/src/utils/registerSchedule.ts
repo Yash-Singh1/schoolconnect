@@ -1,3 +1,5 @@
+// Schedule a QStash to publish notifications for an event at a specific time
+
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -8,11 +10,22 @@ dayjs.locale("en");
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export async function registerSchedule(time: Date, postId: string) {
-  console.log("Registering schedule for", postId, "at", time)
+type QStashResponse =
+  | {
+      scheduleId: string;
+    }
+  | {
+      error: string;
+    };
+
+export async function registerSchedule(
+  time: Date,
+  postId: string,
+): Promise<QStashResponse> {
+  console.log("Registering schedule for", postId, "at", time);
 
   // QStash uses UTC time for cron jobs
-  time = dayjs(time).utc().toDate();
+  const dayTime = dayjs(time).utc();
 
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -23,8 +36,8 @@ export async function registerSchedule(time: Date, postId: string) {
   // Convert date to cron expression format
   myHeaders.append(
     "Upstash-Cron",
-    `${time.getMinutes()} ${time.getHours()} ${time.getDate()} ${
-      time.getMonth() + 1
+    `${dayTime.get("minutes")} ${dayTime.get("hours")} ${dayTime.get("date")} ${
+      dayTime.get("month") + 1
     } *`,
   );
 
