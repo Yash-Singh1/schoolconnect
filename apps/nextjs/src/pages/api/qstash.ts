@@ -6,7 +6,10 @@ import { verifySignature } from "@upstash/qstash/nextjs";
 
 import { prisma } from "@acme/db";
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<{ error: string } | { success: true }>,
+) {
   const eventId = req.body as string;
   const event = await prisma.event.findFirst({
     where: {
@@ -22,7 +25,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       },
     });
   } else {
-    throw new Error("Event not found");
+    return res.status(404).json({ error: "Event not found" });
   }
 
   const receivingDevices = [
@@ -75,6 +78,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       console.error(error);
     }
   }
+
+  res.status(200).json({ success: true });
 }
 
 export default verifySignature(handler);
