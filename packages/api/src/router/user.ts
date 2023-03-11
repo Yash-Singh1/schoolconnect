@@ -81,15 +81,17 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      if (deviceFound && deviceFound.userId !== ctx.user.id) {
-        await ctx.prisma.device.update({
-          where: {
-            id: deviceFound.id,
-          },
-          data: {
-            userId: ctx.user.id,
-          },
-        });
+      if (deviceFound) {
+        if (deviceFound.userId !== ctx.user.id) {
+          await ctx.prisma.device.update({
+            where: {
+              id: deviceFound.id,
+            },
+            data: {
+              userId: ctx.user.id,
+            },
+          });
+        }
       } else {
         await ctx.prisma.device.create({
           data: {
