@@ -15,6 +15,7 @@ export default function useCode(antiState: string, path: string) {
       scopes: ["user"],
       state: antiState,
       redirectUri: makeRedirectUri({
+        scheme: "schoolconnect",
         path,
       }),
       responseType: ResponseType.Token,

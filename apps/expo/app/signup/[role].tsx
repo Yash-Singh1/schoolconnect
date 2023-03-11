@@ -103,8 +103,8 @@ const Signup = () => {
             className="mt-2 flex flex-row flex-nowrap items-center justify-center gap-x-2 rounded-lg bg-green-300 p-4"
           >
             <FontAwesomeIcon color="white" icon="phone" size={30} />
-            <Text className="text-xl font-semibold text-white">
-              Request a quote
+            <Text className="text-xl font-semibold android:font-normal text-white">
+              Request a quote<Text className="hidden"> </Text>
             </Text>
           </TouchableOpacity>
         </View>
