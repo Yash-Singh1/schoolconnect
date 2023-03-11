@@ -42,7 +42,7 @@ export const userRouter = createTRPCRouter({
 
   // Get a list of all linked accounts for the user
   linkedAccounts: protectedProcedure
-    .input(z.object({ token: z.string() }))
+    .input(z.object({ token: z.string().min(1) }))
     .query(async ({ ctx }) => {
       const linked = {
         github: false,
@@ -62,7 +62,7 @@ export const userRouter = createTRPCRouter({
 
   // Deletes the user
   delete: protectedProcedure
-    .input(z.object({ token: z.string() }))
+    .input(z.object({ token: z.string().min(1) }))
     .mutation(async ({ ctx }) => {
       await ctx.prisma.user.delete({
         where: {
@@ -71,6 +71,66 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
-  // TODO: registerDevice mutation
-  // TODO: unregisterDevice mutation
+  // Registers a device for push notifications, unregisters previous users of device also
+  registerDevice: protectedProcedure
+    .input(z.object({ token: z.string().min(1), device: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const deviceFound = await ctx.prisma.device.findFirst({
+        where: {
+          pushToken: input.device,
+        },
+      });
+
+      if (deviceFound && deviceFound.userId !== ctx.user.id) {
+        await ctx.prisma.device.update({
+          where: {
+            id: deviceFound.id,
+          },
+          data: {
+            userId: ctx.user.id,
+          },
+        });
+      } else {
+        await ctx.prisma.device.create({
+          data: {
+            pushToken: input.device,
+            userId: ctx.user.id,
+          },
+        });
+      }
+    }),
+
+  // Unregisters a device for push notifications
+  unregisterDevice: protectedProcedure
+    .input(z.object({ token: z.string().min(1), device: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      const deviceFound = await ctx.prisma.device.findFirst({
+        where: {
+          pushToken: input.device,
+        },
+      });
+
+      if (deviceFound) {
+        await ctx.prisma.device.delete({
+          where: {
+            id: deviceFound.id,
+          },
+        });
+      }
+    }),
+
+  // Checks if a device is registered
+  devicePresent: protectedProcedure
+    .input(z.object({ token: z.string().min(1), device: z.string().min(1) }))
+    .query(async ({ ctx, input }) => {
+      const deviceFound = await ctx.prisma.device.findFirst({
+        where: {
+          pushToken: input.device,
+        },
+      });
+      if (deviceFound) {
+        return true;
+      }
+      return false;
+    }),
 });

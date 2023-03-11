@@ -1,3 +1,4 @@
+import { Expo } from "expo-server-sdk";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -65,9 +66,11 @@ export const postRouter = createTRPCRouter({
           message: "Role is not permitted to create posts",
         });
       }
+
       const { classId, title, content, image } = input;
       let imageOutput = null;
       if (image) imageOutput = await uploadImage(image);
+
       await ctx.prisma.post.create({
         data: {
           classId,
@@ -78,5 +81,56 @@ export const postRouter = createTRPCRouter({
           ...(imageOutput ? { image: imageOutput.data.url } : {}),
         },
       });
+
+      const receivingDevices = [
+        ...(await ctx.prisma.device.findMany({
+          where: {
+            user: {
+              classesIn: {
+                some: {
+                  id: classId,
+                },
+              },
+            },
+          },
+        })),
+        ...(await ctx.prisma.device.findMany({
+          where: {
+            userId: ctx.user.id,
+          },
+        })),
+      ];
+
+      const expo = new Expo();
+
+      const messages = [];
+      for (const receivingDevice of receivingDevices) {
+        if (!Expo.isExpoPushToken(receivingDevice.pushToken)) {
+          await ctx.prisma.device.delete({
+            where: {
+              id: receivingDevice.id,
+            },
+          });
+          continue;
+        }
+
+        messages.push({
+          to: receivingDevice.pushToken,
+          sound: "default" as const,
+          title: title,
+          subtitle: `Sent by ${ctx.user.name}`,
+          body: content,
+        });
+      }
+
+      const chunks = expo.chunkPushNotifications(messages);
+      const tickets = [];
+      for (const chunk of chunks) {
+        try {
+          tickets.push(...(await expo.sendPushNotificationsAsync(chunk)));
+        } catch (error) {
+          console.error(error);
+        }
+      }
     }),
 });

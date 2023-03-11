@@ -114,6 +114,7 @@ const NewPost: React.FC = () => {
         >
           Upload Banner
         </Text>
+        {/** TODO: Loading button similar to newclass */}
         <Text
           className="mx-4 mt-2 rounded-lg bg-green-500/80 py-2 text-center text-lg font-bold text-white"
           style={{ width: Dimensions.get("screen").width - 32 }}

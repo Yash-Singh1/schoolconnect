@@ -15,7 +15,7 @@ import {
 } from "react-native-calendars";
 import { type MarkedDates } from "react-native-calendars/src/types";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { type Event } from "@prisma/client";
 import dayjs from "dayjs";
@@ -105,6 +105,9 @@ const AgendaItem: React.FC<{
                 <Text className="mb-1 text-sm font-light italic text-gray-200">
                   {sourceQuery.data ? `Posted by ${sourceQuery.data.name}` : ""}
                 </Text>
+                <Text className="mt-2 text-left text-lg font-semibold text-white">
+                  {event.description}
+                </Text>
                 <Text className="mt-2 text-left text-base font-normal text-white">
                   {formatTwo(event.start, event.end)}
                 </Text>
@@ -122,6 +125,9 @@ const Events: React.FC = () => {
   const [_, setEvents] = useAtom(eventsAtom);
 
   const eventsQuery = api.events.all.useQuery({ token });
+  const selfQuery = api.user.self.useQuery({ token });
+
+  const router = useRouter();
 
   const [eventsGrouped, setEventsGrouped] = useState<
     | null
@@ -140,8 +146,8 @@ const Events: React.FC = () => {
     // Some messy manipulation of API data to get it into the format the calendar API wants
     const hs = eventsQuery.data.reduce<Record<string, DataEntry[]>>(
       (acc, event, eventIdx) => {
-        const date = event.start.toISOString().split("T")[0] as string;
-        const hr = event.start.getHours();
+        const date = event!.start.toISOString().split("T")[0] as string;
+        const hr = event!.start.getHours();
         if (!acc[date]) acc[date] = [];
         acc[date]!.push({
           hour: `${hr > 12 ? hr - 12 : hr}${hr >= 12 ? "pm" : "am"}`,
@@ -159,15 +165,28 @@ const Events: React.FC = () => {
     setEventsGrouped(keys.map((key) => ({ title: key, data: hs[key]! })));
   }, [eventsQuery.data]);
 
-  return eventsQuery.data ? (
+  return eventsQuery.data && selfQuery.data ? (
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "Events" }} />
       <View className="flex h-full w-full items-center justify-center">
         <View className="h-[88%] w-full">
+          <View className="flex flex-row">
+            <Text className="pl-4 text-2xl font-bold text-white">Events</Text>
+            {selfQuery.data.role === "admin" && (
+              <TouchableOpacity
+                activeOpacity={0.5}
+                className="ml-2 rounded-lg bg-blue-500 p-1"
+                onPress={() => router.push(`/newevent`)}
+              >
+                <FontAwesomeIcon icon="plus" size={24} color="white" />
+              </TouchableOpacity>
+            )}
+          </View>
           {eventsGrouped ? (
             <CalendarProvider
               date={new Date().toISOString().split("T")[0]!}
               showTodayButton
+              className="mt-4"
             >
               <ExpandableCalendar
                 firstDay={1}

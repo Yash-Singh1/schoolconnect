@@ -11,7 +11,7 @@ export const eventsRouter = createTRPCRouter({
   all: protectedProcedure
     .input(
       z.object({
-        token: z.string(),
+        token: z.string().min(1),
         take: z.number().int().min(0).optional(),
         upOnly: z.boolean().default(false),
       }),
@@ -75,9 +75,9 @@ export const eventsRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        token: z.string(),
-        name: z.string().min(1),
-        description: z.string().min(1),
+        token: z.string().min(1),
+        title: z.string().min(1),
+        content: z.string().min(1),
         start: z.date(),
         end: z.date(),
         classId: z.string().min(1).optional(),
@@ -90,6 +90,7 @@ export const eventsRouter = createTRPCRouter({
           message: "You must be a teacher or admin to create an event",
         });
       }
+
       if (input.classId) {
         const classFound: Class | null = await ctx.prisma.class.findFirst({
           where: {
@@ -120,10 +121,11 @@ export const eventsRouter = createTRPCRouter({
           message: "You must be an admin to create a school-wide event",
         });
       }
+
       const event = await ctx.prisma.event.create({
         data: {
-          name: input.name,
-          description: input.description,
+          name: input.title,
+          description: input.content,
           start: input.start,
           end: input.end,
           ...(input.classId
@@ -136,7 +138,8 @@ export const eventsRouter = createTRPCRouter({
         },
       });
 
-      await registerSchedule(input.start, input.name);
+      console.log("over here");
+      console.log(await registerSchedule(input.start, event.id));
 
       return event;
     }),

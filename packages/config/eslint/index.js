@@ -26,6 +26,7 @@ const config = {
       { prefer: "type-imports", fixStyle: "inline-type-imports" },
     ],
     "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/require-await": "off",
     "react-hooks/exhaustive-deps": "off",
   },
   ignorePatterns: ["**/*.config.js", "**/*.config.cjs", "packages/config/**"],

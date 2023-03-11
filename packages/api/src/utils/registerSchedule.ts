@@ -9,6 +9,8 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export async function registerSchedule(time: Date, postId: string) {
+  console.log("Registering schedule for", postId, "at", time)
+
   // QStash uses UTC time for cron jobs
   time = dayjs(time).utc().toDate();
 
@@ -26,16 +28,12 @@ export async function registerSchedule(time: Date, postId: string) {
     } *`,
   );
 
-  return (
-    (
-      await fetch(
-        `https://qstash.upstash.io/v1/publish/https://schoolconnect-mu.vercel.app/https://schoolconnect-mu.vercel.app/api/qstash`,
-        {
-          method: "POST",
-          body: `"${postId}"`,
-          headers: myHeaders,
-        },
-      )
-    ).status < 400
-  );
+  return await fetch(
+    `https://qstash.upstash.io/v1/publish/https://schoolconnect-mu.vercel.app/api/qstash`,
+    {
+      method: "POST",
+      body: `"${postId}"`,
+      headers: myHeaders,
+    },
+  ).then((res) => res.json());
 }

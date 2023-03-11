@@ -4,6 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { verifySignature } from "@upstash/qstash/nextjs";
 
 function handler(req: NextApiRequest, res: NextApiResponse) {
+  console.log(req.body);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   res.json({ message: req.body });
 }

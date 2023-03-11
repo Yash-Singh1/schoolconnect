@@ -94,6 +94,7 @@ const Settings: React.FC = () => {
           <View className="border-b border-gray-200"></View>
           <TouchableOpacity
             activeOpacity={0.5}
+            onPress={() => router.push('/settings/notifications')}
             className="flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-3"
           >
             <Text className="text-lg font-bold text-white">

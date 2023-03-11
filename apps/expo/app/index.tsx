@@ -113,7 +113,7 @@ const Landing = () => {
           </View>
           {tab === "news" ? (
             <>
-              <Text className="w-full pb-2 text-left text-xl font-bold text-white mt-2">
+              <Text className="w-full pb-2 text-center text-xl font-bold text-white mt-2">
                 Recent Announcements
               </Text>
               <Announcements />
@@ -206,19 +206,25 @@ const Announcements = () => {
   }, [recentEventsQuery.data, recentPostsQuery.data]);
 
   return recentAnnouncements ? (
-    <View
-      style={{
-        height: Dimensions.get("screen").height * 0.7,
-        width: Dimensions.get("screen").width,
-      }}
-    >
-      <FlashList
-        data={recentAnnouncements}
-        ItemSeparatorComponent={() => <View className="h-3" />}
-        renderItem={({ item }) => <Announcement item={item} />}
-        estimatedItemSize={46}
-      />
-    </View>
+    recentAnnouncements.length ? (
+      <View
+        style={{
+          height: Dimensions.get("screen").height * 0.7,
+          width: Dimensions.get("screen").width,
+        }}
+      >
+        <FlashList
+          data={recentAnnouncements}
+          ItemSeparatorComponent={() => <View className="h-3" />}
+          renderItem={({ item }) => <Announcement item={item} />}
+          estimatedItemSize={46}
+        />
+      </View>
+    ) : (
+      <Text className="text-white text-center mt-2">
+        No Recent Announcements
+      </Text>
+    )
   ) : null;
 };
 
