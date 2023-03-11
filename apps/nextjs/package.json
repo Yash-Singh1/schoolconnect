@@ -1,5 +1,6 @@
 {
   "name": "@acme/nextjs",
+  "description": "Next.js app for SchoolConnect",
   "version": "0.1.0",
   "private": true,
   "scripts": {

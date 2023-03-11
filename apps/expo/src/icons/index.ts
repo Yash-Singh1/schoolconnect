@@ -1,3 +1,5 @@
+// Load all of the FontAwesome icons we use in one file for tree-shaking (performance)
+
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
   faFacebook,

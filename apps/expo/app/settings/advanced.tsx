@@ -1,4 +1,4 @@
-// The settings and information page
+// Advanced settings, currently only allows deleting accounts
 
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,7 +10,7 @@ import { tokenAtom } from "../../src/store";
 import { api } from "../../src/utils/api";
 import { resetStack } from "../../src/utils/resetStack";
 
-const Settings: React.FC = () => {
+const Advanced: React.FC = () => {
   const router = useRouter();
   const navigation = useNavigation();
 
@@ -20,11 +20,11 @@ const Settings: React.FC = () => {
 
   return (
     <SafeAreaView className="bg-[#101010]">
-      <Stack.Screen options={{ title: "Settings" }} />
+      <Stack.Screen options={{ title: "Advanced Settings" }} />
       <View className="flex h-full w-full flex-col content-center items-center justify-end self-center">
         <ScrollView className="h-[88%] w-full pt-2">
           <Text className="px-4 text-3xl font-bold text-white">
-            Advanced<Text className="hidden"> </Text>
+            Advanced Settings<Text className="hidden"> </Text>
           </Text>
           <TouchableOpacity
             activeOpacity={0.5}
@@ -53,4 +53,4 @@ const Settings: React.FC = () => {
   );
 };
 
-export default Settings;
+export default Advanced;

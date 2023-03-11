@@ -1,4 +1,4 @@
-// Test handler for working with QStash scheduling
+// QStash handler for sending notifications on event
 
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Expo } from "expo-server-sdk";

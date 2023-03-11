@@ -1,3 +1,5 @@
+// Main file for setting up tRPC procedures and context
+
 import { TRPCError, initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";

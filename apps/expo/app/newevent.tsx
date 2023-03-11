@@ -1,15 +1,12 @@
 // Form to create a new event
 
 import { useState } from "react";
-import {
-  Dimensions,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Dimensions, Platform, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+  DateTimePickerAndroid,
+} from "@react-native-community/datetimepicker";
 import { useAtom } from "jotai";
 
 import LoadingWrapper from "../src/components/LoadingWrapper";
@@ -36,6 +33,28 @@ const NewEvent: React.FC = () => {
       router.back();
     },
   });
+
+  const showStartDatePicker = (mode: "date" | "time") => {
+    if (Platform.OS === "android") {
+      DateTimePickerAndroid.open({
+        value: start,
+        onChange: (_, value) => value && setStart(value),
+        mode,
+        is24Hour: true,
+      });
+    }
+  };
+
+  const showEndDatePicker = (mode: "date" | "time") => {
+    if (Platform.OS === "android") {
+      DateTimePickerAndroid.open({
+        value: end,
+        onChange: (_, value) => value && setEnd(value),
+        mode,
+        is24Hour: true,
+      });
+    }
+  };
 
   return (
     <SafeAreaView className="bg-[#101010]">
@@ -72,26 +91,84 @@ const NewEvent: React.FC = () => {
           style={{ width: Dimensions.get("screen").width - 32 }}
         >
           <Text className="text-white text-lg">Start</Text>
-          <DateTimePicker
-            value={start}
-            mode="datetime"
-            is24Hour={true}
-            maximumDate={end}
-            onChange={(_, value) => value && setStart(value)}
-          />
+          {Platform.OS === "ios" ? (
+            <DateTimePicker
+              value={start}
+              // @ts-expect-error -- Android Mode required, but we will do separately
+              mode="datetime"
+              is24Hour={true}
+              maximumDate={end}
+              onChange={(_, value) => value && setStart(value)}
+            />
+          ) : (
+            <View className="flex flex-row">
+              <Text
+                className="text-white mr-2 text-base"
+                onPress={() => {
+                  showStartDatePicker("date");
+                }}
+              >
+                {start.toDateString().split(" ").slice(1).join(" ")}
+              </Text>
+              <Text
+                className="text-white mr-2 text-base"
+                onPress={() => {
+                  showStartDatePicker("time");
+                }}
+              >
+                {start
+                  .toLocaleTimeString()
+                  .split(" ")
+                  .map((t, i) =>
+                    i === 0 ? t.split(":").slice(0, 2).join(":") : t,
+                  )
+                  .join(" ")
+                  .toUpperCase()}
+              </Text>
+            </View>
+          )}
         </View>
         <View
           className="my-2 flex flex-row justify-between items-center"
           style={{ width: Dimensions.get("screen").width - 32 }}
         >
           <Text className="text-white text-lg">End</Text>
-          <DateTimePicker
-            value={end}
-            mode="datetime"
-            is24Hour={true}
-            minimumDate={start}
-            onChange={(_, value) => value && setEnd(value)}
-          />
+          {Platform.OS === "ios" ? (
+            <DateTimePicker
+              value={end}
+              // @ts-expect-error -- Android Mode required, but we will do separately
+              mode="datetime"
+              is24Hour={true}
+              minimumDate={start}
+              onChange={(_, value) => value && setEnd(value)}
+            />
+          ) : (
+            <View className="flex flex-row">
+              <Text
+                className="text-white mr-2 text-base"
+                onPress={() => {
+                  showEndDatePicker("date");
+                }}
+              >
+                {end.toDateString().split(" ").slice(1).join(" ")}
+              </Text>
+              <Text
+                className="text-white mr-2 text-base"
+                onPress={() => {
+                  showEndDatePicker("time");
+                }}
+              >
+                {end
+                  .toLocaleTimeString()
+                  .split(" ")
+                  .map((t, i) =>
+                    i === 0 ? t.split(":").slice(0, 2).join(":") : t,
+                  )
+                  .join(" ")
+                  .toUpperCase()}
+              </Text>
+            </View>
+          )}
         </View>
         {createEvent.isLoading ? (
           <LoadingWrapper
@@ -105,7 +182,7 @@ const NewEvent: React.FC = () => {
           </LoadingWrapper>
         ) : (
           <Text
-            className="mx-4 mt-2 rounded-lg bg-green-500/80 py-1 text-center text-lg font-bold text-white"
+            className="mx-4 mt-2 rounded-lg bg-green-500/80 py-1 text-center text-lg font-bold android:font-normal text-white"
             style={{ width: Dimensions.get("screen").width - 32 }}
             onPress={() => {
               createEvent.mutate({
@@ -117,7 +194,7 @@ const NewEvent: React.FC = () => {
               });
             }}
           >
-            Submit
+            Submit<Text className="hidden"> </Text>
           </Text>
         )}
       </View>

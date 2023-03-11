@@ -24,7 +24,7 @@ import { api } from "../src/utils/api";
 import { TOKEN_KEY, supportedSocialMedia } from "../src/utils/constants";
 
 // Main landing page when logged in
-const Landing = () => {
+const Landing: React.FC = () => {
   const [token] = useAtom(tokenAtom);
 
   const selfQuery = api.user.self.useQuery({
@@ -80,7 +80,10 @@ const Landing = () => {
               style={{ borderBottomWidth: tab === "news" ? 1 : 0 }}
             >
               <FontAwesomeIcon icon="newspaper" color="white" />
-              <Text className="ml-2 text-lg font-bold text-white">News</Text>
+              <Text className="ml-2 text-lg font-bold text-white">
+                News
+                <Text className="hidden"> </Text>
+              </Text>
             </TouchableOpacity>
 
             {socialMedia ? (
@@ -93,6 +96,7 @@ const Landing = () => {
                 <FontAwesomeIcon icon={socialMedia.icon} color="white" />
                 <Text className="ml-2 text-lg font-bold text-white">
                   {socialMedia.name}
+                  <Text className="hidden"> </Text>
                 </Text>
               </TouchableOpacity>
             ) : null}
@@ -106,7 +110,7 @@ const Landing = () => {
               >
                 <FontAwesomeIcon icon="pen" color="white" />
                 <Text className="ml-2 text-lg font-bold text-white">
-                  Social
+                  Social<Text className="hidden"> </Text>
                 </Text>
               </TouchableOpacity>
             ) : null}
@@ -165,7 +169,8 @@ const Landing = () => {
   );
 };
 
-const Announcements = () => {
+// Component for fetching and displaying announcements
+const Announcements: React.FC = () => {
   const [token] = useAtom(tokenAtom);
 
   const recentEventsQuery = api.events.all.useQuery({
@@ -228,6 +233,7 @@ const Announcements = () => {
   ) : null;
 };
 
+// Helper function checking if the union of an Event and a Post is a Event
 const isEvent = (item: Event | Post): item is Event => {
   if (Object.hasOwn(item, "start")) {
     return true;
@@ -235,7 +241,8 @@ const isEvent = (item: Event | Post): item is Event => {
   return false;
 };
 
-const Announcement = ({ item }: { item: Event | Post }) => {
+// Component for displaying a specific announcement
+const Announcement: React.FC<{ item: Event | Post }> = ({ item }) => {
   const eventItem = isEvent(item);
 
   const [token] = useAtom(tokenAtom);
@@ -332,7 +339,7 @@ const Login: React.FC = () => {
 };
 
 // Index page, decides whether to display landing page or login page based on API verification
-const Index = () => {
+const Index: React.FC = () => {
   const [token, setToken] = useAtom(tokenAtom);
   const [verifyStatus, setVerifyStatus] = useState<
     "loading" | "error" | "success"
@@ -344,6 +351,9 @@ const Index = () => {
     },
     {
       enabled: false,
+      onError() {
+        void SecureStore.deleteItemAsync(TOKEN_KEY);
+      },
     },
   );
 

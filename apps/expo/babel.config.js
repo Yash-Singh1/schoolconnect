@@ -1,3 +1,5 @@
+// The Babel configuration, used by Expo to transpile the code when bundling
+
 module.exports = function (api) {
   api.cache(true);
   return {

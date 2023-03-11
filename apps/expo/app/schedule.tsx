@@ -4,7 +4,7 @@ import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
 
-const Members: React.FC = () => {
+const Schedule: React.FC = () => {
   return (
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "Schedule" }} />
@@ -17,4 +17,4 @@ const Members: React.FC = () => {
   );
 };
 
-export default Members;
+export default Schedule;

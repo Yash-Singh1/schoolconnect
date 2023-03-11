@@ -5,6 +5,10 @@ import { type useNavigation, type useRouter } from "expo-router";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- any type is required for this generic to work properly
 type GetReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
 
+/**
+ * @param ctx Contains the router and navigation objects, each from `useRouter` and `useNavigation` respectively
+ * @param nextRoute A route to push on top of the root route, optional
+ */
 export function resetStack(
   ctx: {
     router: GetReturnType<typeof useRouter>;

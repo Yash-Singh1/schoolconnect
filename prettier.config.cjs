@@ -1,5 +1,5 @@
 // Configuration for Prettier for the project
-// We import a few plugins to sort imports and format Tailwind CSS
+// We import a plugin to sort imports
 
 /** @type {import("prettier").Config & { [key:string]: any }} */
 const config = {
@@ -12,9 +12,7 @@ const config = {
   tabWidth: 2,
   plugins: [
     "@ianvs/prettier-plugin-sort-imports",
-    // "prettier-plugin-tailwindcss",
   ],
-  // tailwindConfig: "./packages/config/tailwind",
   importOrder: [
     "^(react/(.*)$)|^(react$)|^(react-native(.*)$)",
     "^(next/(.*)$)|^(next$)",

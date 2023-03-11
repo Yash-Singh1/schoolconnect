@@ -1,3 +1,5 @@
+// The root router, contains subrouters of all the different parts of the API
+
 import { authRouter } from "./router/auth";
 import { classRouter } from "./router/class";
 import { eventsRouter } from "./router/events";

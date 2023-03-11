@@ -1,9 +1,12 @@
+// Enable and disable notifications about events and posts
+
 import { useCallback, useEffect, useState } from "react";
 import { ScrollView, Switch, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
 import { useAtom } from "jotai";
 
+import LoadingWrapper from "../../src/components/LoadingWrapper";
 import { Navbar } from "../../src/components/Navbar";
 import { tokenAtom } from "../../src/store";
 import { api } from "../../src/utils/api";
@@ -15,6 +18,7 @@ const NotificationSettings: React.FC = () => {
   const [token] = useAtom(tokenAtom);
 
   const [pushToken, setPushToken] = useState("");
+  const [evaluated, setEvaluated] = useState(false);
 
   const registerDeviceMutation = api.user.registerDevice.useMutation();
   const unregisterDeviceMutation = api.user.unregisterDevice.useMutation();
@@ -25,20 +29,26 @@ const NotificationSettings: React.FC = () => {
     },
     {
       enabled: false,
+      onSuccess: (data) => {
+        setIsEnabled(data);
+        setEvaluated(true);
+      },
     },
   );
 
   useEffect(() => {
     async function pushTokenWork() {
       const newPushToken = await getPushToken();
-      if (newPushToken && pushToken !== newPushToken) {
+      if (newPushToken) {
         setPushToken(newPushToken);
-      } else {
         await devicePresentQuery.refetch();
+      } else {
+        setIsEnabled(false);
+        setEvaluated(true);
       }
     }
     void pushTokenWork();
-  }, [pushToken]);
+  }, []);
 
   const toggleSwitch = useCallback(async () => {
     const pushToken = await getPushToken();
@@ -54,7 +64,7 @@ const NotificationSettings: React.FC = () => {
     setIsEnabled((previousState) => !previousState);
   }, [isEnabled]);
 
-  return (
+  return evaluated ? (
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "Notifications" }} />
       <View className="w-full h-full">
@@ -63,9 +73,9 @@ const NotificationSettings: React.FC = () => {
             Notifications<Text className="hidden"> </Text>
           </Text>
           <View className="mt-4 flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-2">
-            <View className="flex flex-row justify-between w-full">
-              <Text className="text-lg font-bold text-white">
-                Enable Notifications
+            <View className="flex flex-row justify-between items-center w-full">
+              <Text className="text-lg font-bold android:font-normal text-white">
+                Enable Notifications<Text className="hidden"> </Text>
               </Text>
               <Switch
                 trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -76,10 +86,13 @@ const NotificationSettings: React.FC = () => {
               />
             </View>
           </View>
+          <Text className="w-full text-white text-left px-4 mt-2">We will notify you on the latest posts and upcoming events scheduled</Text>
         </ScrollView>
         <Navbar />
       </View>
     </SafeAreaView>
+  ) : (
+    <LoadingWrapper stackName="Notifications" />
   );
 };
 

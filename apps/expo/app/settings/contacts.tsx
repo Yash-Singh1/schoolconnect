@@ -8,10 +8,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Navbar } from "../../src/components/Navbar";
 import { baseURL } from "../../src/utils/constants";
 
-const Settings: React.FC = () => {
+const Contacts: React.FC = () => {
   return (
     <SafeAreaView className="bg-[#101010]">
-      <Stack.Screen options={{ title: "Settings" }} />
+      <Stack.Screen options={{ title: "Contacts" }} />
       <View className="flex h-full w-full flex-col content-center items-center justify-end self-center">
         <ScrollView className="h-[88%] w-full pt-2">
           <Text className="w-full px-4 text-center text-4xl font-bold text-white">
@@ -22,7 +22,7 @@ const Settings: React.FC = () => {
           </Text>
           <View className="mt-10 flex w-full items-center justify-center">
             <Text
-              className="text-2xl font-bold text-white"
+              className="text-2xl font-bold text-white android:font-normal"
               onPress={() =>
                 void Linking.openURL("mailto:schoolconnect@yashsingh.us")
               }
@@ -31,7 +31,22 @@ const Settings: React.FC = () => {
               <Text> </Text>
             </Text>
             <Text
-              className="text-2xl font-bold text-white"
+              className="text-2xl font-bold text-white android:font-normal"
+              onPress={() =>
+                void Linking.openURL(
+                  "https://yash-singh1.github.io/schoolconnect-support-tracker/",
+                )
+              }
+            >
+              <FontAwesomeIcon
+                icon="newspaper"
+                color="white"
+                size={24}
+              />{" "}
+              Documentation<Text className="hidden"> </Text>
+            </Text>
+            <Text
+              className="text-2xl font-bold text-white android:font-normal"
               onPress={() =>
                 void Linking.openURL(
                   "https://github.com/Yash-Singh1/schoolconnect-support-tracker/issues",
@@ -82,4 +97,4 @@ const Settings: React.FC = () => {
   );
 };
 
-export default Settings;
+export default Contacts;

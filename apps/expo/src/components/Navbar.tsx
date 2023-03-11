@@ -1,3 +1,6 @@
+// Main navigation bar
+// Some pages are only shown to certain roles
+
 import { Text, TouchableOpacity, View } from "react-native";
 import { useNavigation, useRouter } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";

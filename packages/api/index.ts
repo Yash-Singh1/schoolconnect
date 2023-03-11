@@ -1,3 +1,5 @@
+// Entry point file for the API
+
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 
 import { type AppRouter } from "./src/root";

@@ -1,3 +1,5 @@
+// A react hook to wrap `useAuthRequest` with GitHub authentication configuration
+
 import {
   ResponseType,
   makeRedirectUri,

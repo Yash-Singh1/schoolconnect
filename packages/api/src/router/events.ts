@@ -138,7 +138,6 @@ export const eventsRouter = createTRPCRouter({
         },
       });
 
-      console.log("over here");
       const schedule = await registerSchedule(input.start, event.id);
 
       if ("scheduleId" in schedule) {

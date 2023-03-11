@@ -5,12 +5,12 @@
     "types": ["nativewind/types"]
   },
   "include": [
+    "module.d.ts",
     "app",
     "expo-plugins",
     "src",
     "app.config.ts",
-    "index.ts",
-    "module.d.ts"
+    "index.ts"
   ],
   "exclude": ["node_modules"]
 }

@@ -80,7 +80,7 @@ const NewPost: React.FC = () => {
           value={content}
           textAlignVertical="top"
           // @ts-expect-error -- TODO: See above comment
-          enterKeyHint={"done"}
+          enterKeyHint="done"
           onChangeText={setContent}
           placeholder="Content of the post"
         />
@@ -114,27 +114,38 @@ const NewPost: React.FC = () => {
         >
           Upload Banner
         </Text>
-        {/** TODO: Loading button similar to newclass */}
-        <Text
-          className="mx-4 mt-2 rounded-lg bg-green-500/80 py-2 text-center text-lg font-bold text-white"
-          style={{ width: Dimensions.get("screen").width - 32 }}
-          onPress={() => {
-            // Create the post with the form data
-            // Will automatically return server-side form validation errors if required
-            createPost.mutate({
-              token,
-              classId: classQuery.data.id,
-              title,
-              content,
-              image:
-                file && file.assets
-                  ? (file.assets[0]?.base64 as string)
-                  : undefined,
-            });
-          }}
-        >
-          Submit
-        </Text>
+        {createPost.isLoading ? (
+          <LoadingWrapper
+            small
+            spinClass="bg-green-500/80 mt-2 py-2 flex flex-row justify-center items-center gap-x-4 ml-1"
+            spinStyle={{
+              width: Dimensions.get("screen").width - 32,
+            }}
+          >
+            <Text className="font-bold text-white text-lg">Submit</Text>
+          </LoadingWrapper>
+        ) : (
+          <Text
+            className="mx-4 mt-2 rounded-lg bg-green-500/80 py-2 text-center text-lg font-bold text-white"
+            style={{ width: Dimensions.get("screen").width - 32 }}
+            onPress={() => {
+              // Create the post with the form data
+              // Will automatically return server-side form validation errors if required
+              createPost.mutate({
+                token,
+                classId: classQuery.data.id,
+                title,
+                content,
+                image:
+                  file && file.assets
+                    ? (file.assets[0]?.base64 as string)
+                    : undefined,
+              });
+            }}
+          >
+            Submit
+          </Text>
+        )}
       </View>
     </SafeAreaView>
   ) : (

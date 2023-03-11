@@ -1,4 +1,4 @@
-// Manage linked social accounts, such as GitHub, Facebook, etc.
+// Manage linked social accounts
 
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,7 +11,7 @@ import { Navbar } from "../../src/components/Navbar";
 import { tokenAtom } from "../../src/store";
 import { api } from "../../src/utils/api";
 
-const Settings: React.FC = () => {
+const Linked: React.FC = () => {
   const [token] = useAtom(tokenAtom);
 
   const selfQuery = api.user.self.useQuery({ token });
@@ -21,7 +21,7 @@ const Settings: React.FC = () => {
 
   return selfQuery.data && schoolQuery.data && linkedAccountsQuery.data ? (
     <SafeAreaView className="bg-[#101010]">
-      <Stack.Screen options={{ title: "Settings" }} />
+      <Stack.Screen options={{ title: "Linked Accounts" }} />
       <View className="flex h-full w-full flex-col content-center items-center justify-end self-center">
         <ScrollView className="h-[88%] w-full pt-2">
           <Text className="px-4 text-3xl font-bold text-white">
@@ -58,8 +58,8 @@ const Settings: React.FC = () => {
       </View>
     </SafeAreaView>
   ) : (
-    <LoadingWrapper stackName="Settings" />
+    <LoadingWrapper stackName="Linked Accounts" />
   );
 };
 
-export default Settings;
+export default Linked;

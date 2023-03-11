@@ -1,3 +1,6 @@
+# CI Workflow that runs on changes in the repository
+# This CI Workflow lints, builds, and type-checks everything to make sure it is working properly
+
 name: CI
 
 on:

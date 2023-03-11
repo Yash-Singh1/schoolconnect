@@ -1,3 +1,5 @@
+// Configuration file for Metro bundler to work in a monorepo setting
+
 // Learn more: https://docs.expo.dev/guides/monorepos/
 const { getDefaultConfig } = require("expo/metro-config");
 const path = require("path");

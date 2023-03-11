@@ -1,3 +1,5 @@
+// Main configuration file for the application
+
 import type { ExpoConfig } from "@expo/config";
 
 const defineConfig = (): ExpoConfig => ({

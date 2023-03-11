@@ -1,3 +1,5 @@
+// Wrapper that adds the loading screen to all of the pages components
+
 import { useEffect, useRef } from "react";
 import {
   Animated,

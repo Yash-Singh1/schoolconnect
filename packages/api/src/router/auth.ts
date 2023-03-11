@@ -130,6 +130,7 @@ export const authRouter = createTRPCRouter({
 
         return newSession.sessionToken;
       }
+
       const { userInfo, accessToken } = await retrieveAuthToken(code);
       if (!userInfo.email) {
         throw new TRPCError({
@@ -226,7 +227,6 @@ export const authRouter = createTRPCRouter({
         });
       }
       return newSession.sessionToken;
-      // return accessToken.token.access_token as string;
     }),
 
   // Login mutation, updates access token in database and searches for existing account
@@ -281,6 +281,6 @@ export const authRouter = createTRPCRouter({
         });
       }
 
-      return accessToken.token.access_token as string;
+      return newSession.sessionToken;
     }),
 });

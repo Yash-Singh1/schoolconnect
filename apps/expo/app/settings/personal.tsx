@@ -35,7 +35,7 @@ function formatRole(role: string) {
   }
 }
 
-const Settings: React.FC = () => {
+const Personal: React.FC = () => {
   const [token] = useAtom(tokenAtom);
 
   const selfQuery = api.user.self.useQuery({ token });
@@ -55,7 +55,7 @@ const Settings: React.FC = () => {
 
   return selfQuery.data && schoolQuery.data ? (
     <SafeAreaView className="bg-[#101010]">
-      <Stack.Screen options={{ title: "Settings" }} />
+      <Stack.Screen options={{ title: "Personal Settings" }} />
       <View className="flex h-full w-full flex-col content-center items-center justify-end self-center">
         <ScrollView className="h-[88%] w-full pt-2">
           <Text className="px-4 text-3xl font-bold text-white">
@@ -175,8 +175,8 @@ const Settings: React.FC = () => {
       </View>
     </SafeAreaView>
   ) : (
-    <LoadingWrapper stackName="Settings" />
+    <LoadingWrapper stackName="Personal Settings" />
   );
 };
 
-export default Settings;
+export default Personal;

@@ -120,6 +120,7 @@ const Settings: React.FC = () => {
             onPress={() => {
               void SecureStore.deleteItemAsync(TOKEN_KEY).then(async () => {
                 setToken("");
+                // Unregister notifications from this device
                 const pushToken = await getPushToken(false);
                 if (pushToken) {
                   await unregisterDeviceMutation.mutateAsync({
