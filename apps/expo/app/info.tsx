@@ -18,6 +18,7 @@ import { Navbar } from "../src/components/Navbar";
 import { tokenAtom } from "../src/store";
 import { api } from "../src/utils/api";
 import { TOKEN_KEY, baseURL } from "../src/utils/constants";
+import { getPushToken } from "../src/utils/getPushToken";
 import { resetStack } from "../src/utils/resetStack";
 
 const Settings: React.FC = () => {
@@ -29,6 +30,8 @@ const Settings: React.FC = () => {
   const selfQuery = api.user.self.useQuery({ token });
   const schoolQuery = api.school.get.useQuery({ token });
 
+  const unregisterDeviceMutation = api.user.unregisterDevice.useMutation();
+
   return selfQuery.data && schoolQuery.data ? (
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "Settings" }} />
@@ -37,8 +40,6 @@ const Settings: React.FC = () => {
           <Text className="px-4 text-4xl font-bold text-white">
             Settings<Text className="hidden"> </Text>
           </Text>
-          {/* TODO: Make user modification actually work */}
-          {/* TODO: Add more information about the school, etc. */}
           <View className="mt-2 flex w-full flex-row items-center bg-[#2c2c2e] px-6 py-4">
             <View className="mr-2 rounded-full border-2 border-white bg-[#1c1c1e] p-4 pt-3">
               <FontAwesomeIcon icon="user" size={50} color="white" />
@@ -94,7 +95,7 @@ const Settings: React.FC = () => {
           <View className="border-b border-gray-200"></View>
           <TouchableOpacity
             activeOpacity={0.5}
-            onPress={() => router.push('/settings/notifications')}
+            onPress={() => router.push("/settings/notifications")}
             className="flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-3"
           >
             <Text className="text-lg font-bold text-white">
@@ -117,9 +118,15 @@ const Settings: React.FC = () => {
           <TouchableOpacity
             activeOpacity={0.5}
             onPress={() => {
-              // TODO: once we get to that point, remember to delete Device model
-              void SecureStore.deleteItemAsync(TOKEN_KEY).then(() => {
+              void SecureStore.deleteItemAsync(TOKEN_KEY).then(async () => {
                 setToken("");
+                const pushToken = await getPushToken(false);
+                if (pushToken) {
+                  await unregisterDeviceMutation.mutateAsync({
+                    token,
+                    device: pushToken,
+                  });
+                }
                 resetStack({ router, navigation });
               });
             }}
