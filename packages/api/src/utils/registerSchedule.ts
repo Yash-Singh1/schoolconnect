@@ -28,6 +28,7 @@ export async function registerSchedule(time: Date, postId: string) {
     } *`,
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return await fetch(
     `https://qstash.upstash.io/v1/publish/https://schoolconnect-mu.vercel.app/api/qstash`,
     {
