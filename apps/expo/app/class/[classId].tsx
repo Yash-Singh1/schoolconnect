@@ -89,15 +89,13 @@ const Board: React.FC = () => {
           )}
           <View className="mb-4 flex flex-row items-center">
             <Text className="ml-8 text-2xl font-bold text-white">Posts</Text>
-            {selfQuery.data.role === "teacher" && (
-              <TouchableOpacity
-                activeOpacity={0.5}
-                className="ml-2 rounded-lg bg-blue-500 p-1"
-                onPress={() => router.push(`/newpost/${classId}`)}
-              >
-                <FontAwesomeIcon icon="plus" size={24} color="white" />
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              activeOpacity={0.5}
+              className="ml-2 rounded-lg bg-blue-500 p-1"
+              onPress={() => router.push(`/newpost/${classId}`)}
+            >
+              <FontAwesomeIcon icon="plus" size={24} color="white" />
+            </TouchableOpacity>
           </View>
           {/* TODO: Pagination for posts */}
           <FlashList

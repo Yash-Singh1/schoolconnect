@@ -48,8 +48,6 @@ const NewPost: React.FC = () => {
     },
   });
 
-  // TODO: Validate that a teacher or admin is doing this client-side
-
   return classQuery.data ? (
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "New Post" }} />

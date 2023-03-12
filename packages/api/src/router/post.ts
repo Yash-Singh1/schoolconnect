@@ -60,13 +60,6 @@ export const postRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      if (ctx.user.role !== "teacher") {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Role is not permitted to create posts",
-        });
-      }
-
       const { classId, title, content, image } = input;
       let imageOutput = null;
       if (image) imageOutput = await uploadImage(image);
