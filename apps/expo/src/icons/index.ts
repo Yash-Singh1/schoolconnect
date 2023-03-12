@@ -10,9 +10,11 @@ import {
 import {
   faCalendar,
   faCheck,
+  faChevronDown,
   faChevronRight,
   faCircleNotch,
   faClock,
+  faEllipsisVertical,
   faEnvelope,
   faGear,
   faNewspaper,
@@ -24,6 +26,7 @@ import {
   faSchool,
   faSquareXmark,
   faUser,
+  faUserPlus,
   faUserSecret,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
@@ -34,8 +37,10 @@ library.add(
   faPlus,
   faClock,
   faChevronRight,
+  faChevronDown,
   faSchool,
   faUsers,
+  faUserPlus,
   faCalendar,
   faTwitter,
   faInstagram,
@@ -51,4 +56,5 @@ library.add(
   faSquareXmark,
   faCircleNotch,
   faPen,
+  faEllipsisVertical,
 );

@@ -8,11 +8,11 @@ import { useAtom } from "jotai";
 import { Navbar } from "../../src/components/Navbar";
 import { tokenAtom } from "../../src/store";
 import { api } from "../../src/utils/api";
-import { resetStack } from "../../src/utils/resetStack";
+import { resetStack, type NavigatorOverride } from "../../src/utils/resetStack";
 
 const Advanced: React.FC = () => {
   const router = useRouter();
-  const navigation = useNavigation();
+  const navigation = useNavigation() as NavigatorOverride;
 
   const [token] = useAtom(tokenAtom);
 

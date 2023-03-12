@@ -58,4 +58,42 @@ export const schoolRouter = createTRPCRouter({
         },
       });
     }),
+
+  // Pending members of a school
+  pending: protectedProcedure
+    .input(z.object({ token: z.string().min(1) }))
+    .query(async ({ ctx }) => {
+      if (ctx.user.role === "admin") {
+        return await ctx.prisma.user.findMany({
+          where: {
+            schoolId: ctx.user.schoolId,
+            pending: true,
+          },
+        });
+      } else {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Role is not permitted to view pending members",
+        });
+      }
+    }),
+
+  // Invited members of a school
+  invited: protectedProcedure
+    .input(z.object({ token: z.string().min(1) }))
+    .query(async ({ ctx }) => {
+      if (ctx.user.role === "admin") {
+        return await ctx.prisma.user.findMany({
+          where: {
+            schoolId: ctx.user.schoolId,
+            pending: false,
+          },
+        });
+      } else {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Role is not permitted to view invited members",
+        });
+      }
+    }),
 });

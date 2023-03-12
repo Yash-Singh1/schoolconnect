@@ -67,7 +67,6 @@ function isTokened(input: unknown): input is { token: string } {
 
 /**
  * Reusable middleware that enforces users are logged in before running the procedure
- * TODO: Provider agnostic authentication, use custom auth token
  */
 const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
   let input;

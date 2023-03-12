@@ -40,11 +40,17 @@ const eventsAtom = atom<Event[]>([]);
 
 // Helper function for formatting time for event
 function formatTwo(firstDate: Date, secondDate: Date): string {
+  const format = `${
+    firstDate.toDateString() === secondDate.toDateString() ? "" : "M/D"
+  }${
+    firstDate.getFullYear() === secondDate.getFullYear() ? "" : "/YYYY"
+  } h:mmA`.trim();
+
   return (
-    dayjs(firstDate).format("h:mmA") +
-    (secondDate.getTime() - firstDate.getTime() <= 60 * 1000
+    dayjs(firstDate).format(format) +
+    (secondDate.getTime() - firstDate.getTime() <= 120 * 1000 - 1
       ? ""
-      : `-${dayjs(secondDate).format("h:mmA")}`)
+      : ` - ${dayjs(secondDate).format(format)}`)
   );
 }
 

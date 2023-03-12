@@ -19,11 +19,11 @@ import { tokenAtom } from "../src/store";
 import { api } from "../src/utils/api";
 import { TOKEN_KEY, baseURL } from "../src/utils/constants";
 import { getPushToken } from "../src/utils/getPushToken";
-import { resetStack } from "../src/utils/resetStack";
+import { resetStack, type NavigatorOverride } from "../src/utils/resetStack";
 
 const Settings: React.FC = () => {
   const router = useRouter();
-  const navigation = useNavigation();
+  const navigation = useNavigation() as NavigatorOverride;
 
   const [token, setToken] = useAtom(tokenAtom);
 
@@ -137,7 +137,6 @@ const Settings: React.FC = () => {
               Logout<Text className="hidden"> </Text>
             </Text>
           </TouchableOpacity>
-          {/* TODO: License and term of use and privacy policy */}
           <Text className="mt-4 w-full text-center text-lg text-white">
             Based on the{" "}
             <Text

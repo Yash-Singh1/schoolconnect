@@ -86,7 +86,9 @@ const NotificationSettings: React.FC = () => {
               />
             </View>
           </View>
-          <Text className="w-full text-white text-left px-4 mt-2">We will notify you on the latest posts and upcoming events scheduled</Text>
+          <Text className="w-full text-white text-left px-4 mt-2">
+            We will notify you on the latest posts and upcoming events scheduled
+          </Text>
         </ScrollView>
         <Navbar />
       </View>

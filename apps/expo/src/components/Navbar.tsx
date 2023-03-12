@@ -8,11 +8,11 @@ import { useAtom } from "jotai";
 
 import { tokenAtom } from "../store";
 import { api } from "../utils/api";
-import { resetStack } from "../utils/resetStack";
+import { resetStack, type NavigatorOverride } from "../utils/resetStack";
 
 export const Navbar = () => {
   const router = useRouter();
-  const navigation = useNavigation();
+  const navigation = useNavigation() as NavigatorOverride;
 
   const [token] = useAtom(tokenAtom);
   const selfQuery = api.user.self.useQuery({

@@ -10,6 +10,7 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<{ error: string } | { success: true }>,
 ) {
+  // Search for the event for which we are sending the notifications
   const eventId = req.body as string;
   const event = await prisma.event.findFirst({
     where: {
@@ -17,6 +18,7 @@ async function handler(
     },
   });
 
+  // If the event exists, we delete the schedule to make sure it doesn't get triggered again
   if (event) {
     await fetch(`https://qstash.upstash.io/v1/schedules/${event.scheduleId}`, {
       method: "DELETE",
@@ -25,9 +27,11 @@ async function handler(
       },
     });
   } else {
+    // The event was not found, so we return with an error
     return res.status(404).json({ error: "Event not found" });
   }
 
+  // Get all the devices of users in the school
   const receivingDevices = [
     ...(await prisma.device.findMany({
       where: {
@@ -38,6 +42,7 @@ async function handler(
     })),
   ];
 
+  // Request information about the school
   const school = await prisma.school.findFirst({
     where: {
       id: event.schoolId!,
@@ -47,10 +52,13 @@ async function handler(
     },
   });
 
+  // Initialize Expo client
   const expo = new Expo();
 
+  // Push notifications to all devices
   const messages = [];
   for (const receivingDevice of receivingDevices) {
+    // If the device has an invalid push token, we delete it
     if (!Expo.isExpoPushToken(receivingDevice.pushToken)) {
       await prisma.device.delete({
         where: {
@@ -60,6 +68,7 @@ async function handler(
       continue;
     }
 
+    // Otherwise, we push the message into the array
     messages.push({
       to: receivingDevice.pushToken,
       sound: "default" as const,
@@ -69,6 +78,7 @@ async function handler(
     });
   }
 
+  // The expo-server-sdk requires that we send the notifications in chunks
   const chunks = expo.chunkPushNotifications(messages);
   const tickets = [];
   for (const chunk of chunks) {
@@ -79,9 +89,12 @@ async function handler(
     }
   }
 
+  // Return with success
   res.status(200).json({ success: true });
 }
 
+// The verifySignature middleware verifies that the request is coming from QStash
+// This can prevent hackers from sending fake requests to ping notifications to your users
 export default verifySignature(handler);
 
 export const config = {

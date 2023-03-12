@@ -38,11 +38,7 @@ const Contacts: React.FC = () => {
                 )
               }
             >
-              <FontAwesomeIcon
-                icon="newspaper"
-                color="white"
-                size={24}
-              />{" "}
+              <FontAwesomeIcon icon="newspaper" color="white" size={24} />{" "}
               Documentation<Text className="hidden"> </Text>
             </Text>
             <Text
@@ -60,7 +56,6 @@ const Contacts: React.FC = () => {
               />{" "}
               Issue Tracker
             </Text>
-            {/** TODO: Add in documentation site once finished */}
             <Text className="mt-4 w-full text-center text-lg text-white">
               Based on the{" "}
               <Text

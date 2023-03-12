@@ -4,14 +4,28 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
-  // Receives information on self
+  // Receives information on a user
   self: protectedProcedure
     .input(
       z.object({
         token: z.string().min(1),
+        userId: z.string().min(1).optional(),
       }),
     )
-    .query(({ ctx }) => {
+    .query(async ({ ctx, input }) => {
+      if (input.userId) {
+        if (ctx.user.role === "student" || ctx.user.role === "parent") {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Role is not permitted to view another user",
+          });
+        }
+        return await ctx.prisma.user.findUnique({
+          where: {
+            id: input.userId,
+          },
+        });
+      }
       return ctx.user;
     }),
 
@@ -21,6 +35,7 @@ export const userRouter = createTRPCRouter({
       z.object({
         token: z.string().min(1),
         name: z.string().min(3),
+        userId: z.string().min(1).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -30,15 +45,23 @@ export const userRouter = createTRPCRouter({
           message: "Role is not permitted to change name",
         });
       }
+      if (input.userId && ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Role is not permitted to change another user's name",
+        });
+      }
       await ctx.prisma.user.update({
         where: {
-          id: ctx.user.id,
+          id: input.userId || ctx.user.id,
         },
         data: {
           name: input.name,
         },
       });
     }),
+
+  // Set the email of a user
 
   // Get a list of all linked accounts for the user
   linkedAccounts: protectedProcedure
@@ -62,11 +85,22 @@ export const userRouter = createTRPCRouter({
 
   // Deletes the user
   delete: protectedProcedure
-    .input(z.object({ token: z.string().min(1) }))
-    .mutation(async ({ ctx }) => {
+    .input(
+      z.object({
+        token: z.string().min(1),
+        userId: z.string().min(1).optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (ctx.user.role !== "admin" && input.userId) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Role is not permitted to delete other's account",
+        });
+      }
       await ctx.prisma.user.delete({
         where: {
-          id: ctx.user.id,
+          id: input.userId || ctx.user.id,
         },
       });
     }),
@@ -134,5 +168,31 @@ export const userRouter = createTRPCRouter({
         return true;
       }
       return false;
+    }),
+
+  // Creates a new pending user
+  createPending: protectedProcedure
+    .input(
+      z.object({
+        token: z.string().min(1),
+        email: z.string().email(),
+        name: z.string().min(1).optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Role is not permitted to create pending users",
+        });
+      }
+      await ctx.prisma.user.create({
+        data: {
+          email: input.email,
+          ...(input.name ? { name: input.name } : {}),
+          schoolId: ctx.user.schoolId,
+          pending: true,
+        },
+      });
     }),
 });

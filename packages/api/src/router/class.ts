@@ -119,6 +119,7 @@ export const classRouter = createTRPCRouter({
           message: "Role is not permitted to create classes",
         });
       }
+
       const { image, name, description } = input;
 
       const imageOutput = await uploadImage(image);

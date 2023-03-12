@@ -138,8 +138,10 @@ export const eventsRouter = createTRPCRouter({
         },
       });
 
+      // Schedule notifications to be sent out when event starts
       const schedule = await registerSchedule(input.start, event.id);
 
+      // If the schedule was successfully created, update the event with the schedule ID
       if ("scheduleId" in schedule) {
         await ctx.prisma.event.update({
           where: {

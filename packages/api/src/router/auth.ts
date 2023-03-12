@@ -216,6 +216,7 @@ export const authRouter = createTRPCRouter({
                   scope: "user",
                 },
               },
+              name: userFound.name || userInfo.name || "",
             },
           });
         }
@@ -257,6 +258,16 @@ export const authRouter = createTRPCRouter({
       const newSession = generateNextSession();
 
       if (userFound) {
+        if (userFound.pending) {
+          await ctx.prisma.user.update({
+            where: {
+              id: userFound.id,
+            },
+            data: {
+              pending: false,
+            },
+          });
+        }
         await ctx.prisma.account.update({
           where: {
             provider_providerAccountId: {

@@ -11,14 +11,14 @@ import { useAtom } from "jotai";
 import { tokenAtom } from "../../src/store";
 import { api } from "../../src/utils/api";
 import { TOKEN_KEY } from "../../src/utils/constants";
-import { resetStack } from "../../src/utils/resetStack";
+import { resetStack, type NavigatorOverride } from "../../src/utils/resetStack";
 import useCode from "../../src/utils/useCode";
 
 const antiState = Math.random().toString();
 
 const Login: React.FC = () => {
   const router = useRouter();
-  const navigation = useNavigation();
+  const navigation = useNavigation() as NavigatorOverride;
 
   const params = useSearchParams();
 
