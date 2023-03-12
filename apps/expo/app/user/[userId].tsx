@@ -3,13 +3,24 @@
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useSearchParams } from "expo-router";
+import { useAtom } from "jotai";
 
+import LoadingWrapper from "../../src/components/LoadingWrapper";
 import { Navbar } from "../../src/components/Navbar";
+import { tokenAtom } from "../../src/store";
+import { api } from "../../src/utils/api";
 
 const ModifyUser: React.FC = () => {
   const params = useSearchParams();
 
-  return (
+  const [token] = useAtom(tokenAtom);
+
+  const selfQuery = api.user.self.useQuery({
+    userId: params.userId as string,
+    token,
+  });
+
+  return selfQuery.data ? (
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "Modify User" }} />
       <View className="w-full h-full">
@@ -22,6 +33,8 @@ const ModifyUser: React.FC = () => {
         <Navbar />
       </View>
     </SafeAreaView>
+  ) : (
+    <LoadingWrapper stackName="Modify User" />
   );
 };
 
