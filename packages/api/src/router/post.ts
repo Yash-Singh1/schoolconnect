@@ -2,7 +2,6 @@ import { Expo } from "expo-server-sdk";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { getUserFromId } from "../utils/getUserFromId";
 import { uploadImage } from "../utils/uploadImage";
 
 export const postRouter = createTRPCRouter({
@@ -37,14 +36,11 @@ export const postRouter = createTRPCRouter({
         orderBy: {
           createdAt: "desc",
         },
+        include: {
+          author: true,
+        },
       });
-      const authors = await Promise.all(
-        posts.map((post) => getUserFromId(post.authorId, ctx)),
-      );
-      return posts.map((post, idx) => ({
-        ...post,
-        author: authors[idx]!,
-      }));
+      return posts;
     }),
 
   // Creates a post, requires a tittle, content, class, and image

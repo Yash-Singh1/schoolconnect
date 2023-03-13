@@ -27,6 +27,9 @@ export const classRouter = createTRPCRouter({
               },
             },
           },
+          include: {
+            owner: true,
+          },
         });
       } else if (ctx.user.role === "teacher") {
         classes = await ctx.prisma.class.findMany({
@@ -34,11 +37,17 @@ export const classRouter = createTRPCRouter({
             ownerId: ctx.user.id,
             schoolId: ctx.user.schoolId,
           },
+          include: {
+            owner: true,
+          },
         });
       } else if (ctx.user.role === "admin") {
         classes = await ctx.prisma.class.findMany({
           where: {
             schoolId: ctx.user.schoolId,
+          },
+          include: {
+            owner: true,
           },
         });
       } else {
@@ -47,13 +56,7 @@ export const classRouter = createTRPCRouter({
           message: "Role is not permitted to view classes",
         });
       }
-      const owners = await Promise.all(
-        classes.map((class_) => getUserFromId(class_.ownerId, ctx)),
-      );
-      return classes.map((class_, idx) => ({
-        ...class_,
-        owner: owners[idx]!.name,
-      }));
+      return classes;
     }),
 
   // Get a specific class by the class id

@@ -72,14 +72,14 @@ const Contacts: React.FC = () => {
             <View className="mb-8 mt-1 flex w-full flex-row items-center justify-center">
               <Text
                 className="text-lg text-blue-500"
-                onPress={() => void Linking.openURL(`${baseURL}privacy`)}
+                onPress={() => void Linking.openURL(`https://schoolconnect-mu.vercel.app/privacy`)}
               >
                 Privacy Policy
               </Text>
               <Text className="mx-2 text-white">•</Text>
               <Text
                 className="text-lg text-blue-500"
-                onPress={() => void Linking.openURL(`${baseURL}tos`)}
+                onPress={() => void Linking.openURL(`https://schoolconnect-mu.vercel.app/tos`)}
               >
                 Terms of Service
               </Text>

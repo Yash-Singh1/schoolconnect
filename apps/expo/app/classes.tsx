@@ -3,7 +3,7 @@
 import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
-import { type Class } from "@prisma/client";
+import { type Class, type User } from "@prisma/client";
 import { FlashList } from "@shopify/flash-list";
 import { useAtom } from "jotai";
 
@@ -13,9 +13,7 @@ import { tokenAtom } from "../src/store";
 import { api } from "../src/utils/api";
 
 // Card for a class, displays the class name, description, and banner
-const ClassCard: React.FC<{ item: Class & { owner: string | null } }> = ({
-  item,
-}) => {
+const ClassCard: React.FC<{ item: Class & { owner: User } }> = ({ item }) => {
   const router = useRouter();
 
   return (
@@ -34,7 +32,7 @@ const ClassCard: React.FC<{ item: Class & { owner: string | null } }> = ({
       <View className="px-4 py-2">
         <Text className="text-2xl font-bold text-white">
           {item.name}
-          {item.owner ? ` - ${item.owner}` : ""}
+          {item.owner.name ? ` - ${item.owner.name}` : ""}
         </Text>
         <Text className="text-lg text-white">{item.description}</Text>
       </View>
