@@ -14,6 +14,7 @@ export const eventsRouter = createTRPCRouter({
         token: z.string().min(1),
         take: z.number().int().min(0).optional(),
         upOnly: z.boolean().default(false),
+        includeSource: z.boolean().default(false),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -30,6 +31,9 @@ export const eventsRouter = createTRPCRouter({
           start: "desc",
         },
         ...(input.take ? { take: input.take } : {}),
+        include: {
+          School: !!input.includeSource,
+        },
       });
       const classEvents = await ctx.prisma.event.findMany({
         where: {
@@ -48,6 +52,9 @@ export const eventsRouter = createTRPCRouter({
         },
         orderBy: {
           start: "desc",
+        },
+        include: {
+          Class: !!input.includeSource,
         },
         ...(input.take ? { take: input.take } : {}),
       });

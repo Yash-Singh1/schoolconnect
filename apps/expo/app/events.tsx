@@ -17,7 +17,6 @@ import { type MarkedDates } from "react-native-calendars/src/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { type Event } from "@prisma/client";
 import dayjs from "dayjs";
 import { atom, useAtom } from "jotai";
 
@@ -28,7 +27,7 @@ import previousIcon from "../assets/previous.png";
 import LoadingWrapper from "../src/components/LoadingWrapper";
 import { Navbar } from "../src/components/Navbar";
 import { tokenAtom } from "../src/store";
-import { api } from "../src/utils/api";
+import { api, type RouterOutputs } from "../src/utils/api";
 
 type DataEntry = {
   hour: string;
@@ -36,7 +35,7 @@ type DataEntry = {
   title: string;
 };
 
-const eventsAtom = atom<Event[]>([]);
+const eventsAtom = atom<RouterOutputs["events"]["all"]>([]);
 
 // Helper function for formatting time for event
 function formatTwo(firstDate: Date, secondDate: Date): string {
@@ -59,21 +58,10 @@ const AgendaItem: React.FC<{
   item: DataEntry;
 }> = ({ item }) => {
   const [events] = useAtom(eventsAtom);
-  const [token] = useAtom(tokenAtom);
 
   const event = useMemo(() => {
     return events[Number(item.title)]!;
   }, [events, item.title]);
-
-  // Get the source of the event for UI
-  const sourceQuery = event.schoolId
-    ? api.school.get.useQuery({
-        token,
-      })
-    : api.class.get.useQuery({
-        token,
-        classId: event.classId!,
-      });
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -86,7 +74,7 @@ const AgendaItem: React.FC<{
       <View className="ml-4 flex flex-col">
         <Text className="text-lg font-bold text-black">{event.name}</Text>
         <Text className="mb-1 text-sm font-light italic text-[lightgray]">
-          {sourceQuery.data ? `Posted by ${sourceQuery.data.name}` : ""}
+          Posted by {"School" in event ? event.School!.name : event.Class!.name}
         </Text>
         <View className="flex flex-row items-center">
           <Text className="text-black">
@@ -109,7 +97,7 @@ const AgendaItem: React.FC<{
                   {event.name}
                 </Text>
                 <Text className="mb-1 text-sm font-light italic text-gray-200">
-                  {sourceQuery.data ? `Posted by ${sourceQuery.data.name}` : ""}
+                  Posted by {"School" in event ? event.School!.name : event.Class!.name}
                 </Text>
                 <Text className="mt-2 text-left text-lg font-semibold text-white">
                   {event.description}
@@ -130,7 +118,10 @@ const Events: React.FC = () => {
   const [token] = useAtom(tokenAtom);
   const [_, setEvents] = useAtom(eventsAtom);
 
-  const eventsQuery = api.events.all.useQuery({ token });
+  const eventsQuery = api.events.all.useQuery({
+    token,
+    includeSource: true,
+  });
   const selfQuery = api.user.self.useQuery({ token });
 
   const router = useRouter();
@@ -147,7 +138,7 @@ const Events: React.FC = () => {
   useEffect(() => {
     if (!eventsQuery.data) return;
     const marked: MarkedDates = {};
-    setEvents(eventsQuery.data as Event[]);
+    setEvents(eventsQuery.data);
 
     // Some messy manipulation of API data to get it into the format the calendar API wants
     const hs = eventsQuery.data.reduce<Record<string, DataEntry[]>>(

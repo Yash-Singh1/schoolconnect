@@ -256,11 +256,11 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         token: z.string().min(1),
-        userId: z.string().min(1),
+        userId: z.string().min(1).optional(),
       }),
     )
     .query(async ({ ctx, input }) => {
-      if (ctx.user.role !== "admin") {
+      if (input.userId && ctx.user.role !== "admin") {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Role is not permitted to query children of another user",
@@ -270,7 +270,7 @@ export const userRouter = createTRPCRouter({
       return (
         await ctx.prisma.user.findUniqueOrThrow({
           where: {
-            id: input.userId,
+            id: input.userId || ctx.user.id,
           },
           include: {
             children: true,

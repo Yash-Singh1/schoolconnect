@@ -20,7 +20,7 @@ import { useAtom } from "jotai";
 import LoadingWrapper from "../src/components/LoadingWrapper";
 import { Navbar } from "../src/components/Navbar";
 import { tokenAtom } from "../src/store/";
-import { api } from "../src/utils/api";
+import { api, type RouterOutputs } from "../src/utils/api";
 import { TOKEN_KEY, supportedSocialMedia } from "../src/utils/constants";
 
 // Main landing page when logged in
@@ -177,6 +177,7 @@ const Announcements: React.FC = () => {
     token,
     take: 10,
     upOnly: true,
+    includeSource: true,
   });
 
   const recentPostsQuery = api.post.all.useQuery({
@@ -234,35 +235,20 @@ const Announcements: React.FC = () => {
 };
 
 // Helper function checking if the union of an Event and a Post is a Event
-const isEvent = (item: Event | Post): item is Event => {
-  if (Object.hasOwn(item, "start")) {
+const isEvent = (
+  item: RouterOutputs["events" | "post"]["all"][number],
+): item is RouterOutputs["events"]["all"][number] => {
+  if (item && Object.hasOwn(item, "start")) {
     return true;
   }
   return false;
 };
 
 // Component for displaying a specific announcement
-const Announcement: React.FC<{ item: Event | Post }> = ({ item }) => {
+const Announcement: React.FC<{
+  item: RouterOutputs["events" | "post"]["all"][number];
+}> = ({ item }) => {
   const eventItem = isEvent(item);
-
-  const [token] = useAtom(tokenAtom);
-
-  let sourceQuery;
-  if (eventItem) {
-    sourceQuery = item.schoolId
-      ? api.school.get.useQuery({
-          token,
-        })
-      : api.class.getOwner.useQuery({
-          token,
-          classId: item.classId!,
-        });
-  } else {
-    sourceQuery = api.class.getOwner.useQuery({
-      token,
-      classId: item.classId,
-    });
-  }
 
   return (
     <View
@@ -272,10 +258,14 @@ const Announcement: React.FC<{ item: Event | Post }> = ({ item }) => {
       className="mb-2 rounded-lg border-2 border-violet-400/50 bg-violet-400/40 p-2"
     >
       <Text className="text-base font-bold text-white">
-        {eventItem ? item.name : item.title}
+        {eventItem ? item!.name : item.title}
       </Text>
       <Text className="italic text-white">
-        {sourceQuery.data ? sourceQuery.data.name : ""}
+        {eventItem
+          ? "School" in item!
+            ? item.School!.name
+            : item!.Class!.name
+          : item.title}
       </Text>
     </View>
   );
