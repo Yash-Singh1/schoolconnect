@@ -16,7 +16,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useAtom } from "jotai";
 
 import { tokenAtom } from "../../src/store";
-import { api } from "../../src/utils/api";
+import { api, type RouterInputs } from "../../src/utils/api";
 import { TOKEN_KEY } from "../../src/utils/constants";
 import { resetStack, type NavigatorOverride } from "../../src/utils/resetStack";
 import useCode from "../../src/utils/useCode";
@@ -49,14 +49,17 @@ const Signup = () => {
   // Once client-side authentication complete, we pass on to backend to finish authentication and fetch token
   useEffect(() => {
     if (response?.type === "success") {
+      // Check if the GitHub API returns with the same state we provided
+      // Otherwise, it's a possible CSRF attack because someone in the middle could have intercepted the message
       if (response.params.state !== antiState) {
         throw new Error("State mismatch, possible CSRF Attack");
       }
+      // If the state matches, we can safely proceed with the authentication to the backend
       signupMutation.mutate({
         code: response.params.code!,
         state: antiState,
         schoolId: value!,
-        role: params.role as string,
+        role: params.role as RouterInputs["auth"]["signup"]["role"],
       });
     }
   }, [response]);
@@ -64,8 +67,13 @@ const Signup = () => {
   // Once back-end authentication complete, we store token in secure store and redirect to home page
   useEffect(() => {
     if (signupMutation?.data?.length && signupMutation?.data?.length > 1) {
+      // Store the token in secure store for remembering the user
       void SecureStore.setItemAsync(TOKEN_KEY, signupMutation.data);
+
+      // Set the token in the global store for other routes to use
       setToken(signupMutation?.data || "");
+
+      // Reset the stack to the home page
       resetStack({ router, navigation });
     }
   }, [signupMutation.data]);

@@ -1,5 +1,6 @@
 // The root router, contains subrouters of all the different parts of the API
 
+import { absenceRouter } from "./router/absence";
 import { authRouter } from "./router/auth";
 import { classRouter } from "./router/class";
 import { eventsRouter } from "./router/events";
@@ -15,6 +16,7 @@ export const appRouter = createTRPCRouter({
   class: classRouter,
   post: postRouter,
   events: eventsRouter,
+  absence: absenceRouter,
 });
 
 // export type definition of API

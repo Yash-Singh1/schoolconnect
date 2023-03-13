@@ -67,7 +67,7 @@ export const authRouter = createTRPCRouter({
         state: z.string().min(1),
         code: z.string().min(1),
         schoolId: z.string().min(1),
-        role: z.string().min(1),
+        role: z.enum(["student", "teacher", "admin", "parent"]),
         email: z.string().min(1).optional(),
       }),
     )
@@ -111,24 +111,24 @@ export const authRouter = createTRPCRouter({
               message: "User doesn't have password linked to account",
             });
           }
-        }
-      } else {
-        await ctx.prisma.user.create({
-          data: {
-            name: "Anonymous",
-            email: input.email,
-            password: await bcrypt.hash(code, 10),
-            role: "student",
-            schoolId,
-            sessions: {
-              create: {
-                ...newSession,
+        } else {
+          await ctx.prisma.user.create({
+            data: {
+              name: "Anonymous",
+              email: input.email,
+              password: await bcrypt.hash(code, 10),
+              role: "student",
+              schoolId,
+              sessions: {
+                create: {
+                  ...newSession,
+                },
               },
             },
-          },
-        });
+          });
 
-        return newSession.sessionToken;
+          return newSession.sessionToken;
+        }
       }
 
       const { userInfo, accessToken } = await retrieveAuthToken(code);

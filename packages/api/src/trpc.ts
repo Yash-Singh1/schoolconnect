@@ -87,11 +87,6 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
 
   const userFound = await ctx.prisma.user.findFirst({
     where: {
-      accounts: {
-        some: {
-          provider: "github",
-        },
-      },
       sessions: {
         some: {
           sessionToken: token,
@@ -102,6 +97,7 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
       },
     },
   });
+
   if (userFound) {
     return next({
       ctx: {

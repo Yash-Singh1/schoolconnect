@@ -79,7 +79,7 @@ const Board: React.FC = () => {
           {selfQuery.data.role === "teacher" && (
             <TouchableOpacity
               activeOpacity={0.5}
-              className="m-4 rounded-lg bg-blue-500 p-2"
+              className="mt-4 mx-4 rounded-lg bg-blue-500 p-2"
               onPress={() => router.push(`/members/${classQuery.data.id}`)}
             >
               <Text className="font-xl w-full text-center font-bold text-white">
@@ -87,8 +87,8 @@ const Board: React.FC = () => {
               </Text>
             </TouchableOpacity>
           )}
-          <View className="mb-4 flex flex-row items-center">
-            <Text className="ml-8 text-2xl font-bold text-white">Posts</Text>
+          <View className="mb-4 mt-4 flex flex-row items-center">
+            <Text className="ml-8 text-2xl font-bold android:font-normal text-white">Posts</Text>
             <TouchableOpacity
               activeOpacity={0.5}
               className="ml-2 rounded-lg bg-blue-500 p-1"

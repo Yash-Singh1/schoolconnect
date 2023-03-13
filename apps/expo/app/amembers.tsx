@@ -83,9 +83,16 @@ const Member: React.FC<{ item: User; pending: boolean }> = ({
                   </TouchableOpacity>
                 ) : null}
                 {pending ? null : (
-                  <TouchableOpacity activeOpacity={0.5} className="px-2 py-1">
+                  <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={() => {
+                      setModalShown(false);
+                      router.push(`/children/${item.id}`);
+                    }}
+                    className="px-2 py-1"
+                  >
                     <Text className="text-lg font-normal text-white">
-                      Request Relation
+                      Manage Children
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -144,8 +151,13 @@ const Members: React.FC = () => {
   // By default the pending invites and invited members accordions are not expanded
   const [pendingShown, setPendingShown] = useState(false);
   const [invitedShown, setInvitedShown] = useState(false);
-  const [drawn, setDrawn] = useState(false);
 
+  // We keep a boolean to track whether the pending invites and invited members have been drawn
+  // Once they are drawn, we resize the list to match their needed heights
+  const [drawnPending, setDrawnPending] = useState(false);
+  const [drawnInvited, setDrawnInvited] = useState(false);
+
+  // State for the new invite modal
   const [newInviteModalShown, setNewInviteModalShown] = useState(false);
   const [newUserName, setNewUserName] = useState("");
   const [newUserEmail, setNewUserEmail] = useState("");
@@ -174,7 +186,7 @@ const Members: React.FC = () => {
         <TouchableOpacity
           activeOpacity={0.5}
           onPress={() => {
-            if (invitedShown) setDrawn(false);
+            if (invitedShown) setDrawnInvited(false);
             setInvitedShown((current) => !current);
           }}
           className="mt-4 flex w-full flex-row justify-between items-center bg-[#2c2c2e] px-6 py-2"
@@ -192,14 +204,14 @@ const Members: React.FC = () => {
             style={{
               width: Dimensions.get("screen").width,
             }}
-            className={`flex h-1/3 ${drawn ? "flex-shrink" : ""}`}
+            className={`flex h-1/3 ${drawnInvited ? "flex-shrink" : ""}`}
           >
             {invitedMembers.data.length ? (
               <FlashList
                 data={invitedMembers.data}
                 estimatedItemSize={100}
                 onLoad={() => {
-                  setDrawn(true);
+                  setDrawnInvited(true);
                 }}
                 renderItem={({ item }) => (
                   <Member item={item} pending={false} />
@@ -212,10 +224,17 @@ const Members: React.FC = () => {
             )}
           </View>
         ) : null}
-        <View className="border-b border-gray-200"></View>
+        <View
+          className={`border-b border-gray-200 ${
+            invitedShown && pendingShown ? "mt-4" : ""
+          }`}
+        ></View>
         <TouchableOpacity
           activeOpacity={0.5}
-          onPress={() => setPendingShown((current) => !current)}
+          onPress={() => {
+            if (pendingShown) setDrawnPending(false);
+            setPendingShown((current) => !current);
+          }}
           className="flex w-full flex-row justify-between items-center bg-[#2c2c2e] px-6 py-2"
         >
           <Text className="color-white font-semibold text-lg">
@@ -300,15 +319,14 @@ const Members: React.FC = () => {
             <ScrollView
               style={{
                 width: Dimensions.get("screen").width,
-                ...(pendingMembers.data.length
-                  ? { height: Dimensions.get("screen").height }
-                  : {}),
               }}
+              className={`flex h-1/3 ${drawnPending ? "flex-shrink" : ""}`}
             >
               {pendingMembers.data.length ? (
                 <FlashList
                   data={pendingMembers.data}
                   estimatedItemSize={100}
+                  onLoad={() => setDrawnPending(true)}
                   renderItem={({ item }) => <Member item={item} pending />}
                 />
               ) : (
