@@ -15,7 +15,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useAtom } from "jotai";
 
 import { tokenAtom } from "../../src/store";
-import { RouterInputs, api } from "../../src/utils/api";
+import { api } from "../../src/utils/api";
 import { TOKEN_KEY } from "../../src/utils/constants";
 import { resetStack, type NavigatorOverride } from "../../src/utils/resetStack";
 import useCode from "../../src/utils/useCode";
