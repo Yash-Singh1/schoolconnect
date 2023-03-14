@@ -13,7 +13,6 @@ import { WebView } from "react-native-webview";
 import { Stack, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { type Event, type Post } from "@prisma/client";
 import { FlashList } from "@shopify/flash-list";
 import { useAtom } from "jotai";
 
@@ -65,12 +64,12 @@ const Landing: React.FC = () => {
       <Stack.Screen options={{ title: "Home Page" }} />
       <View className="flex h-full w-full flex-col content-center items-center justify-end self-center">
         <View className="h-[88%] w-full p-2">
-          <Text className="mx-auto pb-2 text-center text-2xl font-bold text-white android:font-medium">
+          <Text className="mx-auto pb-2 text-center text-2xl font-bold text-white">
             Welcome{" "}
             <Text className="text-pink-400">
               {selfQuery.data.name || "Anonymous"}
             </Text>
-            !<Text className="hidden"> </Text>
+            !
           </Text>
           <View className="flex flex-row gap-x-4">
             <TouchableOpacity
@@ -80,10 +79,7 @@ const Landing: React.FC = () => {
               style={{ borderBottomWidth: tab === "news" ? 1 : 0 }}
             >
               <FontAwesomeIcon icon="newspaper" color="white" />
-              <Text className="ml-2 text-lg font-bold text-white">
-                News
-                <Text className="hidden"> </Text>
-              </Text>
+              <Text className="ml-2 text-lg font-bold text-white">News</Text>
             </TouchableOpacity>
 
             {socialMedia ? (
@@ -96,7 +92,6 @@ const Landing: React.FC = () => {
                 <FontAwesomeIcon icon={socialMedia.icon} color="white" />
                 <Text className="ml-2 text-lg font-bold text-white">
                   {socialMedia.name}
-                  <Text className="hidden"> </Text>
                 </Text>
               </TouchableOpacity>
             ) : null}
@@ -110,7 +105,7 @@ const Landing: React.FC = () => {
               >
                 <FontAwesomeIcon icon="pen" color="white" />
                 <Text className="ml-2 text-lg font-bold text-white">
-                  Social<Text className="hidden"> </Text>
+                  Social
                 </Text>
               </TouchableOpacity>
             ) : null}

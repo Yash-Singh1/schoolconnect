@@ -6,7 +6,6 @@ import { Stack } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 import { Navbar } from "../../src/components/Navbar";
-import { baseURL } from "../../src/utils/constants";
 
 const Contacts: React.FC = () => {
   return (
@@ -15,23 +14,22 @@ const Contacts: React.FC = () => {
       <View className="flex h-full w-full flex-col content-center items-center justify-end self-center">
         <ScrollView className="h-[88%] w-full pt-2">
           <Text className="w-full px-4 text-center text-4xl font-bold text-white">
-            Contacts<Text className="hidden"> </Text>
+            Contacts
           </Text>
           <Text className="w-full text-center text-xl mt-2 text-white">
             Found a bug? Have a suggestion?
           </Text>
           <View className="mt-10 flex w-full items-center justify-center">
             <Text
-              className="text-2xl font-bold text-white android:font-normal"
+              className="text-2xl font-bold text-white"
               onPress={() =>
                 void Linking.openURL("mailto:schoolconnect@yashsingh.us")
               }
             >
               <FontAwesomeIcon icon="envelope" color="white" size={24} /> Email
-              <Text> </Text>
             </Text>
             <Text
-              className="text-2xl font-bold text-white android:font-normal"
+              className="text-2xl font-bold text-white"
               onPress={() =>
                 void Linking.openURL(
                   "https://yash-singh1.github.io/schoolconnect-support-tracker/",
@@ -39,10 +37,10 @@ const Contacts: React.FC = () => {
               }
             >
               <FontAwesomeIcon icon="newspaper" color="white" size={24} />{" "}
-              Documentation<Text className="hidden"> </Text>
+              Documentation
             </Text>
             <Text
-              className="text-2xl font-bold text-white android:font-normal"
+              className="text-2xl font-bold text-white"
               onPress={() =>
                 void Linking.openURL(
                   "https://github.com/Yash-Singh1/schoolconnect-support-tracker/issues",
@@ -72,14 +70,22 @@ const Contacts: React.FC = () => {
             <View className="mb-8 mt-1 flex w-full flex-row items-center justify-center">
               <Text
                 className="text-lg text-blue-500"
-                onPress={() => void Linking.openURL(`https://schoolconnect-mu.vercel.app/privacy`)}
+                onPress={() =>
+                  void Linking.openURL(
+                    `https://schoolconnect-mu.vercel.app/privacy`,
+                  )
+                }
               >
                 Privacy Policy
               </Text>
               <Text className="mx-2 text-white">•</Text>
               <Text
                 className="text-lg text-blue-500"
-                onPress={() => void Linking.openURL(`https://schoolconnect-mu.vercel.app/tos`)}
+                onPress={() =>
+                  void Linking.openURL(
+                    `https://schoolconnect-mu.vercel.app/tos`,
+                  )
+                }
               >
                 Terms of Service
               </Text>

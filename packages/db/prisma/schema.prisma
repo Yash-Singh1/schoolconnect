@@ -40,11 +40,11 @@ model Session {
 
 model Absence {
     id             String   @id @default(cuid())
-    date           DateTime
-    period         Int?
+    createdAt      DateTime @default(now())
+    dateTill       DateTime
     userId         String
+    reason         String?
     user           User     @relation(fields: [userId], references: [id])
-    approvedSchool Boolean? @default(false)
 }
 
 model User {

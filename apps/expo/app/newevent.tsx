@@ -1,14 +1,13 @@
 // Form to create a new event
 
-import { useState } from "react";
-import { Dimensions, Platform, Text, TextInput, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Dimensions, Text, TextInput, View } from "react-native";
+import DropDownPicker, { type ItemType } from "react-native-dropdown-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
-import DateTimePicker, {
-  DateTimePickerAndroid,
-} from "@react-native-community/datetimepicker";
 import { useAtom } from "jotai";
 
+import { DatePicker } from "../src/components/DatePicker";
 import LoadingWrapper from "../src/components/LoadingWrapper";
 import { tokenAtom } from "../src/store";
 import { api } from "../src/utils/api";
@@ -18,6 +17,8 @@ const NewEvent: React.FC = () => {
   const [content, setContent] = useState("");
   const [start, setStart] = useState(new Date());
   const [end, setEnd] = useState(new Date());
+  const [classId, setClassId] = useState<string | null>(null);
+  const [classDropdownOpen, setClassDropdownOpen] = useState(false);
 
   const [token] = useAtom(tokenAtom);
 
@@ -34,29 +35,37 @@ const NewEvent: React.FC = () => {
     },
   });
 
-  const showStartDatePicker = (mode: "date" | "time") => {
-    if (Platform.OS === "android") {
-      DateTimePickerAndroid.open({
-        value: start,
-        onChange: (_, value) => value && setStart(value),
-        mode,
-        is24Hour: true,
-      });
-    }
-  };
+  const selfQuery = api.user.self.useQuery({ token });
+  const classesQuery = api.class.all.useQuery(
+    {
+      token,
+    },
+    {
+      enabled: false,
+    },
+  );
 
-  const showEndDatePicker = (mode: "date" | "time") => {
-    if (Platform.OS === "android") {
-      DateTimePickerAndroid.open({
-        value: end,
-        onChange: (_, value) => value && setEnd(value),
-        mode,
-        is24Hour: true,
-      });
-    }
-  };
+  const [items, setItems] = useState<ItemType<string>[]>([]);
 
-  return (
+  useEffect(() => {
+    if (selfQuery.data && selfQuery.data.role === "teacher") {
+      void classesQuery.refetch();
+    }
+  }, [selfQuery.data]);
+
+  useEffect(() => {
+    if (classesQuery.data) {
+      setItems(
+        classesQuery.data.map((_class) => ({
+          label: _class.name,
+          value: _class.id,
+        })),
+      );
+    }
+  }, [classesQuery.data]);
+
+  return selfQuery.data &&
+    (selfQuery.data.role === "teacher" ? classesQuery.data : true) ? (
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "New Event" }} />
       <View className="flex h-full w-full flex-col items-center justify-center">
@@ -91,89 +100,42 @@ const NewEvent: React.FC = () => {
           style={{ width: Dimensions.get("screen").width - 32 }}
         >
           <Text className="text-white text-lg">Start</Text>
-          {Platform.OS === "ios" ? (
-            <DateTimePicker
-              value={start}
-              // @ts-expect-error -- Android Mode required, but we will do separately
-              mode="datetime"
-              is24Hour={true}
-              maximumDate={end}
-              onChange={(_, value) => value && setStart(value)}
-            />
-          ) : (
-            <View className="flex flex-row">
-              <Text
-                className="text-white mr-2 text-base"
-                onPress={() => {
-                  showStartDatePicker("date");
-                }}
-              >
-                {start.toDateString().split(" ").slice(1).join(" ")}
-              </Text>
-              <Text
-                className="text-white mr-2 text-base"
-                onPress={() => {
-                  showStartDatePicker("time");
-                }}
-              >
-                {start
-                  .toLocaleTimeString()
-                  .split(" ")
-                  .map((t, i) =>
-                    i === 0 ? t.split(":").slice(0, 2).join(":") : t,
-                  )
-                  .join(" ")
-                  .toUpperCase()}
-              </Text>
-            </View>
-          )}
+          <DatePicker
+            value={start}
+            mode="datetime"
+            maximumDate={end}
+            onChange={(_, value) => value && setStart(value)}
+          />
         </View>
         <View
           className="my-2 flex flex-row justify-between items-center"
           style={{ width: Dimensions.get("screen").width - 32 }}
         >
           <Text className="text-white text-lg">End</Text>
-          {Platform.OS === "ios" ? (
-            <DateTimePicker
-              value={end}
-              // @ts-expect-error -- Android Mode required, but we will do separately
-              mode="datetime"
-              is24Hour={true}
-              minimumDate={start}
-              onChange={(_, value) => value && setEnd(value)}
-            />
-          ) : (
-            <View className="flex flex-row">
-              <Text
-                className="text-white mr-2 text-base"
-                onPress={() => {
-                  showEndDatePicker("date");
-                }}
-              >
-                {end.toDateString().split(" ").slice(1).join(" ")}
-              </Text>
-              <Text
-                className="text-white mr-2 text-base"
-                onPress={() => {
-                  showEndDatePicker("time");
-                }}
-              >
-                {end
-                  .toLocaleTimeString()
-                  .split(" ")
-                  .map((t, i) =>
-                    i === 0 ? t.split(":").slice(0, 2).join(":") : t,
-                  )
-                  .join(" ")
-                  .toUpperCase()}
-              </Text>
-            </View>
-          )}
+          <DatePicker
+            value={end}
+            mode="datetime"
+            minimumDate={start}
+            onChange={(_, value) => value && setEnd(value)}
+          />
         </View>
+        {selfQuery.data.role === "teacher" ? (
+          <View className="z-10 mx-4">
+            <DropDownPicker
+              open={classDropdownOpen}
+              setOpen={setClassDropdownOpen}
+              value={classId}
+              setValue={setClassId}
+              items={items}
+              setItems={setItems}
+              theme="DARK"
+            />
+          </View>
+        ) : null}
         {createEvent.isLoading ? (
           <LoadingWrapper
             small
-            spinClass="bg-green-500/80 mt-2 py-2 flex flex-row justify-center items-center gap-x-4 ml-1"
+            spinClass="bg-green-500/80 -z-10 rounded-lg mt-2 py-2 flex flex-row justify-center items-center gap-x-4 ml-1"
             spinStyle={{
               width: Dimensions.get("screen").width - 32,
             }}
@@ -182,7 +144,7 @@ const NewEvent: React.FC = () => {
           </LoadingWrapper>
         ) : (
           <Text
-            className="mx-4 mt-2 rounded-lg bg-green-500/80 py-1 text-center text-lg font-bold android:font-normal text-white"
+            className="mx-4 mt-2 -z-10 rounded-lg bg-green-500/80 py-1 text-center text-lg font-bold text-white"
             style={{ width: Dimensions.get("screen").width - 32 }}
             onPress={() => {
               createEvent.mutate({
@@ -191,14 +153,17 @@ const NewEvent: React.FC = () => {
                 content,
                 start,
                 end,
+                classId: classId || undefined,
               });
             }}
           >
-            Submit<Text className="hidden"> </Text>
+            Submit
           </Text>
         )}
       </View>
     </SafeAreaView>
+  ) : (
+    <LoadingWrapper stackName="New Event" />
   );
 };
 

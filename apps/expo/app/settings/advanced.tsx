@@ -24,7 +24,7 @@ const Advanced: React.FC = () => {
       <View className="flex h-full w-full flex-col content-center items-center justify-end self-center">
         <ScrollView className="h-[88%] w-full pt-2">
           <Text className="px-4 text-3xl font-bold text-white">
-            Advanced Settings<Text className="hidden"> </Text>
+            Advanced Settings
           </Text>
           <TouchableOpacity
             activeOpacity={0.5}
@@ -43,7 +43,7 @@ const Advanced: React.FC = () => {
                 }
               }}
             >
-              Delete User <Text className="hidden"> </Text>
+              Delete User
             </Text>
           </TouchableOpacity>
         </ScrollView>

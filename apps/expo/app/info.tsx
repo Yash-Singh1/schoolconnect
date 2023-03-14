@@ -17,7 +17,7 @@ import LoadingWrapper from "../src/components/LoadingWrapper";
 import { Navbar } from "../src/components/Navbar";
 import { tokenAtom } from "../src/store";
 import { api } from "../src/utils/api";
-import { TOKEN_KEY, baseURL } from "../src/utils/constants";
+import { TOKEN_KEY } from "../src/utils/constants";
 import { getPushToken } from "../src/utils/getPushToken";
 import { resetStack, type NavigatorOverride } from "../src/utils/resetStack";
 
@@ -37,20 +37,17 @@ const Settings: React.FC = () => {
       <Stack.Screen options={{ title: "Settings" }} />
       <View className="flex h-full w-full flex-col content-center items-center justify-end self-center">
         <ScrollView className="h-[88%] w-full pt-2">
-          <Text className="px-4 text-4xl font-bold text-white">
-            Settings<Text className="hidden"> </Text>
-          </Text>
+          <Text className="px-4 text-4xl font-bold text-white">Settings</Text>
           <View className="mt-2 flex w-full flex-row items-center bg-[#2c2c2e] px-6 py-4">
             <View className="mr-2 rounded-full border-2 border-white bg-[#1c1c1e] p-4 pt-3">
               <FontAwesomeIcon icon="user" size={50} color="white" />
             </View>
-            <Text className="text-xl font-bold text-gray-300 android:font-normal">
+            <Text className="text-xl font-bold text-gray-300">
               <Text>{selfQuery.data.name || "No name"}</Text>
               <Text className="text-base">
                 {"\n"}
                 {schoolQuery.data.name}
               </Text>
-              <Text className="hidden"> </Text>
             </Text>
           </View>
           <View className="border-b border-gray-200"></View>
@@ -61,9 +58,7 @@ const Settings: React.FC = () => {
             }}
             className="flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-3"
           >
-            <Text className="text-lg font-bold text-white">
-              Personal Info<Text className="hidden"> </Text>
-            </Text>
+            <Text className="text-lg font-bold text-white">Personal Info</Text>
             <FontAwesomeIcon icon="chevron-right" color="white" size={15} />
           </TouchableOpacity>
           <View className="border-b border-gray-200"></View>
@@ -74,9 +69,7 @@ const Settings: React.FC = () => {
             }}
             className="flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-3"
           >
-            <Text className="text-lg font-bold text-white">
-              Linked Socials<Text className="hidden"> </Text>
-            </Text>
+            <Text className="text-lg font-bold text-white">Linked Socials</Text>
             <FontAwesomeIcon icon="chevron-right" color="white" size={15} />
           </TouchableOpacity>
           <View className="border-b border-gray-200"></View>
@@ -87,9 +80,7 @@ const Settings: React.FC = () => {
             }}
             className="flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-3"
           >
-            <Text className="text-lg font-bold text-white">
-              Contact Us<Text className="hidden"> </Text>
-            </Text>
+            <Text className="text-lg font-bold text-white">Contact Us</Text>
             <FontAwesomeIcon icon="chevron-right" color="white" size={15} />
           </TouchableOpacity>
           <View className="border-b border-gray-200"></View>
@@ -98,9 +89,7 @@ const Settings: React.FC = () => {
             onPress={() => router.push("/settings/notifications")}
             className="flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-3"
           >
-            <Text className="text-lg font-bold text-white">
-              Notifications <Text className="hidden"> </Text>
-            </Text>
+            <Text className="text-lg font-bold text-white">Notifications</Text>
             <FontAwesomeIcon icon="chevron-right" color="white" size={15} />
           </TouchableOpacity>
           <View className="border-b border-gray-200"></View>
@@ -110,7 +99,7 @@ const Settings: React.FC = () => {
             className="flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-3"
           >
             <Text className="text-lg font-bold text-white">
-              Advanced Settings <Text className="hidden"> </Text>
+              Advanced Settings
             </Text>
             <FontAwesomeIcon icon="chevron-right" color="white" size={15} />
           </TouchableOpacity>
@@ -133,9 +122,7 @@ const Settings: React.FC = () => {
             }}
             className="w-full bg-[#2c2c2e] px-4 py-3"
           >
-            <Text className="text-xl font-bold text-red-500">
-              Logout<Text className="hidden"> </Text>
-            </Text>
+            <Text className="text-xl font-bold text-red-500">Logout</Text>
           </TouchableOpacity>
           <Text className="mt-4 w-full text-center text-lg text-white">
             Based on the{" "}
@@ -153,14 +140,20 @@ const Settings: React.FC = () => {
           <View className="mb-8 mt-1 flex w-full flex-row items-center justify-center">
             <Text
               className="text-lg text-blue-500"
-              onPress={() => void Linking.openURL(`https://schoolconnect-mu.vercel.app/privacy`)}
+              onPress={() =>
+                void Linking.openURL(
+                  `https://schoolconnect-mu.vercel.app/privacy`,
+                )
+              }
             >
               Privacy Policy
             </Text>
             <Text className="mx-2 text-white">•</Text>
             <Text
               className="text-lg text-blue-500"
-              onPress={() => void Linking.openURL(`https://schoolconnect-mu.vercel.app/tos`)}
+              onPress={() =>
+                void Linking.openURL(`https://schoolconnect-mu.vercel.app/tos`)
+              }
             >
               Terms of Service
             </Text>

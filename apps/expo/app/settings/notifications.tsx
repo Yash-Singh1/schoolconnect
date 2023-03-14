@@ -70,12 +70,12 @@ const NotificationSettings: React.FC = () => {
       <View className="w-full h-full">
         <ScrollView className="h-[88%] w-full pt-2">
           <Text className="px-4 text-3xl font-bold text-white">
-            Notifications<Text className="hidden"> </Text>
+            Notifications
           </Text>
           <View className="mt-4 flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-2">
             <View className="flex flex-row justify-between items-center w-full">
-              <Text className="text-lg font-bold android:font-normal text-white">
-                Enable Notifications<Text className="hidden"> </Text>
+              <Text className="text-lg font-bold text-white">
+                Enable Notifications
               </Text>
               <Switch
                 trackColor={{ false: "#767577", true: "#81b0ff" }}

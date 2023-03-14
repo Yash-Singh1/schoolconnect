@@ -69,13 +69,12 @@ const ManageChildren: React.FC = () => {
               <FontAwesomeIcon icon="user" size={40} color="white" />
             </View>
 
-            <Text className="text-xl font-bold text-gray-300 android:font-normal">
+            <Text className="text-xl font-bold text-gray-300">
               <Text>{selfQuery.data.name || "No name"}</Text>
               <Text className="text-base">
                 {"\n"}
                 {schoolQuery.data.name}
               </Text>
-              <Text className="hidden"> </Text>
             </Text>
           </View>
 

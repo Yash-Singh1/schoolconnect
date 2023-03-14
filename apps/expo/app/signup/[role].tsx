@@ -5,6 +5,7 @@ import {
   Dimensions,
   Linking,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -30,6 +31,8 @@ const Signup = () => {
   const [items, setItems] = useState<ItemType<string>[]>([]);
   const [error, setError] = useState(false);
   const [schooled, setSchooled] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const schoolsQuery = api.school.all.useQuery();
   const signupMutation = api.auth.signup.useMutation();
@@ -111,8 +114,8 @@ const Signup = () => {
             className="mt-2 flex flex-row flex-nowrap items-center justify-center gap-x-2 rounded-lg bg-green-300 p-4"
           >
             <FontAwesomeIcon color="white" icon="phone" size={30} />
-            <Text className="text-xl font-semibold android:font-normal text-white">
-              Request a quote<Text className="hidden"> </Text>
+            <Text className="text-xl font-semibold text-white">
+              Request a quote
             </Text>
           </TouchableOpacity>
         </View>
@@ -127,9 +130,43 @@ const Signup = () => {
           >
             <FontAwesomeIcon icon={["fab", "github"]} size={50} color="#fff" />
             <Text className="text-center text-lg uppercase text-white">
-              Signup with GitHub<Text className="hidden"> </Text>
+              Signup with GitHub
             </Text>
           </TouchableOpacity>
+          <Text className="text-white w-full text-center text-lg mt-2">OR</Text>
+          <TextInput
+            className="mt-2 mb-1 w-full mr-4 rounded bg-white/10 p-2 text-white"
+            style={{ width: Dimensions.get("screen").width - 32 }}
+            placeholder="Email"
+            placeholderTextColor="rgba(255, 255, 255, 0.5)"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <TextInput
+            className="mt-2 mb-1 w-full mr-4 rounded bg-white/10 p-2 text-white"
+            style={{ width: Dimensions.get("screen").width - 32 }}
+            placeholder="Password"
+            placeholderTextColor="rgba(255, 255, 255, 0.5)"
+            value={password}
+            secureTextEntry={true}
+            onChangeText={setPassword}
+          />
+
+          <Text
+            onPress={() => {
+              signupMutation.mutate({
+                email,
+                code: password,
+                state: antiState,
+                schoolId: value!,
+                role: params.role as RouterInputs["auth"]["signup"]["role"],
+              });
+            }}
+            style={{ width: Dimensions.get("screen").width - 32 }}
+            className="mr-4 mt-2 rounded-lg bg-blue-500 p-1 text-center text-lg font-semibold uppercase text-white"
+          >
+            Submit
+          </Text>
         </View>
       ) : (
         <View className="flex h-full w-full items-center self-center p-4 align-middle">
@@ -149,17 +186,18 @@ const Signup = () => {
               onOpen={() => {
                 void schoolsQuery.refetch();
               }}
+              theme="DARK"
             />
           </View>
           <Text
             className={`mt-1 w-full font-light text-red-500 ${
               error ? "" : "hidden"
-            }`}
+            } -z-10`}
           >
             Error: You must select a school to signup for
           </Text>
           <Text
-            className="mt-2 w-full rounded-lg bg-blue-500 p-1 text-center text-lg font-semibold uppercase text-white"
+            className="mt-2 w-full rounded-lg bg-blue-500 p-1 text-center text-lg font-semibold uppercase text-white -z-10"
             onPress={() => {
               if (!value) {
                 setError(true);
@@ -170,10 +208,10 @@ const Signup = () => {
           >
             Next
           </Text>
-          <Text className="mt-2 w-full text-center text-xs text-white">
+          <Text className="mt-2 w-full text-center text-xs text-white -z-10">
             Don&rsquo;t see your school here? Contact your school admin.
           </Text>
-          <Text className="mt-2 w-full text-center text-xs text-white">
+          <Text className="mt-2 w-full text-center text-xs text-white -z-10">
             Already have an account?{" "}
             <Text
               className="text-blue-400"

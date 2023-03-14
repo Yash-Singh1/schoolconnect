@@ -25,7 +25,7 @@ const Linked: React.FC = () => {
       <View className="flex h-full w-full flex-col content-center items-center justify-end self-center">
         <ScrollView className="h-[88%] w-full pt-2">
           <Text className="px-4 text-3xl font-bold text-white">
-            Linked Accounts<Text className="hidden"> </Text>
+            Linked Accounts
           </Text>
           <View className="mt-2 flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-2">
             <View className="flex flex-row items-center">
@@ -36,9 +36,7 @@ const Linked: React.FC = () => {
                   color="white"
                 />
               </View>
-              <Text className="text-xl font-bold text-gray-300 android:font-normal">
-                GitHub<Text> </Text>
-              </Text>
+              <Text className="text-xl font-bold text-gray-300">GitHub</Text>
             </View>
             {linkedAccountsQuery.data["github"] ? (
               <FontAwesomeIcon icon="check" size={30} color="#3b82f6" />

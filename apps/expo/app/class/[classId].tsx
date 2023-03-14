@@ -88,7 +88,7 @@ const Board: React.FC = () => {
             </TouchableOpacity>
           )}
           <View className="mb-4 mt-4 flex flex-row items-center">
-            <Text className="ml-8 text-2xl font-bold android:font-normal text-white">Posts</Text>
+            <Text className="ml-8 text-2xl font-bold text-white">Posts</Text>
             <TouchableOpacity
               activeOpacity={0.5}
               className="ml-2 rounded-lg bg-blue-500 p-1"

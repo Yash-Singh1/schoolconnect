@@ -59,19 +59,18 @@ const Personal: React.FC = () => {
       <View className="flex h-full w-full flex-col content-center items-center justify-end self-center">
         <ScrollView className="h-[88%] w-full pt-2">
           <Text className="px-4 text-3xl font-bold text-white">
-            Personal Info<Text className="hidden"> </Text>
+            Personal Info
           </Text>
           <View className="mt-2 flex w-full flex-row items-center bg-[#2c2c2e] px-6 py-4">
             <View className="mr-2 rounded-full border-2 border-white bg-[#1c1c1e] p-4 pt-3">
               <FontAwesomeIcon icon="user" size={50} color="white" />
             </View>
-            <Text className="text-xl font-bold text-gray-300 android:font-normal">
+            <Text className="text-xl font-bold text-gray-300">
               <Text>{selfQuery.data.name || "No name"}</Text>
               <Text className="text-base">
                 {"\n"}
                 {schoolQuery.data.name}
               </Text>
-              <Text className="hidden"> </Text>
             </Text>
           </View>
           <View className="border-b border-gray-200"></View>
@@ -79,12 +78,9 @@ const Personal: React.FC = () => {
             activeOpacity={0.5}
             className="flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-3"
           >
-            <Text className="text-lg font-bold text-white">
-              Role<Text className="hidden"> </Text>
-            </Text>
-            <Text className="text-lg font-bold text-white android:font-normal">
+            <Text className="text-lg font-bold text-white">Role</Text>
+            <Text className="text-lg font-normal text-white">
               {formatRole(selfQuery.data.role)}
-              <Text className="hidden"> </Text>
             </Text>
           </TouchableOpacity>
           <View className="border-b border-gray-200"></View>
@@ -92,13 +88,10 @@ const Personal: React.FC = () => {
             activeOpacity={0.5}
             className="flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-3"
           >
-            <Text className="text-lg font-bold text-white android:font-bold">
-              Email<Text className="hidden"> </Text>
-            </Text>
-            <Text className="text-lg font-bold text-white android:font-normal">
+            <Text className="text-lg font-bold text-white">Email</Text>
+            <Text className="text-lg font-normal text-white">
               {selfQuery.data.email!.slice(0, 15) +
                 (selfQuery.data.email!.length > 17 ? "..." : "")}
-              <Text className="hidden"> </Text>
             </Text>
           </TouchableOpacity>
           <View className="border-b border-gray-200"></View>
@@ -107,10 +100,8 @@ const Personal: React.FC = () => {
             onPress={() => setModalVisible(true)}
             className="flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-3"
           >
-            <Text className="text-lg font-bold text-white">
-              Name<Text className="hidden"> </Text>
-            </Text>
-            <Text className="text-lg font-bold text-white android:font-normal">
+            <Text className="text-lg font-bold text-white">Name</Text>
+            <Text className="text-lg font-normal text-white">
               {selfQuery.data.name}
             </Text>
           </TouchableOpacity>

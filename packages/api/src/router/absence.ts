@@ -10,7 +10,8 @@ export const absenceRouter = createTRPCRouter({
       z.object({
         token: z.string().min(1),
         userId: z.string().min(1),
-        period: z.number().int().optional(),
+        dateTill: z.date(),
+        reason: z.string().min(1).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -43,48 +44,8 @@ export const absenceRouter = createTRPCRouter({
       await ctx.prisma.absence.create({
         data: {
           userId: ctx.user.id,
-          date: new Date(),
-          ...(input.period ? { period: input.period } : {}),
-        },
-      });
-    }),
-
-  // Gets all unapproved absences
-  unapproved: protectedProcedure
-    .input(z.object({ token: z.string().min(1) }))
-    .query(async ({ ctx }) => {
-      if (ctx.user.role !== "admin") {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Role is not permitted to view unapproved absences",
-        });
-      }
-      return await ctx.prisma.absence.findMany({
-        where: {
-          approvedSchool: false,
-          user: {
-            schoolId: ctx.user.schoolId,
-          },
-        },
-      });
-    }),
-
-  // Approves an absence
-  approve: protectedProcedure
-    .input(z.object({ token: z.string().min(1), absenceId: z.string().min(1) }))
-    .mutation(async ({ ctx, input }) => {
-      if (ctx.user.role !== "admin") {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Role is not permitted to approve absence",
-        });
-      }
-      await ctx.prisma.absence.update({
-        where: {
-          id: input.absenceId,
-        },
-        data: {
-          approvedSchool: true,
+          dateTill: input.dateTill,
+          ...(input.reason ? { reason: input.reason } : {}),
         },
       });
     }),

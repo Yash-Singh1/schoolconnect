@@ -97,7 +97,8 @@ const AgendaItem: React.FC<{
                   {event.name}
                 </Text>
                 <Text className="mb-1 text-sm font-light italic text-gray-200">
-                  Posted by {"School" in event ? event.School!.name : event.Class!.name}
+                  Posted by{" "}
+                  {"School" in event ? event.School!.name : event.Class!.name}
                 </Text>
                 <Text className="mt-2 text-left text-lg font-semibold text-white">
                   {event.description}
@@ -169,7 +170,8 @@ const Events: React.FC = () => {
         <View className="h-[88%] w-full">
           <View className="flex flex-row">
             <Text className="pl-4 text-2xl font-bold text-white">Events</Text>
-            {selfQuery.data.role === "admin" && (
+            {selfQuery.data.role === "admin" ||
+            selfQuery.data.role === "teacher" ? (
               <TouchableOpacity
                 activeOpacity={0.5}
                 className="ml-2 rounded-lg bg-blue-500 p-1"
@@ -177,7 +179,7 @@ const Events: React.FC = () => {
               >
                 <FontAwesomeIcon icon="plus" size={24} color="white" />
               </TouchableOpacity>
-            )}
+            ) : null}
           </View>
           {eventsGrouped ? (
             <CalendarProvider

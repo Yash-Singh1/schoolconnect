@@ -1,28 +1,26 @@
 // Absences screen
 
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { Dimensions, Text, TextInput, View } from "react-native";
 import DropDownPicker, { type ItemType } from "react-native-dropdown-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
 import { useAtom } from "jotai";
 
-import LoadingWrapper from "../src/components/LoadingWrapper";
+import { DatePicker } from "../src/components/DatePicker";
 import { Navbar } from "../src/components/Navbar";
 import { tokenAtom } from "../src/store";
 import { api } from "../src/utils/api";
 
-// Dashboard when the user is an admin
-const AdminAbsences: React.FC = () => {
-  return <View />;
-};
-
 // Dashboard when the user is a parent
 const ParentAbsences: React.FC = () => {
+  // Form state for reporting an absence
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<ItemType<string>[]>([]);
+  const [reason, setReason] = useState("");
+  const [dateTill, setDateTill] = useState(new Date());
 
   const [token] = useAtom(tokenAtom);
 
@@ -30,18 +28,36 @@ const ParentAbsences: React.FC = () => {
     token,
   });
 
+  const reportAbsence = api.absence.reportAbsence.useMutation({
+    async onSuccess() {
+      setValue(null);
+      setReason("");
+      setDateTill(new Date());
+      setOpen(false);
+    },
+  });
+
   useEffect(() => {
-    if (loading && childrenQuery.data && childrenQuery.data.length > 0)
+    if (loading && childrenQuery.data && childrenQuery.data.length > 0) {
       setLoading(false);
+      setItems(
+        childrenQuery.data.map((child) => ({
+          label: child.name!,
+          value: child.id,
+        })),
+      );
+    }
   }, [childrenQuery.data]);
 
   return (
     <SafeAreaView className="bg-[#101010]">
-      <Stack.Screen />
+      <Stack.Screen options={{ title: "Absences" }} />
       <View className="w-full h-full flex">
-        <View className="h-[88%] mx-4">
-          <Text className="text-white text-3xl font-bold">Report Absence</Text>
-          <View className="flex">
+        <View className="h-[88%] mx-2">
+          <Text className="text-white text-3xl font-bold mx-1">
+            Report Absence
+          </Text>
+          <View className="flex mx-2">
             <Text className="text-white text-lg mt-4">Child to report</Text>
             <View className="z-10 mt-1">
               <DropDownPicker
@@ -57,9 +73,49 @@ const ParentAbsences: React.FC = () => {
                 onOpen={() => {
                   void childrenQuery.refetch();
                 }}
+                theme="DARK"
               />
             </View>
           </View>
+          <View className="mx-2 -z-10">
+            <Text className="text-white text-lg mt-4">Reason</Text>
+            <TextInput
+              className="mt-2 mb-1 rounded bg-white/10 p-2 text-white"
+              placeholder="Reason of absence"
+              placeholderTextColor="rgba(255, 255, 255, 0.5)"
+              value={reason}
+              onChangeText={setReason}
+            />
+          </View>
+          <View className="flex flex-col items-start -z-10">
+            <Text className="text-white text-lg mt-4 mb-1 mx-2">
+              Date absent till
+            </Text>
+            <DatePicker
+              value={dateTill}
+              mode="date"
+              themeVariant="dark"
+              onChange={(_, value) => value && setDateTill(value)}
+            />
+          </View>
+          <Text
+            style={{
+              width: Dimensions.get("screen").width - 32,
+            }}
+            className="text-white text-lg font-semibold text-center mt-4 bg-green-500/80 rounded-lg mx-2"
+            onPress={() => {
+              if (value && reason) {
+                void reportAbsence.mutateAsync({
+                  userId: value,
+                  token,
+                  reason,
+                  dateTill,
+                });
+              }
+            }}
+          >
+            Report Absence
+          </Text>
         </View>
         <Navbar />
       </View>
@@ -67,22 +123,4 @@ const ParentAbsences: React.FC = () => {
   );
 };
 
-const Absences: React.FC = () => {
-  const [token] = useAtom(tokenAtom);
-
-  const selfQuery = api.user.self.useQuery({
-    token,
-  });
-
-  return selfQuery.data ? (
-    selfQuery.data.role === "admin" ? (
-      <AdminAbsences />
-    ) : (
-      <ParentAbsences />
-    )
-  ) : (
-    <LoadingWrapper stackName="Absences" />
-  );
-};
-
-export default Absences;
+export default ParentAbsences;

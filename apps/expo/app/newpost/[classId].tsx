@@ -115,7 +115,7 @@ const NewPost: React.FC = () => {
         {createPost.isLoading ? (
           <LoadingWrapper
             small
-            spinClass="bg-green-500/80 mt-2 py-2 flex flex-row justify-center items-center gap-x-4 ml-1"
+            spinClass="bg-green-500/80 mt-2 py-2 rounded-lg flex flex-row justify-center items-center gap-x-4 ml-1"
             spinStyle={{
               width: Dimensions.get("screen").width - 32,
             }}
