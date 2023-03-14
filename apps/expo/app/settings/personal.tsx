@@ -41,13 +41,20 @@ const Personal: React.FC = () => {
   const selfQuery = api.user.self.useQuery({ token });
   const schoolQuery = api.school.get.useQuery({ token });
 
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState<string | boolean>(false);
   const [newName, setNewName] = useState("");
 
   const utils = api.useContext();
   const setNameMutation = api.user.setName.useMutation({
     onSuccess: () => {
       void utils.user.invalidate();
+      setModalVisible(false);
+      setNewName("");
+    },
+  });
+  const setPasswordMutation = api.user.setPassword.useMutation({
+    onSuccess: () => {
+      void selfQuery.refetch();
       setModalVisible(false);
       setNewName("");
     },
@@ -97,7 +104,7 @@ const Personal: React.FC = () => {
           <View className="border-b border-gray-200"></View>
           <TouchableOpacity
             activeOpacity={0.5}
-            onPress={() => setModalVisible(true)}
+            onPress={() => setModalVisible("name")}
             className="flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-3"
           >
             <Text className="text-lg font-bold text-white">Name</Text>
@@ -105,63 +112,86 @@ const Personal: React.FC = () => {
               {selfQuery.data.name}
             </Text>
           </TouchableOpacity>
+          <View className="border-b border-gray-200"></View>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => setModalVisible("password")}
+            className="flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-3"
+          >
+            <Text className="text-lg font-bold text-white">Password</Text>
+            <Text className="text-lg font-normal text-white">
+              {selfQuery.data.password ? "*********" : "None"}
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
-        {selfQuery.data.role !== "student" ? (
-          <Modal transparent={true} visible={modalVisible}>
-            <SafeAreaView>
-              <View className="flex h-full w-full flex-col items-center justify-center">
-                <View
-                  style={{ width: Dimensions.get("screen").width - 32 }}
-                  className="h-1/2 rounded-lg border-2 border-gray-200 bg-[#101010]"
-                >
-                  <View className="flex w-full items-end">
-                    <TouchableOpacity
-                      onPress={() => {
-                        setNewName("");
-                        setModalVisible(false);
-                      }}
-                      activeOpacity={0.5}
-                      className="mr-2 mt-2"
-                    >
-                      <FontAwesomeIcon
-                        icon="square-xmark"
-                        color="white"
-                        size={20}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                  <View className="flex h-1/2 w-full items-center justify-center">
-                    <Text className="px-4 text-lg font-bold text-white">
-                      Enter your new name:
-                    </Text>
-                    <TextInput
-                      style={{ width: Dimensions.get("screen").width - 64 }}
-                      className="mx-4 mb-1 mt-2 rounded bg-white/10 p-2 text-center text-white"
-                      placeholderTextColor="rgba(255, 255, 255, 0.5)"
-                      value={newName}
-                      onChangeText={setNewName}
-                      // @ts-expect-error -- TODO: Contribute to react-native typings, they support enterKeyHint but didn't document it
-                      enterKeyHint="done"
-                      placeholder="Your new name"
+        <Modal
+          transparent={true}
+          visible={
+            modalVisible === "password" ||
+            (modalVisible === "name" && selfQuery.data.role !== "student")
+          }
+        >
+          <SafeAreaView>
+            <View className="flex h-full w-full flex-col items-center justify-center">
+              <View
+                style={{ width: Dimensions.get("screen").width - 32 }}
+                className="h-1/2 rounded-lg border-2 border-gray-200 bg-[#101010]"
+              >
+                <View className="flex w-full items-end">
+                  <TouchableOpacity
+                    onPress={() => {
+                      setNewName("");
+                      setModalVisible(false);
+                    }}
+                    activeOpacity={0.5}
+                    className="mr-2 mt-2"
+                  >
+                    <FontAwesomeIcon
+                      icon="square-xmark"
+                      color="white"
+                      size={20}
                     />
-                    <Text
-                      style={{ width: Dimensions.get("screen").width - 64 }}
-                      onPress={() => {
+                  </TouchableOpacity>
+                </View>
+                <View className="flex h-1/2 w-full items-center justify-center">
+                  <Text className="px-4 text-lg font-bold text-white">
+                    Enter your new {modalVisible}:
+                  </Text>
+                  <TextInput
+                    style={{ width: Dimensions.get("screen").width - 64 }}
+                    className="mx-4 mb-1 mt-2 rounded bg-white/10 p-2 text-center text-white"
+                    placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                    value={newName}
+                    onChangeText={setNewName}
+                    secureTextEntry={modalVisible === "password"}
+                    // @ts-expect-error -- TODO: Contribute to react-native typings, they support enterKeyHint but didn't document it
+                    enterKeyHint="done"
+                    placeholder={`Your new ${modalVisible}`}
+                  />
+                  <Text
+                    style={{ width: Dimensions.get("screen").width - 64 }}
+                    onPress={() => {
+                      if (modalVisible === "name") {
                         void setNameMutation.mutateAsync({
                           token,
                           name: newName,
                         });
-                      }}
-                      className="mt-2 rounded-lg bg-blue-500 p-1 text-center text-lg font-semibold uppercase text-white"
-                    >
-                      Submit
-                    </Text>
-                  </View>
+                      } else {
+                        void setPasswordMutation.mutateAsync({
+                          token,
+                          password: newName,
+                        });
+                      }
+                    }}
+                    className="mt-2 rounded-lg bg-blue-500 p-1 text-center text-lg font-semibold uppercase text-white"
+                  >
+                    Submit
+                  </Text>
                 </View>
               </View>
-            </SafeAreaView>
-          </Modal>
-        ) : null}
+            </View>
+          </SafeAreaView>
+        </Modal>
         <Navbar />
       </View>
     </SafeAreaView>

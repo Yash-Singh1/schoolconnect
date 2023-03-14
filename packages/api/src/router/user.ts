@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import * as bcrypt from "bcryptjs";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -57,6 +58,25 @@ export const userRouter = createTRPCRouter({
         },
         data: {
           name: input.name,
+        },
+      });
+    }),
+
+  // Changes the password of the user
+  setPassword: protectedProcedure
+    .input(
+      z.object({
+        token: z.string().min(1),
+        password: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.prisma.user.update({
+        where: {
+          id: ctx.user.id,
+        },
+        data: {
+          password: await bcrypt.hash(input.password, 10),
         },
       });
     }),

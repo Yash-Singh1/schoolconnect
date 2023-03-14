@@ -1,7 +1,13 @@
 // Login page for a certain role
 
-import { useEffect } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  Dimensions,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useNavigation, useRouter, useSearchParams } from "expo-router";
 import * as SecureStore from "expo-secure-store";
@@ -9,7 +15,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useAtom } from "jotai";
 
 import { tokenAtom } from "../../src/store";
-import { api } from "../../src/utils/api";
+import { RouterInputs, api } from "../../src/utils/api";
 import { TOKEN_KEY } from "../../src/utils/constants";
 import { resetStack, type NavigatorOverride } from "../../src/utils/resetStack";
 import useCode from "../../src/utils/useCode";
@@ -43,6 +49,9 @@ const Login: React.FC = () => {
     }
   }, [response]);
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   // Backend authentication complete, store token in secure store and redirect to home page
   useEffect(() => {
     if (loginMutation?.data?.length && loginMutation?.data?.length > 1) {
@@ -67,6 +76,38 @@ const Login: React.FC = () => {
             Login with GitHub
           </Text>
         </TouchableOpacity>
+        <Text className="text-white w-full text-center text-lg mt-2">OR</Text>
+        <View className="w-full">
+          <TextInput
+            className="mt-2 mb-1 w-full mr-4 rounded bg-white/10 p-2 text-white"
+            style={{ width: Dimensions.get("screen").width - 32 }}
+            placeholder="Email"
+            placeholderTextColor="rgba(255, 255, 255, 0.5)"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <TextInput
+            className="mt-2 mb-1 w-full mr-4 rounded bg-white/10 p-2 text-white"
+            style={{ width: Dimensions.get("screen").width - 32 }}
+            placeholder="Password"
+            placeholderTextColor="rgba(255, 255, 255, 0.5)"
+            value={password}
+            secureTextEntry={true}
+            onChangeText={setPassword}
+          />
+          <Text
+            onPress={() => {
+              loginMutation.mutate({
+                email,
+                code: password,
+              });
+            }}
+            style={{ width: Dimensions.get("screen").width - 32 }}
+            className="mr-4 mt-2 rounded-lg bg-blue-500 p-1 text-center text-lg font-semibold uppercase text-white"
+          >
+            Submit
+          </Text>
+        </View>
         <Text className="mt-2 text-white">
           Don&rsquo;t have an account yet?{" "}
           <Text

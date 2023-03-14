@@ -91,7 +91,7 @@ export const authRouter = createTRPCRouter({
 
         if (userFound) {
           if (userFound.password) {
-            if (await bcrypt.compare(userFound.password, code)) {
+            if (await bcrypt.compare(code, userFound.password)) {
               await ctx.prisma.session.create({
                 data: {
                   ...newSession,
@@ -232,9 +232,55 @@ export const authRouter = createTRPCRouter({
 
   // Login mutation, updates access token in database and searches for existing account
   login: publicProcedure
-    .input(z.object({ code: z.string().min(1) }))
+    .input(
+      z.object({
+        code: z.string().min(1),
+        email: z.string().min(1).optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const { code } = input;
+
+      const newSession = generateNextSession();
+
+      if (input.email) {
+        const userFound = await ctx.prisma.user.findFirst({
+          where: {
+            email: input.email,
+          },
+        });
+
+        if (!userFound) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User not found",
+          });
+        }
+
+        if (userFound.password) {
+          if (await bcrypt.compare(code, userFound.password)) {
+            await ctx.prisma.session.create({
+              data: {
+                ...newSession,
+                userId: userFound.id,
+              },
+            });
+
+            return newSession.sessionToken;
+          } else {
+            throw new TRPCError({
+              code: "UNAUTHORIZED",
+              message: "Invalid password",
+            });
+          }
+        } else {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "User doesn't have password linked to account",
+          });
+        }
+      }
+
       const { userInfo, accessToken } = await retrieveAuthToken(code);
 
       if (!userInfo.email) {
@@ -254,8 +300,6 @@ export const authRouter = createTRPCRouter({
           },
         },
       });
-
-      const newSession = generateNextSession();
 
       if (userFound) {
         if (userFound.pending) {
