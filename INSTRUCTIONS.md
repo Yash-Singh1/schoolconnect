@@ -42,7 +42,16 @@ To do this, simply navigate to [Imgbb](https://imgbb.com/) and create an account
 
 To get your QStash keys, create a new Upstash account and navigate to the [QStash console](https://console.upstash.com/qstash). Then, copy the keys underneath **Details > Request Builder** into the `.env` file.
 
-### 6. Start the server
+### 6. Modify Platform
+
+Make sure you have one of [Android Studio Emulator](https://docs.expo.dev/workflow/android-studio-emulator/) or [XCode](https://docs.expo.dev/workflow/ios-simulator/) setup. Then if you would like to use `android` instead of `ios`, modify the `scripts.dev` field in the `package.json`:
+
+```diff
+-    "dev": "expo start",
++    "dev": "expo start --android",
+```
+
+### 7. Start the server
 
 To start the server, run the following command:
 
