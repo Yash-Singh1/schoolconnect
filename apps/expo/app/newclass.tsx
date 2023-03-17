@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { Dimensions, Image, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
+import { MediaTypeOptions } from "expo-image-picker";
 import { Stack, useRouter } from "expo-router";
 import { useAtom } from "jotai";
 
@@ -24,6 +25,7 @@ const NewClass: React.FC = () => {
     try {
       const response = await ImagePicker.launchImageLibraryAsync({
         base64: true,
+        mediaTypes: MediaTypeOptions.Images,
       });
       if (!response.canceled) setFile(response);
     } catch (error) {
