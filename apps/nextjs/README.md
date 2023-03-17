@@ -1,6 +1,6 @@
-# SchoolConnect
+# `@acme/nextjs`
 
-This Next.js website hosts the backend of the SchoolConnect application. It also hosts a few other pages that are not a part of the mobile application.
+This Next.js website hosts the backend of the SchoolConnect application. It also hosts a few other static pages that are not a part of the mobile application.
 
 ## Getting Started
 
@@ -34,5 +34,5 @@ The stack of this project is as follows:
 
 - Next.js 13, a meta-framework for React
 - React 18
-- Tailwind CSS, a utility-first CSS framework
+- Kumiko for the styling
 - tRPC server hosted on Vercel

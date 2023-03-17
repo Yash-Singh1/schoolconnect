@@ -26,6 +26,7 @@
     "@trpc/server": "^10.14.0",
     "@upstash/qstash": "^0.3.6",
     "expo-server-sdk": "^3.7.0",
+    "kumiko": "^0.0.1",
     "next": "^13.2.3",
     "next-auth": "^4.20.1",
     "react": "18.2.0",
