@@ -23,21 +23,30 @@ import { tokenAtom } from "../src/store";
 import { api } from "../src/utils/api";
 import { resetStack, type NavigatorOverride } from "../src/utils/resetStack";
 
+/**
+ * Component for a specific member
+ * @param props Takes in an item that is the user information and a boolean on whether the user is pending registration
+ */
 const Member: React.FC<{ item: User; pending: boolean }> = ({
   item,
   pending,
 }) => {
+  // Get token from store
   const [token] = useAtom(tokenAtom);
 
+  // State for modal
   const [modalShown, setModalShown] = useState(false);
 
+  // Mutation for deleting a user
   const deleteMutation = api.user.delete.useMutation();
 
+  // Initialize router helper
   const router = useRouter();
   const navigation = useNavigation() as NavigatorOverride;
 
   return (
     <>
+      {/* Modal for options on user */}
       <Modal transparent visible={modalShown} animationType="fade">
         <SafeAreaView>
           <View className="h-full w-full flex justify-center items-center">
@@ -47,6 +56,7 @@ const Member: React.FC<{ item: User; pending: boolean }> = ({
                 width: Dimensions.get("screen").width * 0.8,
               }}
             >
+              {/* Button for closing a modal */}
               <TouchableOpacity
                 onPress={() => setModalShown(false)}
                 className="p-2"
@@ -54,7 +64,10 @@ const Member: React.FC<{ item: User; pending: boolean }> = ({
               >
                 <FontAwesomeIcon icon="square-xmark" color="white" size={20} />
               </TouchableOpacity>
+
+              {/* All options in this modal usually redirect to the same user modification page, other than the delete option and children page */}
               <View className="border-t border-gray-200/50 flex w-full">
+                {/* Option to change the user's name */}
                 <TouchableOpacity
                   activeOpacity={0.5}
                   onPress={() => {
@@ -67,6 +80,8 @@ const Member: React.FC<{ item: User; pending: boolean }> = ({
                     Change Name
                   </Text>
                 </TouchableOpacity>
+
+                {/* Option to change the user's email */}
                 <View className="border-t border-gray-200/50" />
                 {pending ? (
                   <TouchableOpacity
@@ -82,6 +97,8 @@ const Member: React.FC<{ item: User; pending: boolean }> = ({
                     </Text>
                   </TouchableOpacity>
                 ) : null}
+
+                {/* Manage Children option */}
                 {pending ? null : (
                   <TouchableOpacity
                     activeOpacity={0.5}
@@ -96,6 +113,8 @@ const Member: React.FC<{ item: User; pending: boolean }> = ({
                     </Text>
                   </TouchableOpacity>
                 )}
+
+                {/* Option to change role */}
                 <View className="border-t border-gray-200/50" />
                 <TouchableOpacity
                   activeOpacity={0.5}
@@ -109,6 +128,8 @@ const Member: React.FC<{ item: User; pending: boolean }> = ({
                     Change Role
                   </Text>
                 </TouchableOpacity>
+
+                {/* Option to delete user */}
                 <View className="border-t border-gray-200/50" />
                 <TouchableOpacity
                   activeOpacity={0.5}

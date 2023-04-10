@@ -22,6 +22,9 @@ const getBaseUrl = () => {
    * you don't have anything else running on it, or you'd have to change it.
    */
   const localhost = Constants.manifest?.debuggerHost?.split(":")[0];
+
+  console.log("Debugger localhost", localhost);
+
   if (!localhost) {
     return "https://schoolconnect-mu.vercel.app/";
   }

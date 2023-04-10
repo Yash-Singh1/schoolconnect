@@ -20,11 +20,14 @@ import { tokenAtom } from "../../src/store";
 import { api } from "../../src/utils/api";
 
 const ManageChildren: React.FC = () => {
+  // Get the user id from the url
   const params = useSearchParams();
   const userId = params.userId as string;
 
+  // Get the token from the store
   const [token] = useAtom(tokenAtom);
 
+  // Get information on the user, their children and the current school
   const selfQuery = api.user.self.useQuery({
     userId,
     token,
@@ -41,29 +44,41 @@ const ManageChildren: React.FC = () => {
   const [createUserModalShown, setCreateUserModalShown] = useState(false);
   const [newChildEmail, setNewChildEmail] = useState("");
 
+  // Mutation to delete a child
   const util = api.useContext();
   const deleteChildMutation = api.user.removeChild.useMutation({
     async onSuccess() {
-      await util.user.invalidate();
-      await childrenQuery.refetch();
-    },
-  });
-  const addChildMutation = api.user.addChild.useMutation({
-    async onSuccess() {
-      setCreateUserModalShown(false);
+      // Invalidate the user and children queries
       await util.user.invalidate();
       await childrenQuery.refetch();
     },
   });
 
+  // Mutation to add a child
+  const addChildMutation = api.user.addChild.useMutation({
+    async onSuccess() {
+      // Invalidate the user and children queries and reset the modal form state
+      setCreateUserModalShown(false);
+      setNewChildEmail("");
+      await util.user.invalidate();
+      await childrenQuery.refetch();
+    },
+  });
+
+  // If the queries are loading, show a loading screen
   return selfQuery.data && schoolQuery.data && childrenQuery.data ? (
     <SafeAreaView className="bg-[#101010]">
+      {/* Top stack bar */}
       <Stack.Screen options={{ title: "Manage Children" }} />
+      
+      {/* Content */}
       <View className="h-full w-full flex">
         <View className="h-[88%] w-full">
           <Text className="text-white text-2xl font-bold px-4">
             Manage Children
           </Text>
+
+          {/* Parent information */}
           <View className="mt-2 flex w-full flex-row items-center bg-[#2c2c2e] px-6 py-4">
             <View className="mr-3 rounded-full border-2 border-white bg-[#1c1c1e] p-3 pt-2">
               <FontAwesomeIcon icon="user" size={40} color="white" />
@@ -78,6 +93,7 @@ const ManageChildren: React.FC = () => {
             </Text>
           </View>
 
+          {/* Add child button */}
           <TouchableOpacity
             activeOpacity={0.5}
             onPress={() => setCreateUserModalShown(true)}
@@ -87,6 +103,7 @@ const ManageChildren: React.FC = () => {
             <Text className="text-white text-lg font-bold">Add Child</Text>
           </TouchableOpacity>
 
+          {/* List of all existing children */}
           {childrenQuery.data.length ? (
             <View className="flex w-full bg-[#2c2c2e]">
               {childrenQuery.data.map((child, index) => {
@@ -123,6 +140,8 @@ const ManageChildren: React.FC = () => {
               No children found
             </Text>
           )}
+
+          {/* Add child modal */}
           <Modal
             transparent
             animationType="none"
@@ -136,6 +155,7 @@ const ManageChildren: React.FC = () => {
                     width: Dimensions.get("screen").width * 0.8,
                   }}
                 >
+                  {/* Button to close modal */}
                   <TouchableOpacity
                     onPress={() => setCreateUserModalShown(false)}
                     className="p-2"
@@ -147,6 +167,8 @@ const ManageChildren: React.FC = () => {
                       size={20}
                     />
                   </TouchableOpacity>
+
+                  {/* Form to add a child */}
                   <View className="w-full p-4 pt-0">
                     <TextInput
                       className="mt-2 mb-1 rounded bg-white/10 p-2 text-white"
@@ -155,6 +177,8 @@ const ManageChildren: React.FC = () => {
                       value={newChildEmail}
                       onChangeText={setNewChildEmail}
                     />
+
+                    {/* Form validation error if email is invalid */}
                     {addChildMutation?.error?.data?.zodError?.fieldErrors
                       ?.childEmail && (
                       <Text className="mb-1 w-full text-left text-red-500">
@@ -164,8 +188,10 @@ const ManageChildren: React.FC = () => {
                         }
                       </Text>
                     )}
+
                     <Text
                       onPress={() => {
+                        // Run the mutation to add the child
                         addChildMutation.mutate({
                           childEmail: newChildEmail,
                           userId,

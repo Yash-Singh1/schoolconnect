@@ -57,6 +57,7 @@ const Signup = () => {
       if (response.params.state !== antiState) {
         throw new Error("State mismatch, possible CSRF Attack");
       }
+
       // If the state matches, we can safely proceed with the authentication to the backend
       signupMutation.mutate({
         code: response.params.code!,
@@ -81,6 +82,7 @@ const Signup = () => {
     }
   }, [signupMutation.data]);
 
+  // Once schools are fetched, we stop the loading spinner on the dropdown
   useEffect(() => {
     if (loading && schoolsQuery.data && schoolsQuery.data.length > 0)
       setLoading(false);
@@ -121,7 +123,9 @@ const Signup = () => {
         </View>
       ) : schooled ? (
         <View className="ml-2 flex h-full w-full items-center">
-          {/* If school is selected, we proceed to show social signup buttons */}
+          {/* If school is selected, we proceed to show the signup form */}
+
+          {/* Sign in with some social */}
           <TouchableOpacity
             activeOpacity={0.5}
             style={{ width: Dimensions.get("screen").width - 32 }}
@@ -133,6 +137,8 @@ const Signup = () => {
               Signup with GitHub
             </Text>
           </TouchableOpacity>
+
+          {/* Or sign in with traditional email/password */}
           <Text className="text-white w-full text-center text-lg mt-2">OR</Text>
           <TextInput
             className="mt-2 mb-1 w-full mr-4 rounded bg-white/10 p-2 text-white"
@@ -152,6 +158,7 @@ const Signup = () => {
             onChangeText={setPassword}
           />
 
+          {/* Submit button signup request */}
           <Text
             onPress={() => {
               signupMutation.mutate({
@@ -189,6 +196,8 @@ const Signup = () => {
               theme="DARK"
             />
           </View>
+
+          {/* Validation to ensure school selected */}
           <Text
             className={`mt-1 w-full font-light text-red-500 ${
               error ? "" : "hidden"
@@ -196,6 +205,8 @@ const Signup = () => {
           >
             Error: You must select a school to signup for
           </Text>
+
+          {/* Next button to proceed to the signup form */}
           <Text
             className="mt-2 w-full rounded-lg bg-blue-500 p-1 text-center text-lg font-semibold uppercase text-white -z-10"
             onPress={() => {
@@ -208,9 +219,13 @@ const Signup = () => {
           >
             Next
           </Text>
+
+          {/* If school not listed, ask to contact admin */}
           <Text className="mt-2 w-full text-center text-xs text-white -z-10">
             Don&rsquo;t see your school here? Contact your school admin.
           </Text>
+
+          {/* If already have an account, go to login */}
           <Text className="mt-2 w-full text-center text-xs text-white -z-10">
             Already have an account?{" "}
             <Text

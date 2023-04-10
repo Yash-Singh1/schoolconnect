@@ -20,6 +20,7 @@ import { Navbar } from "../../src/components/Navbar";
 import { tokenAtom } from "../../src/store";
 import { api } from "../../src/utils/api";
 
+// Convert role to localized string
 function formatRole(role: string) {
   switch (role) {
     case "student":
@@ -36,17 +37,22 @@ function formatRole(role: string) {
 }
 
 const Personal: React.FC = () => {
+  // Get token from store
   const [token] = useAtom(tokenAtom);
 
+  // Queries for getting the user's data
   const selfQuery = api.user.self.useQuery({ token });
   const schoolQuery = api.school.get.useQuery({ token });
 
+  // State for modal form data
   const [modalVisible, setModalVisible] = useState<string | boolean>(false);
   const [newName, setNewName] = useState("");
 
+  // Mutations for changing user data
   const utils = api.useContext();
   const setNameMutation = api.user.setName.useMutation({
     onSuccess: () => {
+      // Invalidate the user's data and reset form data
       void utils.user.invalidate();
       setModalVisible(false);
       setNewName("");
@@ -54,7 +60,8 @@ const Personal: React.FC = () => {
   });
   const setPasswordMutation = api.user.setPassword.useMutation({
     onSuccess: () => {
-      void selfQuery.refetch();
+      // Invalidate the user's data and reset form data
+      void utils.user.invalidate();
       setModalVisible(false);
       setNewName("");
     },
@@ -65,6 +72,7 @@ const Personal: React.FC = () => {
       <Stack.Screen options={{ title: "Personal Settings" }} />
       <View className="flex h-full w-full flex-col content-center items-center justify-end self-center">
         <ScrollView className="h-[88%] w-full pt-2">
+          {/* Header + basic info on user */}
           <Text className="px-4 text-3xl font-bold text-white">
             Personal Info
           </Text>
@@ -80,6 +88,8 @@ const Personal: React.FC = () => {
               </Text>
             </Text>
           </View>
+
+          {/* Role Section */}
           <View className="border-b border-gray-200"></View>
           <TouchableOpacity
             activeOpacity={0.5}
@@ -90,6 +100,11 @@ const Personal: React.FC = () => {
               {formatRole(selfQuery.data.role)}
             </Text>
           </TouchableOpacity>
+
+          {/**
+           * Email Section
+           * NOTE: Emails can't be changed because they are used internally for authentication
+           */}
           <View className="border-b border-gray-200"></View>
           <TouchableOpacity
             activeOpacity={0.5}
@@ -101,6 +116,8 @@ const Personal: React.FC = () => {
                 (selfQuery.data.email!.length > 17 ? "..." : "")}
             </Text>
           </TouchableOpacity>
+
+          {/* Name Section */}
           <View className="border-b border-gray-200"></View>
           <TouchableOpacity
             activeOpacity={0.5}
@@ -112,6 +129,8 @@ const Personal: React.FC = () => {
               {selfQuery.data.name}
             </Text>
           </TouchableOpacity>
+
+          {/* Password Section */}
           <View className="border-b border-gray-200"></View>
           <TouchableOpacity
             activeOpacity={0.5}
@@ -124,6 +143,8 @@ const Personal: React.FC = () => {
             </Text>
           </TouchableOpacity>
         </ScrollView>
+
+        {/* Modal for changing name/password */}
         <Modal
           transparent={true}
           visible={
@@ -137,6 +158,7 @@ const Personal: React.FC = () => {
                 style={{ width: Dimensions.get("screen").width - 32 }}
                 className="h-1/2 rounded-lg border-2 border-gray-200 bg-[#101010]"
               >
+                {/* Button for closing modal */}
                 <View className="flex w-full items-end">
                   <TouchableOpacity
                     onPress={() => {
@@ -153,7 +175,10 @@ const Personal: React.FC = () => {
                     />
                   </TouchableOpacity>
                 </View>
+
+                {/* Form for new name/password */}
                 <View className="flex h-1/2 w-full items-center justify-center">
+                  {/* Label and text input */}
                   <Text className="px-4 text-lg font-bold text-white">
                     Enter your new {modalVisible}:
                   </Text>
@@ -168,6 +193,8 @@ const Personal: React.FC = () => {
                     enterKeyHint="done"
                     placeholder={`Your new ${modalVisible}`}
                   />
+
+                  {/* Submit button */}
                   <Text
                     style={{ width: Dimensions.get("screen").width - 64 }}
                     onPress={() => {

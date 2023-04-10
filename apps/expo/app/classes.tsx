@@ -40,14 +40,19 @@ const ClassCard: React.FC<{ item: Class & { owner: User } }> = ({ item }) => {
   );
 };
 
+// The dashboard containing all of the classes
 const Classes: React.FC = () => {
+  // Get token from the store
   const [token] = useAtom(tokenAtom);
 
+  // Query the information on the user
   const selfQuery = api.user.self.useQuery({ token });
   const classesQuery = api.class.all.useQuery({ token });
 
+  // Initialize router helper
   const router = useRouter();
 
+  // Show loading indicator if the data hasn't fetched yet
   return selfQuery.data && classesQuery.data ? (
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "Classes" }} />
@@ -80,6 +85,7 @@ const Classes: React.FC = () => {
               />
             </View>
           ) : (
+            // Show a piece of text if the user doesn't have any classes
             <Text className="mt-4 w-full text-center text-xl font-semibold text-white">
               No classes
             </Text>

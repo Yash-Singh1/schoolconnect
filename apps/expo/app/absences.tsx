@@ -22,14 +22,18 @@ const ParentAbsences: React.FC = () => {
   const [reason, setReason] = useState("");
   const [dateTill, setDateTill] = useState(new Date());
 
+  // Get token from store
   const [token] = useAtom(tokenAtom);
 
+  // Query for getting the user's children
   const childrenQuery = api.user.children.useQuery({
     token,
   });
 
+  // Mutation for reporting an absence
   const reportAbsence = api.absence.reportAbsence.useMutation({
     async onSuccess() {
+      // Reset form state
       setValue(null);
       setReason("");
       setDateTill(new Date());
@@ -37,6 +41,7 @@ const ParentAbsences: React.FC = () => {
     },
   });
 
+  // When the children query is done loading, set the items for the dropdown
   useEffect(() => {
     if (loading && childrenQuery.data && childrenQuery.data.length > 0) {
       setLoading(false);
@@ -54,9 +59,12 @@ const ParentAbsences: React.FC = () => {
       <Stack.Screen options={{ title: "Absences" }} />
       <View className="w-full h-full flex">
         <View className="h-[88%] mx-2">
+          {/* Header */}
           <Text className="text-white text-3xl font-bold mx-1">
             Report Absence
           </Text>
+          
+          {/* Child to report */}
           <View className="flex mx-2">
             <Text className="text-white text-lg mt-4">Child to report</Text>
             <View className="z-10 mt-1">
@@ -77,6 +85,8 @@ const ParentAbsences: React.FC = () => {
               />
             </View>
           </View>
+
+          {/* Reason of absence */}
           <View className="mx-2 -z-10">
             <Text className="text-white text-lg mt-4">Reason</Text>
             <TextInput
@@ -87,6 +97,8 @@ const ParentAbsences: React.FC = () => {
               onChangeText={setReason}
             />
           </View>
+
+          {/* Date absent till */}
           <View className="flex flex-col items-start -z-10">
             <Text className="text-white text-lg mt-4 mb-1 mx-2">
               Date absent till
@@ -98,6 +110,8 @@ const ParentAbsences: React.FC = () => {
               onChange={(_, value) => value && setDateTill(value)}
             />
           </View>
+
+          {/* Submit button */}
           <Text
             style={{
               width: Dimensions.get("screen").width - 32,

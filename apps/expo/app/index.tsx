@@ -24,16 +24,14 @@ import { TOKEN_KEY, supportedSocialMedia } from "../src/utils/constants";
 
 // Main landing page when logged in
 const Landing: React.FC = () => {
+  // Get token from store
   const [token] = useAtom(tokenAtom);
 
-  const selfQuery = api.user.self.useQuery({
-    token,
-  });
+  // Query information on the user
+  const selfQuery = api.user.self.useQuery({ token });
+  const schoolQuery = api.school.get.useQuery({ token });
 
-  const schoolQuery = api.school.get.useQuery({
-    token,
-  });
-
+  // Query the social media that the user is using
   const socialMedia = useMemo(() => {
     if (!schoolQuery.data || !schoolQuery.data.social) return null;
     for (const key of Object.keys(supportedSocialMedia)) {
@@ -47,23 +45,32 @@ const Landing: React.FC = () => {
     }
   }, [schoolQuery.data]);
 
+  // Mutation to edit the social media (admin only)
   const utils = api.useContext();
   const editSocialMutation = api.school.editSocial.useMutation({
     onSuccess() {
+      // Reset form data
       setProfileURL("");
       setTab("social");
+
+      // Invalidate the current query to refetch
       void utils.school.invalidate();
     },
   });
 
+  // Current tab shown
   const [tab, setTab] = useState<"news" | "social" | "edit">("news");
+
+  // Form data for editing the social
   const [profileURL, setProfileURL] = useState("");
 
+  // Show a loading indicator if the data is still fetching
   return selfQuery.data && schoolQuery.data ? (
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "Home Page" }} />
       <View className="flex h-full w-full flex-col content-center items-center justify-end self-center">
         <View className="h-[88%] w-full p-2">
+          {/* Header */}
           <Text className="mx-auto pb-2 text-center text-2xl font-bold text-white">
             Welcome{" "}
             <Text className="text-pink-400">
@@ -71,6 +78,8 @@ const Landing: React.FC = () => {
             </Text>
             !
           </Text>
+
+          {/* Tabs bar for new, social, and editing social */}
           <View className="flex flex-row gap-x-4">
             <TouchableOpacity
               className="flex flex-row items-center pb-1 px-1 border-b-pink-400"
@@ -110,7 +119,9 @@ const Landing: React.FC = () => {
               </TouchableOpacity>
             ) : null}
           </View>
+
           {tab === "news" ? (
+            // Recent announcements tab, uses Announcments component
             <>
               <Text className="w-full pb-2 text-center text-xl font-bold text-white mt-2">
                 Recent Announcements
@@ -118,6 +129,7 @@ const Landing: React.FC = () => {
               <Announcements />
             </>
           ) : tab === "social" ? (
+            // Social tab, embeds configured social
             <WebView
               className="mt-2"
               source={{
@@ -125,7 +137,9 @@ const Landing: React.FC = () => {
               }}
             />
           ) : (
+            // Editing social tab (admin only)
             <View className="mt-2">
+              {/* Input for social profile URL and it's form validation */}
               <TextInput
                 className="mx-4 mt-2 mb-1 rounded bg-white/10 p-2 text-white"
                 placeholder="URL to Social Media Profile"
@@ -139,6 +153,8 @@ const Landing: React.FC = () => {
                   {editSocialMutation.error.data.zodError.fieldErrors.social[0]}
                 </Text>
               )}
+
+              {/* Submit button and info */}
               <Text
                 onPress={() => {
                   editSocialMutation.mutate({

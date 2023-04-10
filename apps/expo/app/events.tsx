@@ -1,6 +1,6 @@
 // Events page, displays calendar with posted events
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal,
   Text,
@@ -29,12 +29,14 @@ import { Navbar } from "../src/components/Navbar";
 import { tokenAtom } from "../src/store";
 import { api, type RouterOutputs } from "../src/utils/api";
 
+// Data type for an event to be displayed
 type DataEntry = {
   hour: string;
   duration: string;
   title: string;
 };
 
+// Temporary atom to store events data fetching response
 const eventsAtom = atom<RouterOutputs["events"]["all"]>([]);
 
 // Helper function for formatting time for event
@@ -57,12 +59,13 @@ function formatTwo(firstDate: Date, secondDate: Date): string {
 const AgendaItem: React.FC<{
   item: DataEntry;
 }> = ({ item }) => {
+  // Make use of the atom storing the events
   const [events] = useAtom(eventsAtom);
 
-  const event = useMemo(() => {
-    return events[Number(item.title)]!;
-  }, [events, item.title]);
+  // Memoize the event we are currently displaying
+  const event = events[Number(item.title)]!;
 
+  // Modal state
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
@@ -71,6 +74,7 @@ const AgendaItem: React.FC<{
       onPress={() => setModalVisible(true)}
       className="border-b border-[lightgray] bg-white pb-4"
     >
+      {/* Card for the event */}
       <View className="ml-4 flex flex-col">
         <Text className="text-lg font-bold text-black">{event.name}</Text>
         <Text className="mb-1 text-sm font-light italic text-[lightgray]">
@@ -82,6 +86,8 @@ const AgendaItem: React.FC<{
           </Text>
         </View>
       </View>
+
+      {/* Modal for displaying more information on the event */}
       <Modal transparent={true} visible={modalVisible} animationType="slide">
         <SafeAreaView>
           <View className="flex h-full w-full flex-col items-center justify-end">
@@ -115,18 +121,27 @@ const AgendaItem: React.FC<{
   );
 };
 
+// Calendar and agenda list containing all the events
 const Events: React.FC = () => {
+  // Get token from store
   const [token] = useAtom(tokenAtom);
+
+  // Setter for temporary state on events data fetching result
   const [_, setEvents] = useAtom(eventsAtom);
 
+  // Get list of all events
   const eventsQuery = api.events.all.useQuery({
     token,
     includeSource: true,
   });
+
+  // Get information on the user
   const selfQuery = api.user.self.useQuery({ token });
 
+  // Initialize router helper
   const router = useRouter();
 
+  // All of the events preprocessed for input into react-native-calendars
   const [eventsGrouped, setEventsGrouped] = useState<
     | null
     | {
@@ -136,10 +151,13 @@ const Events: React.FC = () => {
   >(null);
   const [markedDates, setMarkedDates] = useState<MarkedDates | null>(null);
 
+  // Preprocessed the events for usage in calendars when fetched
   useEffect(() => {
+    // Initialize event query data
     if (!eventsQuery.data) return;
-    const marked: MarkedDates = {};
     setEvents(eventsQuery.data);
+
+    const marked: MarkedDates = {};
 
     // Some messy manipulation of API data to get it into the format the calendar API wants
     const hs = eventsQuery.data.reduce<Record<string, DataEntry[]>>(
@@ -157,19 +175,24 @@ const Events: React.FC = () => {
       },
       {},
     );
-
     const keys = Object.keys(hs).sort();
+
+    // Set the preprocessed data into the state
     setMarkedDates(marked);
     setEventsGrouped(keys.map((key) => ({ title: key, data: hs[key]! })));
   }, [eventsQuery.data]);
 
+  // Show a loading indicator if the data is still fetching
   return eventsQuery.data && selfQuery.data ? (
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "Events" }} />
       <View className="flex h-full w-full items-center justify-center">
         <View className="h-[88%] w-full">
           <View className="flex flex-row">
+            {/* Header */}
             <Text className="pl-4 text-2xl font-bold text-white">Events</Text>
+
+            {/* Option to create another event */}
             {selfQuery.data.role === "admin" ||
             selfQuery.data.role === "teacher" ? (
               <TouchableOpacity
@@ -181,6 +204,8 @@ const Events: React.FC = () => {
               </TouchableOpacity>
             ) : null}
           </View>
+
+          {/* Display calendars and agenda list */}
           {eventsGrouped ? (
             <CalendarProvider
               date={new Date().toISOString().split("T")[0]!}

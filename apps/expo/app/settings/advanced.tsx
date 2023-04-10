@@ -11,11 +11,14 @@ import { api } from "../../src/utils/api";
 import { resetStack, type NavigatorOverride } from "../../src/utils/resetStack";
 
 const Advanced: React.FC = () => {
+  // Initialize router helper
   const router = useRouter();
   const navigation = useNavigation() as NavigatorOverride;
 
+  // Get token from store
   const [token] = useAtom(tokenAtom);
 
+  // Mutation for deleting the user
   const deleteMutation = api.user.delete.useMutation();
 
   return (
@@ -23,9 +26,12 @@ const Advanced: React.FC = () => {
       <Stack.Screen options={{ title: "Advanced Settings" }} />
       <View className="flex h-full w-full flex-col content-center items-center justify-end self-center">
         <ScrollView className="h-[88%] w-full pt-2">
+          {/* Header */}
           <Text className="px-4 text-3xl font-bold text-white">
             Advanced Settings
           </Text>
+
+          {/* Delete User Button */}
           <TouchableOpacity
             activeOpacity={0.5}
             className="flex mt-4 w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-3"

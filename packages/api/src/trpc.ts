@@ -118,7 +118,7 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
   }
 
   throw new TRPCError({
-    code: "UNAUTHORIZED",
+    code: "NOT_FOUND",
     message: "User not found in database",
   });
 });

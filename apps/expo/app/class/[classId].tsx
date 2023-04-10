@@ -16,10 +16,14 @@ import { Navbar } from "../../src/components/Navbar";
 import { tokenAtom } from "../../src/store";
 import { api } from "../../src/utils/api";
 
+// Initialize dayjs for relative time
 dayjs.extend(relativeTime);
 dayjs.locale("en");
 
+// Card to show for each post inside a class
 const PostCard: React.FC<{ item: Post & { author: User } }> = ({ item }) => {
+  // NOTE: We don't want to do any queries here because that would lead us to the n+1 query problem
+
   return (
     <TouchableOpacity
       activeOpacity={0.5}
@@ -44,10 +48,13 @@ const PostCard: React.FC<{ item: Post & { author: User } }> = ({ item }) => {
 };
 
 const Board: React.FC = () => {
+  // Get token from store
   const [token] = useAtom(tokenAtom);
 
+  // Initialize router helper
   const router = useRouter();
 
+  // Get classId from the URL
   const { classId } = useSearchParams();
 
   // Class query for class information
@@ -65,17 +72,24 @@ const Board: React.FC = () => {
   // Self query for the user's role
   const selfQuery = api.user.self.useQuery({ token });
 
+  // Show a loading screen while the queries are loading
   return selfQuery.data && postQuery.data && classQuery.data ? (
     <SafeAreaView className="bg-[#101010]">
+      {/* Top stack bar */}
       <Stack.Screen
         options={{ title: `Class ${classQuery.data.name || ""}` }}
       />
+
+      {/* Content */}
       <View className="flex h-full w-full flex-col">
         <View className="h-[88%]">
+          {/* Header for class, including owner and name of class */}
           <Text className="w-full text-center text-2xl font-bold text-white">
             {classQuery.data.name}
             {classQuery.data.owner ? ` - ${classQuery.data.owner}` : ""}
           </Text>
+
+          {/* Ability for teachers to adjust members in a class */}
           {selfQuery.data.role === "teacher" && (
             <TouchableOpacity
               activeOpacity={0.5}
@@ -87,6 +101,8 @@ const Board: React.FC = () => {
               </Text>
             </TouchableOpacity>
           )}
+
+          {/* List of all posts and ability for students and teachers to create posts */}
           <View className="mb-4 mt-4 flex flex-row items-center">
             <Text className="ml-8 text-2xl font-bold text-white">Posts</Text>
             <TouchableOpacity
@@ -97,6 +113,7 @@ const Board: React.FC = () => {
               <FontAwesomeIcon icon="plus" size={24} color="white" />
             </TouchableOpacity>
           </View>
+
           {/* TODO: Pagination for posts */}
           <FlashList
             data={postQuery.data}

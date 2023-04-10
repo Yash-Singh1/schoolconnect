@@ -13,13 +13,15 @@ import { api } from "../../src/utils/api";
 import { getPushToken } from "../../src/utils/getPushToken";
 
 const NotificationSettings: React.FC = () => {
-  const [isEnabled, setIsEnabled] = useState<boolean>(false);
-
+  // Get token from store
   const [token] = useAtom(tokenAtom);
 
+  // Transition states for getting the user's push token
   const [pushToken, setPushToken] = useState("");
   const [evaluated, setEvaluated] = useState(false);
+  const [isEnabled, setIsEnabled] = useState<boolean>(false);
 
+  // Mutations for registering and unregistering devices, and a query for checking if the device is registered
   const registerDeviceMutation = api.user.registerDevice.useMutation();
   const unregisterDeviceMutation = api.user.unregisterDevice.useMutation();
   const devicePresentQuery = api.user.devicePresent.useQuery(
@@ -36,6 +38,7 @@ const NotificationSettings: React.FC = () => {
     },
   );
 
+  // Get the user's push token and check if the device is registered
   useEffect(() => {
     async function pushTokenWork() {
       const newPushToken = await getPushToken();
@@ -50,6 +53,7 @@ const NotificationSettings: React.FC = () => {
     void pushTokenWork();
   }, []);
 
+  // Toggle the device's registration
   const toggleSwitch = useCallback(async () => {
     const pushToken = await getPushToken();
     if (!pushToken) {
@@ -69,9 +73,12 @@ const NotificationSettings: React.FC = () => {
       <Stack.Screen options={{ title: "Notifications" }} />
       <View className="w-full h-full">
         <ScrollView className="h-[88%] w-full pt-2">
+          {/* Header */}
           <Text className="px-4 text-3xl font-bold text-white">
             Notifications
           </Text>
+
+          {/* Switch for enabling and disabling notifications */}
           <View className="mt-4 flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-2">
             <View className="flex flex-row justify-between items-center w-full">
               <Text className="text-lg font-bold text-white">

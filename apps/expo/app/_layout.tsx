@@ -9,6 +9,7 @@ import { StatusBar } from "expo-status-bar";
 import { TRPCProvider } from "../src/utils/api";
 import "../src/icons";
 
+// Set notification handler for the application
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -19,8 +20,11 @@ Notifications.setNotificationHandler({
 
 const RootLayout = () => {
   return (
+    // Initialize TRPC Client wrapper
     <TRPCProvider>
+      {/* Initialize SafeAreaProvider for preventing intersection with system UI */}
       <SafeAreaProvider>
+        {/* Initialize routing system */}
         <Stack
           screenOptions={{
             headerStyle: {

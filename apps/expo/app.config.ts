@@ -25,6 +25,7 @@ const defineConfig = (): ExpoConfig => ({
     bundleIdentifier: "com.expo.schoolconnect",
     buildNumber: "1.0.0",
   },
+  jsEngine: "hermes",
   android: {
     adaptiveIcon: {
       foregroundImage: "./assets/icon.png",

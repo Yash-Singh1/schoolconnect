@@ -27,7 +27,7 @@ async function retrieveAuthToken(code: string) {
    */
   const accessToken: AccessToken = await client.getToken({
     code,
-    redirect_uri: "exp://10.0.0.26:19000",
+    redirect_uri: "schoolconnect://10.0.0.62:19000",
   });
   const userInfo = await getGitHubUser(
     accessToken.token.access_token as string,

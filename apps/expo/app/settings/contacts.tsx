@@ -13,6 +13,7 @@ const Contacts: React.FC = () => {
       <Stack.Screen options={{ title: "Contacts" }} />
       <View className="flex h-full w-full flex-col content-center items-center justify-end self-center">
         <ScrollView className="h-[88%] w-full pt-2">
+          {/* Static page with information on the contacts */}
           <Text className="w-full px-4 text-center text-4xl font-bold text-white">
             Contacts
           </Text>

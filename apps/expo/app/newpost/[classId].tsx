@@ -13,12 +13,15 @@ import { tokenAtom } from "../../src/store";
 import { api } from "../../src/utils/api";
 
 const NewPost: React.FC = () => {
+  // Form state
   const [file, setFile] = useState<ImagePicker.ImagePickerResult | null>(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
+  // Get token from store
   const [token] = useAtom(tokenAtom);
 
+  // Initialize callback when image is selected
   const selectDocument = useCallback(async () => {
     try {
       const response = await ImagePicker.launchImageLibraryAsync({
@@ -31,21 +34,30 @@ const NewPost: React.FC = () => {
     }
   }, []);
 
+  // Initialize router helper
   const router = useRouter();
 
+  // Get class id from URL
   const { classId } = useSearchParams();
 
+  // Get class data
   const classQuery = api.class.get.useQuery({
     token,
     classId: classId as string,
   });
 
+  // Create post mutation
   const util = api.useContext();
   const createPost = api.post.create.useMutation({
     async onSuccess() {
+      // Reset form data
       setTitle("");
       setContent("");
+
+      // Invalidate post queries
       await util.post.all.invalidate();
+
+      // Go back to class page
       router.back();
     },
   });
@@ -54,7 +66,10 @@ const NewPost: React.FC = () => {
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "New Post" }} />
       <View className="flex h-full w-full flex-col items-center justify-center">
-        {/* Form for creating the post */}
+        {/** 
+         * Form for creating the post
+         * The zodError field is set by the server when the request fails validation
+         */}
         <Text className="ml-8 mb-2 w-full text-left text-2xl text-white">
           Posting to {classQuery.data?.name}
         </Text>

@@ -12,11 +12,14 @@ import { tokenAtom } from "../../src/store";
 import { api } from "../../src/utils/api";
 
 const Linked: React.FC = () => {
+  // Get token from store
   const [token] = useAtom(tokenAtom);
 
+  // Queries for getting the user's data
   const selfQuery = api.user.self.useQuery({ token });
   const schoolQuery = api.school.get.useQuery({ token });
 
+  // Query for getting the user's linked accounts
   const linkedAccountsQuery = api.user.linkedAccounts.useQuery({ token });
 
   return selfQuery.data && schoolQuery.data && linkedAccountsQuery.data ? (
@@ -27,6 +30,8 @@ const Linked: React.FC = () => {
           <Text className="px-4 text-3xl font-bold text-white">
             Linked Accounts
           </Text>
+
+          {/* List of socials to link with */}
           <View className="mt-2 flex w-full flex-row items-center justify-between bg-[#2c2c2e] px-4 py-2">
             <View className="flex flex-row items-center">
               <View className="mr-2 rounded-full bg-[#1c1c1e] p-1">

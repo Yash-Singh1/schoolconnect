@@ -1,4 +1,4 @@
-// Modify User Page
+// Modify User Page -- provided to admin for managing their school's users
 
 import { useState } from "react";
 import { Dimensions, ScrollView, Text, TextInput, View } from "react-native";
@@ -13,8 +13,10 @@ import { tokenAtom } from "../../src/store";
 import { api, type RouterInputs } from "../../src/utils/api";
 
 const ModifyUser: React.FC = () => {
+  // Get the user ID from the URL
   const params = useSearchParams();
 
+  // Get token from store
   const [token] = useAtom(tokenAtom);
 
   // Form data states
@@ -23,6 +25,7 @@ const ModifyUser: React.FC = () => {
   const [newName, setNewName] = useState<string | null>(null);
   const [newEmail, setNewEmail] = useState<string | null>(null);
 
+  // Query for getting the user's data
   const selfQuery = api.user.self.useQuery(
     {
       userId: params.userId as string,
@@ -30,6 +33,7 @@ const ModifyUser: React.FC = () => {
     },
     {
       onSuccess(data) {
+        // Populate form data if user exists
         if (data) {
           setRoleValue(data.role);
           setNewName(data.name || "");
@@ -43,23 +47,32 @@ const ModifyUser: React.FC = () => {
     },
   );
 
+  // Initialize router helper
   const router = useRouter();
 
+  // Mutation for updating the user
   const util = api.useContext();
   const updateUserMutation = api.user.update.useMutation({
     async onSuccess() {
+      // Invalidate the user query to update the UI
       await util.user.invalidate();
+
+      // Navigate back to the admin members page
       router.back();
     },
   });
 
+  // Show loading indicator if query is loading
   return selfQuery.data && roleValue ? (
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "Modify User" }} />
       <View className="w-full h-full">
         <ScrollView className="w-full h-[88%] px-4">
+          {/* Header */}
           <Text className="text-white text-3xl font-bold">Modify User</Text>
+
           <View className="flex gap-y-1 mt-2">
+            {/* Role Dropdown */}
             <Text className="mt-4 text-white text-lg">Role</Text>
             <View className="z-10">
               <DropDownPicker
@@ -90,6 +103,8 @@ const ModifyUser: React.FC = () => {
               />
             </View>
           </View>
+
+          {/* Name Input */}
           <View className="flex gap-y-1 mt-2">
             <Text className="mt-4 text-white text-lg">Name</Text>
             <TextInput
@@ -103,6 +118,8 @@ const ModifyUser: React.FC = () => {
               placeholder="New name"
             />
           </View>
+
+          {/* Email Input -- only for non-registered pending users */}
           {selfQuery.data.pending ? (
             <View className="flex gap-y-1 mt-2">
               <Text className="mt-4 text-white text-lg">Email</Text>
@@ -114,10 +131,12 @@ const ModifyUser: React.FC = () => {
                 onChangeText={setNewEmail}
                 // @ts-expect-error -- TODO: Contribute to react-native typings, they support enterKeyHint but didn't document it
                 enterKeyHint="done"
-                placeholder="New name"
+                placeholder="New email"
               />
             </View>
           ) : null}
+
+          {/* Reset form data button */}
           <Text
             onPress={() => {
               setNewName(selfQuery.data!.name || "");
@@ -128,6 +147,8 @@ const ModifyUser: React.FC = () => {
           >
             Reset
           </Text>
+
+          {/* Update user button -- show loading disabled button if mutation currently running */}
           {updateUserMutation.isLoading ? (
             <LoadingWrapper
               small
