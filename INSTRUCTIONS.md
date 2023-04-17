@@ -42,14 +42,50 @@ To do this, simply navigate to [Imgbb](https://imgbb.com/) and create an account
 
 To get your QStash keys, create a new Upstash account and navigate to the [QStash console](https://console.upstash.com/qstash). Then, copy the keys underneath **Details > Request Builder** into the `.env` file.
 
-### 6. Modify Platform
+### 6. Find Device
 
-Make sure you have one of [Android Studio Emulator](https://docs.expo.dev/workflow/android-studio-emulator/) or [XCode](https://docs.expo.dev/workflow/ios-simulator/) setup. Then if you would like to use `android` instead of `ios`, modify the `scripts.dev` field in the `package.json`:
+The process of this step depends on whether you choose to run the application on a physical device or an emulator.
 
-```diff
--    "dev": "expo start",
-+    "dev": "expo start --android",
+### Emulator
+
+If you are using an emulator for running the application, follow the instructions to setup your emulator on the Expo documentation:
+
+- [IOS Simulator](https://docs.expo.dev/workflow/ios-simulator/)
+- [Android Studio Emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+
+Starting up the simulator with Turborepo is a little complicated since Turborepo disables interactivity to allow synchronization of commands. Instead of straight up running `pnpm run dev`, first run the following:
+
+```sh
+cd apps/expo
+pnpm expo start
 ```
+
+Then when prompted, press the corresponding keys to start up your simulator(s) (<kbd>a</kbd> for Android and <kbd>i</kbd> for IOS). Once the simulator is started and the application has loaded, end the terminal process with <kbd>Ctrl</kbd>+<kbd>c</kbd>, then go back to the root of the repository and run the dev script:
+
+```sh
+cd ../..
+pnpm run dev
+```
+
+Now refresh the application by accessing the [Developer Menu](https://docs.expo.dev/debugging/tools/#developer-menu) and clicking the refresh button. We do this so the server connection can be reestablished.
+
+### Physical Device
+
+If you are running the application on a physical device, the first step is to install [Expo Go](https://docs.expo.dev/get-started/expo-go/) from your application distribution store on your physical device. Once you have that installed, you can first go into the application directory and start up Expo so we can get the QR Code:
+
+```sh
+cd apps/expo
+pnpm expo start
+```
+
+When Expo prints out the QR code, scan it with your physical device (Camera app on IOS and Expo Go on Android). This will automatically open up the application. Now, end the running process in your terminal and run the following:
+
+```sh
+cd ../..
+pnpm run dev
+```
+
+This will restart the process, but this time with the server and the database up and running. Now, reload the application on your device through the [Developer Menu](https://docs.expo.dev/debugging/tools/#developer-menu).
 
 ### 7. Start the server
 
