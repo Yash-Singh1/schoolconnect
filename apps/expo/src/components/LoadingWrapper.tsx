@@ -22,6 +22,7 @@ type LoadingWrapperProps = {
 };
 
 const LoadingWrapper: React.FC<LoadingWrapperProps> = (props = {}) => {
+  // Setup the animation
   const spinAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -48,7 +49,9 @@ const LoadingWrapper: React.FC<LoadingWrapperProps> = (props = {}) => {
   });
 
   return props.small ? (
+    // Make the loading wrapper inline
     <View className={props.spinClass} style={props.spinStyle || {}}>
+      {/* Rotate a circle notch with the given animation */}
       <Animated.View
         style={{
           transform: [
@@ -64,6 +67,7 @@ const LoadingWrapper: React.FC<LoadingWrapperProps> = (props = {}) => {
       {props.children || null}
     </View>
   ) : (
+    // Make the loading wrapper fullscreen
     <SafeAreaView className={`bg-[#101010] ${props.safeAreaViewClass || ""}`}>
       {props.stackName && <Stack.Screen options={{ title: props.stackName }} />}
       <Animated.View

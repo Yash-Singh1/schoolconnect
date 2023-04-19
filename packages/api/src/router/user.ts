@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
+// This router contains procedures related to user information
 export const userRouter = createTRPCRouter({
   // Receives information on a user
   self: protectedProcedure
@@ -14,19 +15,25 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
+      // If a userId is provided, then we are viewing another user
       if (input.userId) {
+        // Make sure user is staff
         if (ctx.user.role === "student" || ctx.user.role === "parent") {
           throw new TRPCError({
             code: "UNAUTHORIZED",
             message: "Role is not permitted to view another user",
           });
         }
+
+        // Give information on that user
         return await ctx.prisma.user.findUnique({
           where: {
             id: input.userId,
           },
         });
       }
+
+      // Otherwise, we are looking for information on ourself
       return ctx.user;
     }),
 
@@ -40,18 +47,24 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Make sure user is not a student
       if (ctx.user.role === "student") {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Role is not permitted to change name",
         });
       }
+
+      // If a userId is provided, then we are changing another user's name
+      // In this case, we need to make sure the user is admin
       if (input.userId && ctx.user.role !== "admin") {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Role is not permitted to change another user's name",
         });
       }
+
+      // Change the name in the database
       await ctx.prisma.user.update({
         where: {
           id: input.userId || ctx.user.id,
@@ -71,6 +84,7 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Change the password in the database
       await ctx.prisma.user.update({
         where: {
           id: ctx.user.id,
@@ -93,6 +107,7 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Make sure user is admin
       if (ctx.user.role !== "admin") {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -100,11 +115,14 @@ export const userRouter = createTRPCRouter({
         });
       }
 
+      // Make sure user exists
       const userFound = await ctx.prisma.user.findUnique({
         where: {
           id: input.userId,
         },
       });
+
+      // Throw error if user does not exist
       if (!userFound) {
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -112,6 +130,7 @@ export const userRouter = createTRPCRouter({
         });
       }
 
+      // Update the user in the database
       await ctx.prisma.user.update({
         where: {
           id: input.userId,
@@ -129,19 +148,25 @@ export const userRouter = createTRPCRouter({
   linkedAccounts: protectedProcedure
     .input(z.object({ token: z.string().min(1) }))
     .query(async ({ ctx }) => {
+      // Initialize an object with all providers set to false
       const linked = {
         github: false,
         facebook: false,
         google: false,
       };
+
+      // Get all accounts for the user
       const accounts = await ctx.prisma.account.findMany({
         where: {
           userId: ctx.user.id,
         },
       });
+
+      // Set the providers to true if the user has an account for that provider
       for (const account of accounts) {
         linked[account.provider as keyof typeof linked] = true;
       }
+
       return linked;
     }),
 
@@ -154,12 +179,16 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Make sure user is admin if we are deleting another user
       if (ctx.user.role !== "admin" && input.userId) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Role is not permitted to delete other's account",
         });
       }
+
+      // Delete the user from the database
+      // Effects are not cascaded, so we can have archives of deleted users
       await ctx.prisma.user.delete({
         where: {
           id: input.userId || ctx.user.id,
@@ -171,12 +200,14 @@ export const userRouter = createTRPCRouter({
   registerDevice: protectedProcedure
     .input(z.object({ token: z.string().min(1), device: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      // Make sure device is not already registered to another user
       const deviceFound = await ctx.prisma.device.findFirst({
         where: {
           pushToken: input.device,
         },
       });
 
+      // If device is already registered to another user, change registration to new user
       if (deviceFound) {
         if (deviceFound.userId !== ctx.user.id) {
           await ctx.prisma.device.update({
@@ -187,8 +218,11 @@ export const userRouter = createTRPCRouter({
               userId: ctx.user.id,
             },
           });
+        } else {
+          // If device is already registered to the user, do nothing
         }
       } else {
+        // If device is not registered, register it
         await ctx.prisma.device.create({
           data: {
             pushToken: input.device,
@@ -202,12 +236,14 @@ export const userRouter = createTRPCRouter({
   unregisterDevice: protectedProcedure
     .input(z.object({ token: z.string().min(1), device: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
+      // Make sure device is registered to the user
       const deviceFound = await ctx.prisma.device.findFirst({
         where: {
           pushToken: input.device,
         },
       });
 
+      // If device is registered to the user, unregister it from database
       if (deviceFound) {
         await ctx.prisma.device.delete({
           where: {
@@ -221,14 +257,19 @@ export const userRouter = createTRPCRouter({
   devicePresent: protectedProcedure
     .input(z.object({ token: z.string().min(1), device: z.string().min(1) }))
     .query(async ({ ctx, input }) => {
+      // Make sure device is registered to the user
       const deviceFound = await ctx.prisma.device.findFirst({
         where: {
           pushToken: input.device,
         },
       });
+
+      // If device is registered to the user, return true
       if (deviceFound) {
         return true;
       }
+
+      // If device is not registered to the user, return false
       return false;
     }),
 
@@ -242,6 +283,7 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Make sure user is admin
       if (ctx.user.role !== "admin") {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -262,6 +304,7 @@ export const userRouter = createTRPCRouter({
         });
       }
 
+      // Create the user in the database
       await ctx.prisma.user.create({
         data: {
           email: input.email,
@@ -272,6 +315,7 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
+  // This procedure gets the children of a user
   children: protectedProcedure
     .input(
       z.object({
@@ -280,6 +324,7 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
+      // Make sure user is admin if we are querying another user
       if (input.userId && ctx.user.role !== "admin") {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -287,6 +332,7 @@ export const userRouter = createTRPCRouter({
         });
       }
 
+      // Return the children of the user from the database
       return (
         await ctx.prisma.user.findUniqueOrThrow({
           where: {
@@ -299,6 +345,7 @@ export const userRouter = createTRPCRouter({
       ).children;
     }),
 
+  // This procedure adds a user as a child of another user
   addChild: protectedProcedure
     .input(
       z.object({
@@ -308,6 +355,7 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Make sure user is admin
       if (ctx.user.role !== "admin") {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -315,12 +363,14 @@ export const userRouter = createTRPCRouter({
         });
       }
 
+      // Make sure child exists
       const child = await ctx.prisma.user.findUniqueOrThrow({
         where: {
           email: input.childEmail,
         },
       });
 
+      // Update user in database to add child
       await ctx.prisma.user.update({
         where: {
           id: input.userId,
@@ -335,6 +385,7 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
+  // This procedure removes a user as a child of another user
   removeChild: protectedProcedure
     .input(
       z.object({
@@ -344,6 +395,7 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Make sure user is admin
       if (ctx.user.role !== "admin") {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -351,6 +403,7 @@ export const userRouter = createTRPCRouter({
         });
       }
 
+      // Update user in database to remove child
       await ctx.prisma.user.update({
         where: {
           id: input.userId,

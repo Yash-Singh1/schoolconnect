@@ -13,6 +13,7 @@ import { tokenAtom } from "../src/store";
 import { api } from "../src/utils/api";
 
 const NewEvent: React.FC = () => {
+  // Form data states
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [start, setStart] = useState(new Date());
@@ -20,21 +21,29 @@ const NewEvent: React.FC = () => {
   const [classId, setClassId] = useState<string | null>(null);
   const [classDropdownOpen, setClassDropdownOpen] = useState(false);
 
+  // Get token from store
   const [token] = useAtom(tokenAtom);
 
+  // Initialize router helper
   const router = useRouter();
 
   // Mutation to create a new class, invalidates current cached data
   const util = api.useContext();
   const createEvent = api.events.create.useMutation({
     async onSuccess() {
+      // Reset form state
       setTitle("");
       setContent("");
+
+      // Invalidate cache on events
       await util.events.all.invalidate();
+      
+      // Navigate back to the events page
       router.back();
     },
   });
 
+  // Query on all classes and self
   const selfQuery = api.user.self.useQuery({ token });
   const classesQuery = api.class.all.useQuery(
     {
@@ -45,14 +54,17 @@ const NewEvent: React.FC = () => {
     },
   );
 
+  // Dropdown items
   const [items, setItems] = useState<ItemType<string>[]>([]);
 
+  // Fetch classes only if the user is a teacher, to prevent unnecessary requests
   useEffect(() => {
     if (selfQuery.data && selfQuery.data.role === "teacher") {
       void classesQuery.refetch();
     }
   }, [selfQuery.data]);
 
+  // Set dropdown items when query successful
   useEffect(() => {
     if (classesQuery.data) {
       setItems(
@@ -64,11 +76,19 @@ const NewEvent: React.FC = () => {
     }
   }, [classesQuery.data]);
 
+  // Show loading screen if data is not ready
   return selfQuery.data &&
     (selfQuery.data.role === "teacher" ? classesQuery.data : true) ? (
     <SafeAreaView className="bg-[#101010]">
+      {/* Router Title */}
       <Stack.Screen options={{ title: "New Event" }} />
+
+      {/**
+       * Form to create a new event
+       * `zodError` is server validation response
+       */}
       <View className="flex h-full w-full flex-col items-center justify-center">
+        {/* Event title */}
         <TextInput
           className="mx-4 mb-1 rounded bg-white/10 p-2 text-white"
           style={{ width: Dimensions.get("screen").width - 32 }}
@@ -82,6 +102,8 @@ const NewEvent: React.FC = () => {
             {createEvent.error.data.zodError.fieldErrors.title[0]}
           </Text>
         )}
+
+        {/* Event information */}
         <TextInput
           className="mx-4 mb-1 rounded bg-white/10 p-2 text-white"
           style={{ width: Dimensions.get("screen").width - 32 }}
@@ -95,6 +117,8 @@ const NewEvent: React.FC = () => {
             {createEvent.error.data.zodError.fieldErrors.description[0]}
           </Text>
         )}
+
+        {/* Event Start datetime */}
         <View
           className="my-2 flex flex-row justify-between items-center"
           style={{ width: Dimensions.get("screen").width - 32 }}
@@ -107,6 +131,8 @@ const NewEvent: React.FC = () => {
             onChange={(_, value) => value && setStart(value)}
           />
         </View>
+
+        {/* Event End datetime */}
         <View
           className="my-2 flex flex-row justify-between items-center"
           style={{ width: Dimensions.get("screen").width - 32 }}
@@ -119,6 +145,8 @@ const NewEvent: React.FC = () => {
             onChange={(_, value) => value && setEnd(value)}
           />
         </View>
+
+        {/* If the person is a teacher, dropwdown for selecting class to post event into */}
         {selfQuery.data.role === "teacher" ? (
           <View className="z-10 mx-4">
             <DropDownPicker
@@ -132,6 +160,8 @@ const NewEvent: React.FC = () => {
             />
           </View>
         ) : null}
+
+        {/* Submit button */}
         {createEvent.isLoading ? (
           <LoadingWrapper
             small

@@ -1,0 +1,1 @@
+This folder contains several assets and sketches to accommodate the documentation.

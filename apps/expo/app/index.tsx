@@ -184,6 +184,8 @@ const Landing: React.FC = () => {
 const Announcements: React.FC = () => {
   const [token] = useAtom(tokenAtom);
 
+  // Fetch recent events and posts
+
   const recentEventsQuery = api.events.all.useQuery({
     token,
     take: 10,
@@ -196,6 +198,8 @@ const Announcements: React.FC = () => {
     take: 10,
     upOnly: true,
   });
+
+  // Combine the two into one array, sorted by date using two pointers (linear time)
 
   const recentAnnouncements = useMemo(() => {
     if (recentEventsQuery.data && recentPostsQuery.data) {
@@ -222,6 +226,8 @@ const Announcements: React.FC = () => {
     }
   }, [recentEventsQuery.data, recentPostsQuery.data]);
 
+
+  // Render the announcements
   return recentAnnouncements ? (
     recentAnnouncements.length ? (
       <View
@@ -238,6 +244,7 @@ const Announcements: React.FC = () => {
         />
       </View>
     ) : (
+      // No view when there aren't any announcements
       <Text className="text-white text-center mt-2">
         No Recent Announcements
       </Text>
@@ -245,7 +252,7 @@ const Announcements: React.FC = () => {
   ) : null;
 };
 
-// Helper function checking if the union of an Event and a Post is a Event
+// Helper function checking if the union of an Event and a Post is a Event (acts as a type guard)
 const isEvent = (
   item: RouterOutputs["events" | "post"]["all"][number],
 ): item is RouterOutputs["events"]["all"][number] => {
@@ -259,6 +266,7 @@ const isEvent = (
 const Announcement: React.FC<{
   item: RouterOutputs["events" | "post"]["all"][number];
 }> = ({ item }) => {
+  // Restrict item to be a Event or a Post using type guard helper
   const eventItem = isEvent(item);
 
   return (
@@ -268,9 +276,12 @@ const Announcement: React.FC<{
       }}
       className="mb-2 rounded-lg border-2 border-violet-400/50 bg-violet-400/40 p-2"
     >
+      {/* Title */}
       <Text className="text-base font-bold text-white">
         {eventItem ? item!.name : item.title}
       </Text>
+
+      {/* Source */}
       <Text className="italic text-white">
         {eventItem
           ? "School" in item!
@@ -286,6 +297,7 @@ const Announcement: React.FC<{
 const Login: React.FC = () => {
   const router = useRouter();
 
+  // Display options for role to choose and redirect to respective page
   return (
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "Landing" }} />
@@ -341,11 +353,15 @@ const Login: React.FC = () => {
 
 // Index page, decides whether to display landing page or login page based on API verification
 const Index: React.FC = () => {
+  // Get token from store
   const [token, setToken] = useAtom(tokenAtom);
+  
+  // State on whether the token is verified
   const [verifyStatus, setVerifyStatus] = useState<
     "loading" | "error" | "success"
   >("loading");
 
+  // Verify token (loaded on demand)
   const verifyQuery = api.auth.verify.useQuery(
     {
       token,
@@ -359,6 +375,7 @@ const Index: React.FC = () => {
   );
 
   useEffect(() => {
+    // Check the current token and verify it
     async function checkToken() {
       if (token.length > 0) {
         try {
@@ -378,6 +395,7 @@ const Index: React.FC = () => {
     void checkToken();
   }, [token]);
 
+  // Show loading if verifying token, show landing page if verified, show login page if not verified
   return (
     <>
       {verifyQuery.isFetching ? (

@@ -3,10 +3,13 @@
 import { type useNavigation, type useRouter } from "expo-router";
 import { type StackActions } from "@react-navigation/native";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- any type is required for this generic to work properly
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- any type is required for this generic to allow all arguments
 export type GetReturnType<T> = T extends (...args: any[]) => infer R
   ? R
   : never;
+
+// Overrides the default navigation object
+// This is safe because we know we are using a StackNavigator
 export type NavigatorOverride = GetReturnType<typeof useNavigation> &
   typeof StackActions;
 
@@ -21,6 +24,9 @@ export function resetStack(
   },
   nextRoute?: string,
 ) {
+  // Pop to the root route if we are already on a child route
   if (ctx.navigation.getState().index > 0) ctx.navigation.popToTop();
+
+  // Push a new route if one is provided
   if (nextRoute) ctx.router.push(nextRoute);
 }

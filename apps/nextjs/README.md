@@ -35,4 +35,5 @@ The stack of this project is as follows:
 - Next.js 13, a meta-framework for React
 - React 18
 - Kumiko for the styling
+- Tailwind for the styling utilities
 - tRPC server hosted on Vercel

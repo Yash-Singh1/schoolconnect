@@ -9,6 +9,8 @@ import {
 import { GITHUB_CLIENT_ID, discovery } from "./constants";
 
 export default function useCode(antiState: string, path: string) {
+  // Here we are simply wrapping the `useAuthRequest` hook
+  // This makes there less duplication configuration when using GitHub authentication
   const [request, response, promptAsync] = useAuthRequest(
     {
       clientId: GITHUB_CLIENT_ID,

@@ -1,4 +1,4 @@
-// Platform-agnostic date picker
+// Platform-agnostic datetime picker
 
 import { useState } from "react";
 import { Platform, Text, View } from "react-native";
@@ -20,6 +20,7 @@ export const DatePicker = ({
   ios,
   ...other
 }: DatePickerProps) => {
+  // Form state
   const [date, setDate] = useState(value);
   const [shown, setShown] = useState(false);
   const [mode, setMode] = useState<"date" | "time" | "datetime" | "countdown">(
@@ -28,6 +29,7 @@ export const DatePicker = ({
       "date",
   );
 
+  // Show the date picker on Android
   const showAndroidPicker = (newMode: "date" | "time") => {
     setShown(true);
     setMode(newMode);
@@ -35,6 +37,7 @@ export const DatePicker = ({
 
   return (
     <View className={other.className || ""}>
+      {/* Date picker for IOS */}
       {Platform.OS === "ios" || shown ? (
         <DateTimePicker
           value={date}
@@ -50,6 +53,11 @@ export const DatePicker = ({
           themeVariant="dark"
         />
       ) : null}
+
+      {/**
+       * Date picker for Android
+       * Makes use of custom styles
+       */}
       {Platform.OS === "android" ? (
         <View className="flex flex-row self-start">
           {((android && android.mode) || other.mode)?.includes("date") ? (

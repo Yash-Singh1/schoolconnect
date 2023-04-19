@@ -18,6 +18,7 @@ export const eventsRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
+      // Query all events in the school
       const schoolEvents = await ctx.prisma.event.findMany({
         where: {
           schoolId: ctx.user.schoolId,
@@ -35,6 +36,8 @@ export const eventsRouter = createTRPCRouter({
           School: !!input.includeSource,
         },
       });
+
+      // Query all events in the classes the user is in
       const classEvents = await ctx.prisma.event.findMany({
         where: {
           Class: {
@@ -60,6 +63,7 @@ export const eventsRouter = createTRPCRouter({
       });
 
       // Two pointers sorting, runs in O(n) without logarithmic factor
+      // Here we combine the two sorted arrays into one sorted array
       const events = [];
       let classI = 0;
       for (let schoolI = 0; schoolI < schoolEvents.length; schoolI++) {
@@ -91,6 +95,7 @@ export const eventsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Make sure user is a teacher or admin
       if (ctx.user.role !== "teacher" && ctx.user.role !== "admin") {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -98,25 +103,33 @@ export const eventsRouter = createTRPCRouter({
         });
       }
 
+      // Ensure the user is an admin if they are creating a school event
       if (input.classId) {
+        // Make sure the class exists and the user owns it
         const classFound: Class | null = await ctx.prisma.class.findFirst({
           where: {
             id: input.classId,
           },
         });
+
+        // If the class doesn't exist, throw an error
         if (!classFound) {
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "Class not found",
           });
         }
+
+        // If the class isn't in the same school as the user, throw an error
         if (classFound.schoolId !== ctx.user.schoolId) {
           throw new TRPCError({
             code: "UNAUTHORIZED",
             message: "You can only create events for classes in your school",
           });
         }
-        if (classFound.ownerId !== ctx.user.id) {
+
+        // If the user doesn't own the class and they aren't admin, throw an error
+        if (classFound.ownerId !== ctx.user.id && ctx.user.role !== "admin") {
           throw new TRPCError({
             code: "UNAUTHORIZED",
             message: "You can only create events for classes you own",
@@ -129,6 +142,7 @@ export const eventsRouter = createTRPCRouter({
         });
       }
 
+      // Create the event in the database
       const event = await ctx.prisma.event.create({
         data: {
           name: input.title,

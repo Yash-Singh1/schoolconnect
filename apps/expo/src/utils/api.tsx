@@ -23,7 +23,7 @@ const getBaseUrl = () => {
    */
   const localhost = Constants.manifest?.debuggerHost?.split(":")[0];
 
-  console.log("Debugger localhost", localhost);
+  console.log("Debugger host", localhost);
 
   if (!localhost) {
     return "https://schoolconnect-mu.vercel.app/";
@@ -41,7 +41,10 @@ export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
   const [queryClient] = React.useState(() => new QueryClient());
   const [trpcClient] = React.useState(() =>
     api.createClient({
+      // superjson transformer allows data types such as Date to be serialized
       transformer: superjson,
+
+      // The URL of the API (this is where the API is hosted)
       links: [
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,

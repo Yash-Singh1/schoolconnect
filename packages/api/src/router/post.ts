@@ -16,30 +16,34 @@ export const postRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
+      // Query all posts in the class
       const posts = await ctx.prisma.post.findMany({
-        ...(input.classId
-          ? {
-              where: {
-                classId: input.classId,
-              },
-            }
-          : {}),
         where: {
+          // Filter by class if classId is provided
           classId: input.classId || {},
+
+          // Filter by date if upOnly is true
           createdAt: input.upOnly
             ? {
                 gte: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
               }
             : {},
         },
+
+        // Take the specified amount of posts
         ...(input.take ? { take: input.take } : {}),
+
+        // Order by date
         orderBy: {
           createdAt: "desc",
         },
+
+        // Include the author
         include: {
           author: true,
         },
       });
+
       return posts;
     }),
 
@@ -55,10 +59,14 @@ export const postRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Destructure input
       const { classId, title, content, image } = input;
+      
+      // Upload image if provided
       let imageOutput = null;
       if (image) imageOutput = await uploadImage(image);
 
+      // Create post in database
       await ctx.prisma.post.create({
         data: {
           classId,
@@ -70,6 +78,7 @@ export const postRouter = createTRPCRouter({
         },
       });
 
+      // Send push notifications to all devices in the class
       const receivingDevices = [
         ...(await ctx.prisma.device.findMany({
           where: {
@@ -89,8 +98,10 @@ export const postRouter = createTRPCRouter({
         })),
       ];
 
+      // Initialize Expo client
       const expo = new Expo();
 
+      // Prepare messages
       const messages = [];
       for (const receivingDevice of receivingDevices) {
         if (!Expo.isExpoPushToken(receivingDevice.pushToken)) {
@@ -111,6 +122,8 @@ export const postRouter = createTRPCRouter({
         });
       }
 
+      // Chunk messages and send
+      // Tickets are the result, we don't need them
       const chunks = expo.chunkPushNotifications(messages);
       const tickets = [];
       for (const chunk of chunks) {

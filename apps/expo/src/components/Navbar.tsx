@@ -11,10 +11,14 @@ import { api } from "../utils/api";
 import { resetStack, type NavigatorOverride } from "../utils/resetStack";
 
 export const Navbar = () => {
+  // Initialize router helpers
   const router = useRouter();
   const navigation = useNavigation() as NavigatorOverride;
 
+  // Get token from store
   const [token] = useAtom(tokenAtom);
+
+  // Queries for getting the user's data
   const selfQuery = api.user.self.useQuery({
     token,
   });
@@ -31,6 +35,7 @@ export const Navbar = () => {
           <Text className="text-center text-xs text-white">Members</Text>
         </TouchableOpacity>
       ) : null}
+
       {selfQuery.data &&
       (selfQuery.data.role === "teacher" ||
         selfQuery.data.role === "student") ? (
@@ -43,6 +48,7 @@ export const Navbar = () => {
           <Text className="text-center text-xs text-white">Classes</Text>
         </TouchableOpacity>
       ) : null}
+
       {selfQuery.data &&
       selfQuery.data.role !== "teacher" &&
       selfQuery.data.role !== "student" ? (
@@ -59,6 +65,7 @@ export const Navbar = () => {
           <Text className="text-center text-xs text-white">Absences</Text>
         </TouchableOpacity>
       ) : null}
+
       <TouchableOpacity
         onPress={() => resetStack({ router, navigation }, "/schedule")}
         activeOpacity={0.5}
@@ -67,6 +74,7 @@ export const Navbar = () => {
         <FontAwesomeIcon icon="clock" size={30} color="white" />
         <Text className="text-center text-xs text-white">Schedule</Text>
       </TouchableOpacity>
+
       <TouchableOpacity
         onPress={() => resetStack({ router, navigation }, "/events")}
         activeOpacity={0.5}
@@ -75,6 +83,7 @@ export const Navbar = () => {
         <FontAwesomeIcon icon="calendar" size={30} color="white" />
         <Text className="text-center text-xs text-white">Events</Text>
       </TouchableOpacity>
+
       <TouchableOpacity
         onPress={() => resetStack({ router, navigation }, "/info")}
         activeOpacity={0.5}

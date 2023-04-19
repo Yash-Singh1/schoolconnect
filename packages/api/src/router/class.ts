@@ -17,7 +17,10 @@ export const classRouter = createTRPCRouter({
     )
     .query(async ({ ctx }) => {
       let classes;
+
+      // Different dependingn on role
       if (ctx.user.role === "student") {
+        // For students get all classes they are in
         classes = await ctx.prisma.class.findMany({
           where: {
             schoolId: ctx.user.schoolId,
@@ -32,6 +35,7 @@ export const classRouter = createTRPCRouter({
           },
         });
       } else if (ctx.user.role === "teacher") {
+        // For teachers get all classes they own
         classes = await ctx.prisma.class.findMany({
           where: {
             ownerId: ctx.user.id,
@@ -42,6 +46,7 @@ export const classRouter = createTRPCRouter({
           },
         });
       } else if (ctx.user.role === "admin") {
+        // For admins get all classes in the school
         classes = await ctx.prisma.class.findMany({
           where: {
             schoolId: ctx.user.schoolId,
@@ -51,11 +56,14 @@ export const classRouter = createTRPCRouter({
           },
         });
       } else {
+        // If not a student, teacher, or admin, throw an unauthorized error
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Role is not permitted to view classes",
         });
       }
+
+      // Return the classes
       return classes;
     }),
 
@@ -68,21 +76,26 @@ export const classRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
+      // Ensure that the user is a student, teacher, or admin
       if (
         ctx.user.role === "student" ||
         ctx.user.role === "teacher" ||
         ctx.user.role === "admin"
       ) {
+        // Get the class
         const classFound: Class = (await ctx.prisma.class.findFirst({
           where: {
             id: input.classId,
           },
         })) as Class;
+
+        // Return the class with the owner's name
         return {
           ...classFound,
           owner: (await getUserFromId(classFound.ownerId, ctx))!.name,
         };
       } else {
+        // Otherwise throw an unauthorized error
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Role is not permitted to view classes",

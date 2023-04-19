@@ -1,4 +1,5 @@
 // Add support for markdown within the project
+
 import addMDX from "@next/mdx";
 import remarkGfm from "remark-gfm";
 import remarkComment from "remark-remove-comments";
@@ -9,6 +10,7 @@ import remarkComment from "remark-remove-comments";
  */
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env.mjs"));
 
+// Setup the markdown plugin by configuring prefix and remark plugins
 const withMDX = addMDX({
   extension: /\.mdx?$/,
   options: {

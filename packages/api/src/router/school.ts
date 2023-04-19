@@ -6,9 +6,11 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 export const schoolRouter = createTRPCRouter({
   // Gets all the schools in the database (for dropdown)
   all: publicProcedure.query(async ({ ctx }) => {
+    // Recieve all the schools in the database
     const schools = await ctx.prisma.school.findMany({
       orderBy: { id: "asc" },
     });
+
     return schools;
   }),
 
@@ -16,11 +18,13 @@ export const schoolRouter = createTRPCRouter({
   get: protectedProcedure
     .input(z.object({ token: z.string().min(1) }))
     .query(async ({ ctx }) => {
+      // Get information on the user's school
       const school = await ctx.prisma.school.findUnique({
         where: {
           id: ctx.user.schoolId,
         },
       });
+
       return school;
     }),
 
@@ -32,6 +36,7 @@ export const schoolRouter = createTRPCRouter({
         social: z
           .string()
           .min(1)
+          // Regex to check if the URL is valid
           .regex(
             /^https:\/\/(www\.facebook\.com\/people\/.*?\/(\d)+?\/?|www\.instagram\.com\/.*?\/?|twitter\.com\/.*?\/?)(\?.*?)?(#.*?)?$/,
             {
@@ -43,12 +48,16 @@ export const schoolRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { social } = input;
+
+      // Check if the user is an admin
       if (ctx.user.role !== "admin") {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Role is not permitted to edit social media",
         });
       }
+
+      // Update the school's social media on the database
       await ctx.prisma.school.update({
         where: {
           id: ctx.user.schoolId,
@@ -63,7 +72,9 @@ export const schoolRouter = createTRPCRouter({
   pending: protectedProcedure
     .input(z.object({ token: z.string().min(1) }))
     .query(async ({ ctx }) => {
+      // Check if the user is an admin
       if (ctx.user.role === "admin") {
+        // Get all the pending members of the school
         return await ctx.prisma.user.findMany({
           where: {
             schoolId: ctx.user.schoolId,
@@ -82,7 +93,9 @@ export const schoolRouter = createTRPCRouter({
   invited: protectedProcedure
     .input(z.object({ token: z.string().min(1) }))
     .query(async ({ ctx }) => {
+      // Check if the user is an admin
       if (ctx.user.role === "admin") {
+        // Get all the invited members of the school
         return await ctx.prisma.user.findMany({
           where: {
             schoolId: ctx.user.schoolId,

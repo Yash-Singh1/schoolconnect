@@ -36,21 +36,26 @@ async function retrieveAuthToken(code: string) {
   return { userInfo, accessToken };
 }
 
+// Generate a new session token using random strings
 function generateNextSession() {
   return {
+    // Generate random string
     sessionToken: [1, 2, 3]
       .map(() => Math.random().toString(36).substring(2, 15))
       .join(""),
+
+    // Set the expiry to 1 year from now
     expires: new Date(new Date().setMonth(new Date().getMonth() + 12)),
   };
 }
 
+// Router for authentication realated procedures
 export const authRouter = createTRPCRouter({
-  // testing protected procedure validation
+  // Testing protected procedure validation
   getSecretMessage: protectedProcedure
     .input(z.object({ token: z.string().min(1) }))
     .query(() => {
-      return "you can see this secret message!";
+      return "You can see this secret message only if you are authenticated!";
     }),
 
   // Verification procedure, protected procedure does all the heavy lifting, so we just return true
@@ -61,6 +66,7 @@ export const authRouter = createTRPCRouter({
     }),
 
   // Signup mutation, creates user or account in database
+  // If the user already exists this procedure will log the user in
   signup: publicProcedure
     .input(
       z.object({
@@ -72,7 +78,10 @@ export const authRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Destructure input
       const { code, schoolId, role } = input;
+
+      // If the role is admin, throw an error as admin accounts cannot be created through the UI
       if (role === "admin") {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -80,16 +89,21 @@ export const authRouter = createTRPCRouter({
         });
       }
 
+      // Generate a new session
       const newSession = generateNextSession();
 
+      // If the user has an email, check if the email is already in use
       if (input.email) {
+        // Retrieve first user in database with that email
         const userFound = await ctx.prisma.user.findFirst({
           where: {
             email: input.email,
           },
         });
 
+        // If a match was found
         if (userFound) {
+          // If the user has a password, check if the password matches and login
           if (userFound.password) {
             if (await bcrypt.compare(code, userFound.password)) {
               await ctx.prisma.session.create({
@@ -106,12 +120,14 @@ export const authRouter = createTRPCRouter({
               });
             }
           } else {
+            // If the user doesn't have a password, throw an error
             throw new TRPCError({
               code: "UNAUTHORIZED",
               message: "User doesn't have password linked to account",
             });
           }
         } else {
+          // If no match was found, create a new user with the email and password
           await ctx.prisma.user.create({
             data: {
               name: "Anonymous",
@@ -131,7 +147,10 @@ export const authRouter = createTRPCRouter({
         }
       }
 
+      // Retrieve user info from GitHub
       const { userInfo, accessToken } = await retrieveAuthToken(code);
+
+      // Ensure the user has an email linked to their GitHub account
       if (!userInfo.email) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -139,11 +158,14 @@ export const authRouter = createTRPCRouter({
         });
       }
 
+      // Check if the user already exists in the database
       let userFound = await ctx.prisma.user.findFirst({
         where: {
           email: userInfo.email,
         },
       });
+
+      // Check if the user already has an account linked to their GitHub account
       const accountFound = await ctx.prisma.user.findFirst({
         where: {
           accounts: {
@@ -155,6 +177,7 @@ export const authRouter = createTRPCRouter({
         },
       });
 
+      // If the user doesn't exist, create a new user
       if (!userFound && !accountFound) {
         userFound = await ctx.prisma.user.create({
           data: {
@@ -179,6 +202,7 @@ export const authRouter = createTRPCRouter({
           },
         });
       } else if (accountFound) {
+        // If we found a user with an account linked to their GitHub account add a new session
         await ctx.prisma.session.create({
           data: {
             userId: accountFound.id,
@@ -186,12 +210,17 @@ export const authRouter = createTRPCRouter({
           },
         });
       } else if (userFound) {
+        // If we found a user with the same email, add a new session and link their GitHub account
+
+        // Find matches for the GitHub account in the database
         const ghAccount = await ctx.prisma.account.findFirst({
           where: {
             userId: userFound.id,
             provider: "github",
           },
         });
+
+        // If a match was found, update the access token
         if (ghAccount) {
           await ctx.prisma.account.update({
             where: {
@@ -202,6 +231,7 @@ export const authRouter = createTRPCRouter({
             },
           });
         } else {
+          // If no match was found, link to a new GitHub account
           await ctx.prisma.user.update({
             where: {
               email: userInfo.email,
@@ -220,6 +250,8 @@ export const authRouter = createTRPCRouter({
             },
           });
         }
+
+        // Add a new session
         await ctx.prisma.session.create({
           data: {
             userId: userFound.id,
@@ -227,6 +259,8 @@ export const authRouter = createTRPCRouter({
           },
         });
       }
+
+      // Return the session token
       return newSession.sessionToken;
     }),
 
@@ -239,17 +273,22 @@ export const authRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Destructure code from input
       const { code } = input;
 
+      // Generate a new session
       const newSession = generateNextSession();
 
+      // If the user provided an email while loggin in
       if (input.email) {
+        // Find a match for the email in the database
         const userFound = await ctx.prisma.user.findFirst({
           where: {
             email: input.email,
           },
         });
 
+        // If no match was found, throw an error
         if (!userFound) {
           throw new TRPCError({
             code: "NOT_FOUND",
@@ -257,7 +296,9 @@ export const authRouter = createTRPCRouter({
           });
         }
 
+        // If the user has a password, check if the password is correct
         if (userFound.password) {
+          // If the password is correct, add a new session
           if (await bcrypt.compare(code, userFound.password)) {
             await ctx.prisma.session.create({
               data: {
@@ -268,12 +309,14 @@ export const authRouter = createTRPCRouter({
 
             return newSession.sessionToken;
           } else {
+            // If the password is incorrect, throw an error
             throw new TRPCError({
               code: "UNAUTHORIZED",
               message: "Invalid password",
             });
           }
         } else {
+          // If the user doesn't have a password, throw an error, because they can't login with a password
           throw new TRPCError({
             code: "UNAUTHORIZED",
             message: "User doesn't have password linked to account",
@@ -281,8 +324,10 @@ export const authRouter = createTRPCRouter({
         }
       }
 
+      // Retrieve user info from GitHub
       const { userInfo, accessToken } = await retrieveAuthToken(code);
 
+      // Ensure the user has an email linked to their GitHub account
       if (!userInfo.email) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -290,6 +335,7 @@ export const authRouter = createTRPCRouter({
         });
       }
 
+      // Find a match for the GitHub account in the database
       const userFound = await ctx.prisma.user.findFirst({
         where: {
           accounts: {
@@ -301,7 +347,9 @@ export const authRouter = createTRPCRouter({
         },
       });
 
+      // If a match was found, update the access token and add a new session
       if (userFound) {
+        // If the user is pending, set pending to false
         if (userFound.pending) {
           await ctx.prisma.user.update({
             where: {
@@ -312,6 +360,8 @@ export const authRouter = createTRPCRouter({
             },
           });
         }
+
+        // Update the access token
         await ctx.prisma.account.update({
           where: {
             provider_providerAccountId: {
@@ -323,6 +373,8 @@ export const authRouter = createTRPCRouter({
             access_token: accessToken.token.access_token as string,
           },
         });
+
+        // Add a new session
         await ctx.prisma.session.create({
           data: {
             userId: userFound.id,
@@ -330,12 +382,14 @@ export const authRouter = createTRPCRouter({
           },
         });
       } else {
+        // If no match was found, throw an error
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Attempting to log into non-existent account",
         });
       }
 
+      // Return the session token
       return newSession.sessionToken;
     }),
 });

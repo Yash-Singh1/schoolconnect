@@ -15,6 +15,7 @@ export const absenceRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Make sure user is a parent
       if (ctx.user.role !== "parent") {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -34,6 +35,7 @@ export const absenceRouter = createTRPCRouter({
         },
       });
 
+      // Make sure that parent is reporting for their own child
       if (!parentReporting) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -41,6 +43,7 @@ export const absenceRouter = createTRPCRouter({
         });
       }
 
+      // Create the absence in the database
       await ctx.prisma.absence.create({
         data: {
           userId: ctx.user.id,

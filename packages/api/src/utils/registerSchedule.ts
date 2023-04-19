@@ -6,10 +6,12 @@ import utc from "dayjs/plugin/utc";
 
 import "dayjs/locale/en";
 
+// Initialize day.js for datetime formatting
 dayjs.locale("en");
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+// Typings for the response from the QStash API
 type QStashResponse =
   | {
       scheduleId: string;
@@ -18,15 +20,18 @@ type QStashResponse =
       error: string;
     };
 
+// Helper function to register a schedule with QStash
 export async function registerSchedule(
   time: Date,
   postId: string,
 ): Promise<QStashResponse> {
+  // Log the schedule registration
   console.log("Registering schedule for", postId, "at", time);
 
   // QStash uses UTC time for cron jobs
   const dayTime = dayjs(time).utc();
 
+  // Create the headers for the request
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
   myHeaders.append("Upstash-Content-Based-Deduplication", "true");
@@ -41,7 +46,7 @@ export async function registerSchedule(
     } *`,
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  // Return the response from the QStash API
   return await fetch(
     `https://qstash.upstash.io/v1/publish/https://schoolconnect-mu.vercel.app/api/qstash`,
     {
@@ -49,5 +54,5 @@ export async function registerSchedule(
       body: `"${postId}"`,
       headers: myHeaders,
     },
-  ).then((res) => res.json());
+  ).then((res) => res.json()) as QStashResponse;
 }

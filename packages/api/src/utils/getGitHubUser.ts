@@ -1,5 +1,6 @@
 import { type Endpoints } from "@octokit/types";
 
+// Use octokit typings to get the GitHub user response type
 type UserResponse = Endpoints["GET /user"]["response"]["data"];
 
 /**
@@ -9,6 +10,7 @@ type UserResponse = Endpoints["GET /user"]["response"]["data"];
 export async function getGitHubUser(
   accessToken: string,
 ): Promise<UserResponse> {
+  // Fetch GitHub API for user
   const response = await fetch("https://api.github.com/user", {
     method: "GET",
     headers: {
@@ -17,8 +19,12 @@ export async function getGitHubUser(
       "X-GitHub-Api-Version": "2022-11-28",
     },
   });
+
+  // Check if the response is valid
   if (response.status >= 400) {
     throw new Error("GitHub API error");
   }
+
+  // Return the user data
   return (await response.json()) as UserResponse;
 }

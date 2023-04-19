@@ -13,11 +13,13 @@ import { tokenAtom } from "../src/store";
 import { api } from "../src/utils/api";
 
 const NewClass: React.FC = () => {
+  // Form data states
   const [file, setFile] = useState<ImagePicker.ImagePickerResult | null>(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [fileError, setFileError] = useState(false);
 
+  // Get token from stores
   const [token] = useAtom(tokenAtom);
 
   // Callback to launch image picker
@@ -33,16 +35,22 @@ const NewClass: React.FC = () => {
     }
   }, []);
 
+  // Initialize router helper
   const router = useRouter();
 
   // Mutation to create a new class, invalidates current cached data
   const util = api.useContext();
   const createClass = api.class.create.useMutation({
     async onSuccess() {
+      // Resret form state
       setName("");
       setDescription("");
       setFileError(false);
+
+      // Invalidate cached class data
       await util.class.all.invalidate();
+
+      // Navigate back to the classes page
       router.back();
     },
   });
@@ -52,7 +60,12 @@ const NewClass: React.FC = () => {
   return (
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "New Class" }} />
+      {/**
+       * Form for creating a new class
+       * The `zodError` contains server validation for the form inputs
+       */}
       <View className="flex h-full w-full flex-col items-center justify-center">
+        {/* New class name */}
         <TextInput
           className="mx-4 mb-1 rounded bg-white/10 p-2 text-white"
           style={{ width: Dimensions.get("screen").width - 32 }}
@@ -66,6 +79,8 @@ const NewClass: React.FC = () => {
             {createClass.error.data.zodError.fieldErrors.name[0]}
           </Text>
         )}
+
+        {/* New class description */}
         <TextInput
           className="mx-4 mb-1 rounded bg-white/10 p-2 text-white"
           style={{ width: Dimensions.get("screen").width - 32 }}
@@ -79,6 +94,8 @@ const NewClass: React.FC = () => {
             {createClass.error.data.zodError.fieldErrors.description[0]}
           </Text>
         )}
+
+        {/* New class banner */}
         <View
           className="mx-4 my-1 flex h-1/2 items-center justify-center rounded-lg border-2 border-white"
           style={{ width: Dimensions.get("screen").width - 32 }}
@@ -97,6 +114,8 @@ const NewClass: React.FC = () => {
             </Text>
           )}
         </View>
+
+        {/* Banner image validation is local */}
         {fileError ? (
           <Text className="ml-8 w-full text-left text-red-500">
             Error: You must select a banner image
@@ -109,6 +128,8 @@ const NewClass: React.FC = () => {
         >
           Upload Banner
         </Text>
+
+        {/* Submit button */}
         {createClass.isLoading ? (
           <LoadingWrapper
             small
@@ -124,12 +145,15 @@ const NewClass: React.FC = () => {
             className="mx-4 mt-2 rounded-lg bg-green-500/80 py-2 text-center text-lg font-bold text-white"
             style={{ width: Dimensions.get("screen").width - 32 }}
             onPress={() => {
+              // Drop or add the file validation error
               if (!file || file.canceled) {
                 setFileError(true);
                 return;
               } else {
                 setFileError(false);
               }
+
+              // Run the mutation
               createClass.mutate({
                 token,
                 name,

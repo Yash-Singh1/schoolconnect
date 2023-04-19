@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
+import Links from "../../src/components/Links";
 import { Navbar } from "../../src/components/Navbar";
 
 const Contacts: React.FC = () => {
@@ -55,42 +56,9 @@ const Contacts: React.FC = () => {
               />{" "}
               Issue Tracker
             </Text>
-            <Text className="mt-4 w-full text-center text-lg text-white">
-              Based on the{" "}
-              <Text
-                onPress={() =>
-                  void Linking.openURL("https://opensource.org/license/mit/")
-                }
-                className="text-blue-500"
-              >
-                MIT License
-              </Text>
-              {"\n"}
-              &#169; 2023 Yash Singh
-            </Text>
-            <View className="mb-8 mt-1 flex w-full flex-row items-center justify-center">
-              <Text
-                className="text-lg text-blue-500"
-                onPress={() =>
-                  void Linking.openURL(
-                    `https://schoolconnect-mu.vercel.app/privacy`,
-                  )
-                }
-              >
-                Privacy Policy
-              </Text>
-              <Text className="mx-2 text-white">•</Text>
-              <Text
-                className="text-lg text-blue-500"
-                onPress={() =>
-                  void Linking.openURL(
-                    `https://schoolconnect-mu.vercel.app/tos`,
-                  )
-                }
-              >
-                Terms of Service
-              </Text>
-            </View>
+
+            {/* Links to licenses, privacy policy, etc. */}
+            <Links />
           </View>
         </ScrollView>
         <Navbar />

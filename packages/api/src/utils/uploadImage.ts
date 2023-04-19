@@ -1,15 +1,44 @@
-// Handpicked types from Imgbb API response that we need
-export type ImgbbApiResponse = {
-  status: number;
-  success: boolean;
-  data: {
-    id: string;
-    title: string;
+// Typings for the response from the Imgbb API
+interface ImageData {
+  id: string;
+  title: string;
+  url_viewer: string;
+  url: string;
+  display_url: string;
+  width: string;
+  height: string;
+  size: string;
+  time: string;
+  expiration: string;
+  image: {
+    filename: string;
+    name: string;
+    mime: string;
+    extension: string;
     url: string;
-    url_viewer: string;
-    delete_url: string;
   };
-};
+  thumb: {
+    filename: string;
+    name: string;
+    mime: string;
+    extension: string;
+    url: string;
+  };
+  medium: {
+    filename: string;
+    name: string;
+    mime: string;
+    extension: string;
+    url: string;
+  };
+  delete_url: string;
+}
+
+export interface ImgbbApiResponse {
+  data: ImageData;
+  success: boolean;
+  status: number;
+}
 
 /**
  * Uploads an image to imgbb.com

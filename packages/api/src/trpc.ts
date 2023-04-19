@@ -57,6 +57,7 @@ export const createTRPCRouter = t.router;
  */
 export const publicProcedure = t.procedure;
 
+// Type guard for checking if an object has a token property
 function isTokened(input: unknown): input is { token: string } {
   return !!(
     input &&
