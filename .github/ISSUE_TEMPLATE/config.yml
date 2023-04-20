@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: SchoolConnect Community Discussions
+    url: https://github.com/Yash-Singh1/schoolconnect/discussions
+    about: Please ask and discuss questions, open ideas, etc. open here.
+  - name: Security Vulnerability Reporting
+    url: https://github.com/Yash-Singh1/schoolconnect/blob/main/SECURITY.md
+    about: Please report security vulnerabilities here.

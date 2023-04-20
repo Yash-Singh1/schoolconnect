@@ -18,7 +18,10 @@
     "lint": "turbo lint && manypkg check",
     "lint:fix": "turbo lint:fix && manypkg fix",
     "type-check": "turbo type-check",
-    "with-env": "dotenv -e .env --"
+    "with-env": "dotenv -e .env --",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^3.7.1",
@@ -29,6 +32,7 @@
     "eslint-config-acme": "0.0.0",
     "prettier": "^2.8.4",
     "turbo": "^1.8.3",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "vitepress": "1.0.0-alpha.50"
   }
 }

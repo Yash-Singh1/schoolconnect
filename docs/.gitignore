@@ -1,0 +1,6 @@
+# Vitepress build files
+.vitepress/cache
+.vitepress/dist
+
+# Dependencies
+node_modules/

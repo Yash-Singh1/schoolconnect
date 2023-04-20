@@ -30,6 +30,10 @@ Now, to sync the schema with the client and the database, run the following comm
 pnpm db:push
 ```
 
+#### Production
+
+If you would like to deploy a production version of the database, 
+
 ### 3. Setup GitHub OAuth
 
 To setup GitHub OAuth, you will need to create a new OAuth app on GitHub. To do this, follow the instructions on GitHub's [guide](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app) and copy the client ID and client secret to their respective places in the `.env` file. For the callback URL, use `exp://[YOUR_IP]:19000`.

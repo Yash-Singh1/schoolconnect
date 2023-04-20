@@ -1,0 +1,70 @@
+name: Feature Request
+description: File a feature request
+title: "[FEAT]: "
+labels: ["feature", "triage"]
+assignees:
+  - Yash-Singh1
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request!
+  - type: textarea
+    id: related-problem
+    attributes:
+      label: Is this feature request related to a problem?
+      description: What was the problem?
+      placeholder: Tell us what the related problem was
+      value: "Problem A can be easily fixed with Problem B"
+    validations:
+      required: true
+  - type: textarea
+    id: what-need
+    attributes:
+      label: What is the feature request?
+      description: A clear and consise description of what you would like.
+      placeholder: Describe the solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Any alternatives you've considered
+      description: A list of alternatives you have considered.
+      placeholder: List a few alternatives or workarounds you used.
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      description: What version of our software are you running?
+      options:
+        - 1.0.0 (Default)
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: What operating system are you using?
+      multiple: true
+      options:
+        - IOS
+        - Android
+        - Other
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any additional context which will help us understand the feature request.
+      placeholder: Screenshots, logs, etc. that will help us understand the feature request.
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/Yash-Singh1/schoolconnect/blob/main/CODE_OF_CONDUCT.md)
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

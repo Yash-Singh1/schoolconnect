@@ -1,6 +1,6 @@
 # SchoolConnect
 
-This is the main repository and source code for the SchoolConnect application. It contains the backend, frontend, website, and database of the application. If you are looking for the documentation, check out our [support tracker](https://github.com/Yash-Singh1/schoolconnect-support-tracker).
+This is the main repository and source code for the SchoolConnect application. It contains the backend, frontend, website, and database of the application. If you are looking for the documentation, check out our [support tracker](https://github.com/Yash-Singh1/schoolconnect/issues).
 
 ## Stack
 

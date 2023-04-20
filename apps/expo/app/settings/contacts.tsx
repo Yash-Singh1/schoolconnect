@@ -34,7 +34,7 @@ const Contacts: React.FC = () => {
               className="text-2xl font-bold text-white"
               onPress={() =>
                 void Linking.openURL(
-                  "https://yash-singh1.github.io/schoolconnect-support-tracker/",
+                  "https://yash-singh1.github.io/schoolconnect/",
                 )
               }
             >
@@ -45,7 +45,7 @@ const Contacts: React.FC = () => {
               className="text-2xl font-bold text-white"
               onPress={() =>
                 void Linking.openURL(
-                  "https://github.com/Yash-Singh1/schoolconnect-support-tracker/issues",
+                  "https://github.com/Yash-Singh1/schoolconnect/issues",
                 )
               }
             >
