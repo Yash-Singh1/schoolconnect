@@ -2,8 +2,6 @@ import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
-import { type Class } from "@acme/db";
-
 import { createTRPCRouter, ee, protectedProcedure } from "../trpc";
 import { registerSchedule } from "../utils/registerSchedule";
 
