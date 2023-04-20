@@ -312,9 +312,6 @@ importers:
       ioredis:
         specifier: ^5.3.2
         version: 5.3.2
-      redis-eventemitter:
-        specifier: ^2.0.1
-        version: 2.0.1
       simple-oauth2:
         specifier: ^4.3.0
         version: 4.3.0
@@ -5281,10 +5278,6 @@ packages:
   /dotenv@16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
     engines: {node: '>=12'}
-    dev: false
-
-  /double-ended-queue@2.1.0-0:
-    resolution: {integrity: sha512-+BNfZ+deCo8hMNpDqDnvT+c0XpJ5cUa6mqYq89bho2Ifze4URTqRkcwR399hWoTrTkbZ/XJYDgP6rc7pRgffEQ==}
     dev: false
 
   /duplexer3@0.1.5:
@@ -10428,24 +10421,9 @@ packages:
       ts-object-utils: 0.0.5
     dev: false
 
-  /redis-commands@1.7.0:
-    resolution: {integrity: sha512-nJWqw3bTFy21hX/CPKHth6sfhZbdiHP6bTawSgQBlKOVRG7EZkfHbbHwQJnrE4vsQf0CMNE+3gJ4Fmm16vdVlQ==}
-    dev: false
-
   /redis-errors@1.2.0:
     resolution: {integrity: sha512-1qny3OExCf0UvUV/5wpYKf2YwPcOqXzkwKKSmKHiE6ZMQs5heeE/c8eXK+PNllPvmjgAbfnsbpkGZWy8cBpn9w==}
     engines: {node: '>=4'}
-    dev: false
-
-  /redis-eventemitter@2.0.1:
-    resolution: {integrity: sha512-D9dZ/fG/xlNFWLZvYuKRPR5k7zlY7/71stMlMPRhcAYEjv347JIqQSTT1DO4QqtxGZk5n0mcz4NHKRs1lqqp5w==}
-    dependencies:
-      redis: 2.8.0
-    dev: false
-
-  /redis-parser@2.6.0:
-    resolution: {integrity: sha512-9Hdw19gwXFBJdN8ENUoNVJFRyMDFrE/ZBClPicKYDPwNPJ4ST1TedAHYNSiGKElwh2vrmRGMoJYbVdJd+WQXIw==}
-    engines: {node: '>=0.10.0'}
     dev: false
 
   /redis-parser@3.0.0:
@@ -10453,15 +10431,6 @@ packages:
     engines: {node: '>=4'}
     dependencies:
       redis-errors: 1.2.0
-    dev: false
-
-  /redis@2.8.0:
-    resolution: {integrity: sha512-M1OkonEQwtRmZv4tEWF2VgpG0JWJ8Fv1PhlgT5+B+uNq2cA3Rt1Yt/ryoR+vQNOQcIEgdCdfH0jr3bDpihAw1A==}
-    engines: {node: '>=0.10.0'}
-    dependencies:
-      double-ended-queue: 2.1.0-0
-      redis-commands: 1.7.0
-      redis-parser: 2.6.0
     dev: false
 
   /regenerate-unicode-properties@10.1.0:
