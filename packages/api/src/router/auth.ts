@@ -1,3 +1,5 @@
+// Backend router for managing authentication
+
 import { TRPCError } from "@trpc/server";
 import * as bcrypt from "bcryptjs";
 import { AuthorizationCode, type AccessToken } from "simple-oauth2";

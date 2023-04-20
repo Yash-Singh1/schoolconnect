@@ -1,3 +1,5 @@
+// Backend router for managing users
+
 import { TRPCError } from "@trpc/server";
 import * as bcrypt from "bcryptjs";
 import { z } from "zod";

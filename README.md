@@ -24,7 +24,7 @@ The technology stack of this application consists of the following:
 - Deployment
   - Expo for the mobile application
   - Vercel for the backend and website
-  - Railway for the database
+  - Railway for the database/websockets
 
 ## Architecture
 

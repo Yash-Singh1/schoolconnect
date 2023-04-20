@@ -1,3 +1,5 @@
+// Backend router for managing posts
+
 import { Expo } from "expo-server-sdk";
 import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";

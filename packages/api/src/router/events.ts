@@ -1,3 +1,5 @@
+// Backend router for managing events
+
 import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";

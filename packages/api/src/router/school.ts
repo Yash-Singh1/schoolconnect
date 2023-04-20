@@ -1,3 +1,5 @@
+// Backend router for managing schools
+
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
