@@ -33,31 +33,24 @@ export const postRouter = createTRPCRouter({
               }
             : {},
 
-          class: {
-            OR: [
-              {
-                ...(input.classId
-                  ? {}
-                  : {
+          ...(input.classId
+            ? {}
+            : {
+                class: {
+                  OR: [
+                    {
                       ownerId: ctx.user.id,
-                    }),
-              },
-              {
-                ...(input.classId
-                  ? {}
-                  : {
+                    },
+                    {
                       members: {
                         some: {
                           id: ctx.user.id,
                         },
                       },
-                    }),
-              },
-            ],
-            AND: {
-              schoolId: ctx.user.schoolId,
-            },
-          },
+                    },
+                  ],
+                },
+              }),
         },
 
         // Take the specified amount of posts
