@@ -30,7 +30,7 @@ The technology stack of this application consists of the following:
 
 The architecture of how the packages interact with each other is as shown in the following diagram:
 
-<img src="./docs/highlevel.png" alt="Architecture Diagram" width="50%" />
+<img src="./docs/assets/highlevel.png" alt="Architecture Diagram" width="50%" />
 
 For more information on the specifics of the packages, check out the READMEs in their packages.
 
