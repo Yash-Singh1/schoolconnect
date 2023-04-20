@@ -1,7 +1,11 @@
 import { Expo } from "expo-server-sdk";
+import { TRPCError } from "@trpc/server";
+import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { type Post } from "@acme/db";
+
+import { createTRPCRouter, ee, protectedProcedure } from "../trpc";
 import { uploadImage } from "../utils/uploadImage";
 
 export const postRouter = createTRPCRouter({
@@ -28,6 +32,32 @@ export const postRouter = createTRPCRouter({
                 gte: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
               }
             : {},
+
+          class: {
+            OR: [
+              {
+                ...(input.classId
+                  ? {}
+                  : {
+                      ownerId: ctx.user.id,
+                    }),
+              },
+              {
+                ...(input.classId
+                  ? {}
+                  : {
+                      members: {
+                        some: {
+                          id: ctx.user.id,
+                        },
+                      },
+                    }),
+              },
+            ],
+            AND: {
+              schoolId: ctx.user.schoolId,
+            },
+          },
         },
 
         // Take the specified amount of posts
@@ -47,6 +77,41 @@ export const postRouter = createTRPCRouter({
       return posts;
     }),
 
+  onPost: protectedProcedure
+    .input(
+      z.object({
+        token: z.string().min(1),
+        classId: z.string().min(1).optional(),
+        schoolId: z.string().min(1).optional(),
+        userId: z.string().min(1).optional(),
+      }),
+    )
+    .subscription(({ input }) => {
+      let key = "";
+      if (input.classId) {
+        key = `class:${input.classId}`;
+      } else if (input.schoolId) {
+        key = `school:${input.schoolId}`;
+      } else if (input.userId) {
+        key = `user:${input.userId}`;
+      } else {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You must provide a classId, schoolId, or userId",
+        });
+      }
+
+      return observable<Post>((emit) => {
+        void (async () => {
+          const onPost = (data: Post) => emit.next(data);
+          const listener = await ee.on(`post:${key}`, onPost);
+          return () => {
+            ee.off(listener);
+          };
+        })();
+      });
+    }),
+
   // Creates a post, requires a tittle, content, class, and image
   create: protectedProcedure
     .input(
@@ -61,22 +126,51 @@ export const postRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       // Destructure input
       const { classId, title, content, image } = input;
-      
+
+      const classFound = await ctx.prisma.class.findUnique({
+        where: {
+          id: classId,
+        },
+        include: {
+          members: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      if (!classFound) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Class not found",
+        });
+      }
+
       // Upload image if provided
       let imageOutput = null;
       if (image) imageOutput = await uploadImage(image);
 
+      const dbInput = {
+        classId,
+        createdAt: new Date(),
+        title,
+        content,
+        authorId: ctx.user.id,
+        ...(imageOutput ? { image: imageOutput.data.url } : {}),
+      };
+
       // Create post in database
       await ctx.prisma.post.create({
-        data: {
-          classId,
-          createdAt: new Date(),
-          title,
-          content,
-          authorId: ctx.user.id,
-          ...(imageOutput ? { image: imageOutput.data.url } : {}),
-        },
+        data: dbInput,
       });
+
+      ee.emit(`post:class:${classId}`, dbInput);
+      ee.emit(`post:school:${ctx.user.schoolId}`, dbInput);
+      ee.emit(`post:user:${ctx.user.id}`, dbInput);
+      for (const member of classFound.members) {
+        ee.emit(`post:user:${member.id}`, dbInput);
+      }
 
       // Send push notifications to all devices in the class
       const receivingDevices = [

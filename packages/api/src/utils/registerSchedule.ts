@@ -47,12 +47,12 @@ export async function registerSchedule(
   );
 
   // Return the response from the QStash API
-  return await fetch(
+  return (await fetch(
     `https://qstash.upstash.io/v1/publish/https://schoolconnect-mu.vercel.app/api/qstash`,
     {
       method: "POST",
       body: `"${postId}"`,
       headers: myHeaders,
     },
-  ).then((res) => res.json()) as QStashResponse;
+  ).then((res) => res.json())) as QStashResponse;
 }

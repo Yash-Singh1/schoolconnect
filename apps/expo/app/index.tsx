@@ -126,7 +126,7 @@ const Landing: React.FC = () => {
               <Text className="w-full pb-2 text-center text-xl font-bold text-white mt-2">
                 Recent Announcements
               </Text>
-              <Announcements />
+              <Announcements userId={selfQuery.data.id} />
             </>
           ) : tab === "social" ? (
             // Social tab, embeds configured social
@@ -181,7 +181,7 @@ const Landing: React.FC = () => {
 };
 
 // Component for fetching and displaying announcements
-const Announcements: React.FC = () => {
+const Announcements: React.FC<{ userId: string }> = ({ userId }) => {
   const [token] = useAtom(tokenAtom);
 
   // Fetch recent events and posts
@@ -198,6 +198,43 @@ const Announcements: React.FC = () => {
     take: 10,
     upOnly: true,
   });
+
+  const util = api.useContext();
+
+  // Subscribe to posts
+  api.post.onPost.useSubscription(
+    {
+      token,
+      userId,
+    },
+    {
+      onData() {
+        void util.post.all.invalidate();
+        void recentPostsQuery.refetch();
+      },
+      onError(err) {
+        console.error("Subscription error", err);
+        void util.post.all.invalidate();
+        void recentPostsQuery.refetch();
+      },
+    },
+  );
+
+  // Subscribe to events
+  api.events.onCreate.useSubscription(
+    { token, userId },
+    {
+      onData() {
+        void util.post.all.invalidate();
+        void recentPostsQuery.refetch();
+      },
+      onError(err) {
+        console.error("Subscription error", err);
+        void util.post.all.invalidate();
+        void recentPostsQuery.refetch();
+      },
+    },
+  );
 
   // Combine the two into one array, sorted by date using two pointers (linear time)
 
@@ -225,7 +262,6 @@ const Announcements: React.FC = () => {
       return false;
     }
   }, [recentEventsQuery.data, recentPostsQuery.data]);
-
 
   // Render the announcements
   return recentAnnouncements ? (
@@ -355,7 +391,7 @@ const Login: React.FC = () => {
 const Index: React.FC = () => {
   // Get token from store
   const [token, setToken] = useAtom(tokenAtom);
-  
+
   // State on whether the token is verified
   const [verifyStatus, setVerifyStatus] = useState<
     "loading" | "error" | "success"
@@ -369,7 +405,8 @@ const Index: React.FC = () => {
     {
       enabled: false,
       onError() {
-        void SecureStore.deleteItemAsync(TOKEN_KEY);
+        // Disabling this for presentations because I don't want to mess up authentication setup due to network
+        // void SecureStore.deleteItemAsync(TOKEN_KEY);
       },
     },
   );

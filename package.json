@@ -8,6 +8,7 @@
   "packageManager": "pnpm@7.28.0",
   "scripts": {
     "build": "pnpm with-env turbo build",
+    "start": "pnpm with-env pnpm --filter @acme/ws start",
     "clean": "rm -rf node_modules",
     "clean:workspaces": "turbo clean",
     "db:generate": "pnpm with-env turbo db:generate",

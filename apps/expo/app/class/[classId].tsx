@@ -69,6 +69,26 @@ const Board: React.FC = () => {
     classId: classId as string,
   });
 
+  // Subscribe to the posts in this class
+  const util = api.useContext();
+  api.post.onPost.useSubscription(
+    {
+      token,
+      classId: classId as string,
+    },
+    {
+      async onData() {
+        await util.post.all.invalidate();
+        await postQuery.refetch();
+      },
+      async onError(error) {
+        console.error("Subscription error", error);
+        await util.post.all.invalidate();
+        await postQuery.refetch();
+      },
+    },
+  );
+
   // Self query for the user's role
   const selfQuery = api.user.self.useQuery({ token });
 
@@ -76,9 +96,7 @@ const Board: React.FC = () => {
   return selfQuery.data && postQuery.data && classQuery.data ? (
     <SafeAreaView className="bg-[#101010]">
       {/* Top stack bar */}
-      <Stack.Screen
-        options={{ title: `Class ${classQuery.data.name || ""}` }}
-      />
+      <Stack.Screen options={{ title: `Class ${classQuery.data.name}` }} />
 
       {/* Content */}
       <View className="flex h-full w-full flex-col">

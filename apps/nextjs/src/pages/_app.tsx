@@ -4,7 +4,6 @@ import { type AppType } from "next/app";
 
 // Import Tailwind styling, utilities
 import "../styles/globals.css";
-
 // Import Kumiko styling, pre-built styles
 import "kumiko/dist/kumiko.css";
 

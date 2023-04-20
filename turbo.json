@@ -18,8 +18,12 @@
       "dependsOn": ["^build", "^db:generate"],
       "outputs": [".next/**", ".expo/**"]
     },
-    "lint": {},
-    "lint:fix": {},
+    "lint": {
+      "cache": false
+    },
+    "lint:fix": {
+      "cache": false
+    },
     "clean": {
       "cache": false
     },
@@ -43,6 +47,9 @@
     "IMGBB_API_KEY",
     "DEV",
     "EAS_PROJECT_ID",
-    "QSTASH_TOKEN"
+    "QSTASH_TOKEN",
+    "QSTASH_NEXT_SIGNING_KEY",
+    "QSTASH_CURRENT_SIGNING_KEY",
+    "REDIS_URL"
   ]
 }

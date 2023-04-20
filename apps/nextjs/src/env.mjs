@@ -9,6 +9,15 @@ import { z } from "zod";
 const server = z.object({
   DATABASE_URL: z.string().url(),
   NODE_ENV: z.enum(["development", "test", "production"]),
+  PORT: z.string().regex(/^\d+$/).optional(),
+  GITHUB_CLIENT_ID: z.string().min(1),
+  GITHUB_CLIENT_SECRET: z.string().min(1),
+  IMGBB_API_KEY: z.string().min(1),
+  EAS_PROJECT_ID: z.string().min(1),
+  QSTASH_TOKEN: z.string().min(1),
+  QSTASH_NEXT_SIGNING_KEY: z.string().min(1),
+  QSTASH_CURRENT_SIGNING_KEY: z.string().min(1),
+  REDIS_URL: z.string().url()
 });
 
 /**
@@ -28,6 +37,15 @@ const client = z.object({
 const processEnv = {
   DATABASE_URL: process.env.DATABASE_URL,
   NODE_ENV: process.env.NODE_ENV,
+  PORT: process.env["PORT"],
+  GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+  GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
+  IMGBB_API_KEY: process.env.IMGBB_API_KEY,
+  EAS_PROJECT_ID: process.env.EAS_PROJECT_ID,
+  QSTASH_TOKEN: process.env.QSTASH_TOKEN,
+  QSTASH_NEXT_SIGNING_KEY: process.env.QSTASH_NEXT_SIGNING_KEY,
+  QSTASH_CURRENT_SIGNING_KEY: process.env.QSTASH_CURRENT_SIGNING_KEY,
+  REDIS_URL: process.env.REDIS_URL,
 };
 
 // Don't touch the part below

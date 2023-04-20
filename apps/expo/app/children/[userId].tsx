@@ -70,7 +70,7 @@ const ManageChildren: React.FC = () => {
     <SafeAreaView className="bg-[#101010]">
       {/* Top stack bar */}
       <Stack.Screen options={{ title: "Manage Children" }} />
-      
+
       {/* Content */}
       <View className="h-full w-full flex">
         <View className="h-[88%] w-full">

@@ -1,18 +1,13 @@
 // The settings and information page
 
-import {
-  Linking,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useNavigation, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useAtom } from "jotai";
 
+import Links from "../src/components/Links";
 import LoadingWrapper from "../src/components/LoadingWrapper";
 import { Navbar } from "../src/components/Navbar";
 import { tokenAtom } from "../src/store";
@@ -20,7 +15,6 @@ import { api } from "../src/utils/api";
 import { TOKEN_KEY } from "../src/utils/constants";
 import { getPushToken } from "../src/utils/getPushToken";
 import { resetStack, type NavigatorOverride } from "../src/utils/resetStack";
-import Links from "../src/components/Links";
 
 const Settings: React.FC = () => {
   // Initialize router helpers

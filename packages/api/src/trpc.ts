@@ -1,18 +1,21 @@
 // Main file for setting up tRPC procedures and context
 
+import { type IncomingMessage } from "node:http";
 import { TRPCError, initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { type NodeHTTPCreateContextFnOptions } from "@trpc/server/adapters/node-http";
 import superjson from "superjson";
+import type ws from "ws";
 import { ZodError } from "zod";
 
 import { prisma } from "@acme/db";
 
+import { RedisEventEmitter } from "./utils/eventEmitter";
+
 // Helper function for generating context
-const createInnerTRPCContext = (req: CreateNextContextOptions["req"]) => {
+const createInnerTRPCContext = () => {
   return {
     prisma,
-    search: req.query,
-    body: req.body as { 0: { json: { token: string } } } | undefined,
   };
 };
 
@@ -22,10 +25,12 @@ const createInnerTRPCContext = (req: CreateNextContextOptions["req"]) => {
  * This function initializes the context for each request
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = (opts: CreateNextContextOptions) => {
-  const { req } = opts;
-
-  return createInnerTRPCContext(req);
+export const createTRPCContext = (
+  _opts:
+    | CreateNextContextOptions
+    | NodeHTTPCreateContextFnOptions<IncomingMessage, ws>,
+) => {
+  return createInnerTRPCContext();
 };
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
@@ -69,22 +74,14 @@ function isTokened(input: unknown): input is { token: string } {
 /**
  * Reusable middleware that enforces users are logged in before running the procedure
  */
-const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
-  let input;
-  if (ctx.search["input"]) {
-    input = (
-      JSON.parse(ctx.search["input"] as string) as { 0: { json: unknown } }
-    )[0].json;
-    if (!isTokened(input)) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "Missing token parameter",
-      });
-    }
-  } else {
-    input = ctx.body![0].json;
+const enforceUserIsAuthed = t.middleware(async ({ ctx, next, rawInput }) => {
+  if (!isTokened(rawInput)) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Missing token parameter",
+    });
   }
-  const { token } = input;
+  const { token } = rawInput;
 
   const userFound = await ctx.prisma.user.findFirst({
     where: {
@@ -133,3 +130,5 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+
+export const ee = new RedisEventEmitter();

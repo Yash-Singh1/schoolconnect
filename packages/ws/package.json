@@ -1,0 +1,21 @@
+{
+  "name": "@acme/ws",
+  "version": "0.1.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rm -rf .turbo node_modules",
+    "dev": "tsx watch --clear-screen=false index.ts",
+    "start": "tsx index.ts"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.4",
+    "tsx": "^3.12.3"
+  },
+  "dependencies": {
+    "@acme/api": "*",
+    "@trpc/server": "^10.14.0",
+    "ws": "^8.13.0"
+  }
+}

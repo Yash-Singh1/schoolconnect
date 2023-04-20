@@ -3,10 +3,8 @@
 import { type useNavigation, type useRouter } from "expo-router";
 import { type StackActions } from "@react-navigation/native";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- any type is required for this generic to allow all arguments
-export type GetReturnType<T> = T extends (...args: any[]) => infer R
-  ? R
-  : never;
+// Typescript generic to get the return type of a function
+type GetReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
 
 // Overrides the default navigation object
 // This is safe because we know we are using a StackNavigator

@@ -1,9 +1,10 @@
 import { TRPCError } from "@trpc/server";
+import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
 import { type Class } from "@acme/db";
 
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, ee, protectedProcedure } from "../trpc";
 import { registerSchedule } from "../utils/registerSchedule";
 
 export const eventsRouter = createTRPCRouter({
@@ -81,6 +82,41 @@ export const eventsRouter = createTRPCRouter({
       return events;
     }),
 
+  onCreate: protectedProcedure
+    .input(
+      z.object({
+        token: z.string().min(1),
+        classId: z.string().min(1).optional(),
+        schoolId: z.string().min(1).optional(),
+        userId: z.string().min(1).optional(),
+      }),
+    )
+    .subscription(({ input }) => {
+      let key = "";
+      if (input.classId) {
+        key = `class:${input.classId}`;
+      } else if (input.schoolId) {
+        key = `school:${input.schoolId}`;
+      } else if (input.userId) {
+        key = `user:${input.userId}`;
+      } else {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You must provide a classId, schoolId, or userId",
+        });
+      }
+
+      return observable<Event>((emit) => {
+        void (async () => {
+          const onEvent = (data: Event) => emit.next(data);
+          const listener = await ee.on(`event:${key}`, onEvent);
+          return () => {
+            ee.off(listener);
+          };
+        })();
+      });
+    }),
+
   // Creates an event, requires a name, description, start, and end
   // Also registers a QStash job to send a notification to all students
   create: protectedProcedure
@@ -103,12 +139,33 @@ export const eventsRouter = createTRPCRouter({
         });
       }
 
+      const dbInput = {
+        name: input.title,
+        description: input.content,
+        start: input.start,
+        end: input.end,
+        ...(input.classId
+          ? {
+              classId: input.classId,
+            }
+          : {
+              schoolId: ctx.user.schoolId,
+            }),
+      };
+
       // Ensure the user is an admin if they are creating a school event
       if (input.classId) {
         // Make sure the class exists and the user owns it
-        const classFound: Class | null = await ctx.prisma.class.findFirst({
+        const classFound = await ctx.prisma.class.findFirst({
           where: {
             id: input.classId,
+          },
+          include: {
+            members: {
+              select: {
+                id: true,
+              },
+            },
           },
         });
 
@@ -135,28 +192,46 @@ export const eventsRouter = createTRPCRouter({
             message: "You can only create events for classes you own",
           });
         }
+
+        ee.emit(`event:class:${input.classId}`, dbInput);
+        for (const member of classFound.members) {
+          ee.emit(`event:user:${member.id}`, dbInput);
+        }
       } else if (ctx.user.role !== "admin") {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "You must be an admin to create a school-wide event",
         });
+      } else {
+        const schoolFound = await ctx.prisma.school.findUnique({
+          where: {
+            id: ctx.user.schoolId,
+          },
+          include: {
+            members: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        });
+
+        if (!schoolFound) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "School not found",
+          });
+        }
+
+        ee.emit(`event:school:${ctx.user.schoolId}`, dbInput);
+        for (const member of schoolFound.members) {
+          ee.emit(`event:user:${member.id}`, dbInput);
+        }
       }
 
       // Create the event in the database
       const event = await ctx.prisma.event.create({
-        data: {
-          name: input.title,
-          description: input.content,
-          start: input.start,
-          end: input.end,
-          ...(input.classId
-            ? {
-                classId: input.classId,
-              }
-            : {
-                schoolId: ctx.user.schoolId,
-              }),
-        },
+        data: dbInput,
       });
 
       // Schedule notifications to be sent out when event starts

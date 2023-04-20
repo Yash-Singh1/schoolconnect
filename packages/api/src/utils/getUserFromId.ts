@@ -1,6 +1,6 @@
 import { type createTRPCContext } from "../trpc";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- any is required for this generic to work
+// Typescript generic to get the return type of a function
 type GetReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
 
 // Gets a user given their ID

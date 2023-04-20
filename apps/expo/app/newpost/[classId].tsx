@@ -66,7 +66,7 @@ const NewPost: React.FC = () => {
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "New Post" }} />
       <View className="flex h-full w-full flex-col items-center justify-center">
-        {/** 
+        {/**
          * Form for creating the post
          * The zodError field is set by the server when the request fails validation
          */}

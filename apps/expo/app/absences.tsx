@@ -63,7 +63,7 @@ const ParentAbsences: React.FC = () => {
           <Text className="text-white text-3xl font-bold mx-1">
             Report Absence
           </Text>
-          
+
           {/* Child to report */}
           <View className="flex mx-2">
             <Text className="text-white text-lg mt-4">Child to report</Text>

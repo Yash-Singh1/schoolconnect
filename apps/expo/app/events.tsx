@@ -129,14 +129,32 @@ const Events: React.FC = () => {
   // Setter for temporary state on events data fetching result
   const [_, setEvents] = useAtom(eventsAtom);
 
+  // Get information on the user
+  const selfQuery = api.user.self.useQuery({ token });
+
   // Get list of all events
   const eventsQuery = api.events.all.useQuery({
     token,
     includeSource: true,
   });
 
-  // Get information on the user
-  const selfQuery = api.user.self.useQuery({ token });
+  // Cache-invalidation utility
+  const util = api.useContext();
+
+  // Subscribe to event changes
+  api.events.onCreate.useSubscription(
+    {
+      token,
+      userId: selfQuery.data?.id,
+    },
+    {
+      enabled: !!selfQuery.data,
+      onData() {
+        void eventsQuery.refetch();
+        void util.events.all.invalidate();
+      },
+    },
+  );
 
   // Initialize router helper
   const router = useRouter();
