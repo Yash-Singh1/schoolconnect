@@ -154,15 +154,15 @@ export const postRouter = createTRPCRouter({
       };
 
       // Create post in database
-      await ctx.prisma.post.create({
+      const newPost = await ctx.prisma.post.create({
         data: dbInput,
       });
 
-      ee.emit(`post:class:${classId}`, dbInput);
-      ee.emit(`post:school:${ctx.user.schoolId}`, dbInput);
-      ee.emit(`post:user:${ctx.user.id}`, dbInput);
+      ee.emit(`post:class:${classId}`, newPost);
+      ee.emit(`post:school:${ctx.user.schoolId}`, newPost);
+      ee.emit(`post:user:${ctx.user.id}`, newPost);
       for (const member of classFound.members) {
-        ee.emit(`post:user:${member.id}`, dbInput);
+        ee.emit(`post:user:${member.id}`, newPost);
       }
 
       // Send push notifications to all devices in the class

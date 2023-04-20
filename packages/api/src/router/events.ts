@@ -151,6 +151,8 @@ export const eventsRouter = createTRPCRouter({
             }),
       };
 
+      const emissions: string[] = [];
+
       // Ensure the user is an admin if they are creating a school event
       if (input.classId) {
         // Make sure the class exists and the user owns it
@@ -191,9 +193,10 @@ export const eventsRouter = createTRPCRouter({
           });
         }
 
-        ee.emit(`event:class:${input.classId}`, dbInput);
+        emissions.push(`event:class:${input.classId}`);
+        emissions.push(`event:school:${ctx.user.schoolId}`);
         for (const member of classFound.members) {
-          ee.emit(`event:user:${member.id}`, dbInput);
+          emissions.push(`event:user:${member.id}`);
         }
       } else if (ctx.user.role !== "admin") {
         throw new TRPCError({
@@ -221,9 +224,9 @@ export const eventsRouter = createTRPCRouter({
           });
         }
 
-        ee.emit(`event:school:${ctx.user.schoolId}`, dbInput);
+        emissions.push(`event:school:${ctx.user.schoolId}`);
         for (const member of schoolFound.members) {
-          ee.emit(`event:user:${member.id}`, dbInput);
+          emissions.push(`event:user:${member.id}`);
         }
       }
 
@@ -231,6 +234,11 @@ export const eventsRouter = createTRPCRouter({
       const event = await ctx.prisma.event.create({
         data: dbInput,
       });
+
+      // Emit the event to all listeners
+      for (const emission of emissions) {
+        ee.emit(emission, event);
+      }
 
       // Schedule notifications to be sent out when event starts
       const schedule = await registerSchedule(input.start, event.id);

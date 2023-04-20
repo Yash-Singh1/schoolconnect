@@ -77,14 +77,14 @@ const Board: React.FC = () => {
       classId: classId as string,
     },
     {
-      async onData() {
-        await util.post.all.invalidate();
-        await postQuery.refetch();
+      onData() {
+        void util.post.all.invalidate();
+        void postQuery.refetch();
       },
-      async onError(error) {
+      onError(error) {
         console.error("Subscription error", error);
-        await util.post.all.invalidate();
-        await postQuery.refetch();
+        void util.post.all.invalidate();
+        void postQuery.refetch();
       },
     },
   );

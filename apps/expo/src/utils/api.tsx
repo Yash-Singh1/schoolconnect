@@ -26,7 +26,7 @@ const getBaseUrl = (websocket = false) => {
   console.log("Debugger host", localhost);
 
   if (!localhost) {
-    return websocket ? "ws://schoolconnect-production.up.railway.app/" : "https://schoolconnect-mu.vercel.app/";
+    return websocket ? "wss://schoolconnect-production.up.railway.app" : "https://schoolconnect-mu.vercel.app";
   }
   return `${websocket ? "ws" : "http"}://${localhost}:${
     websocket ? 3001 : 3000
@@ -60,7 +60,7 @@ export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
             client: wsClient,
           }),
           false: httpBatchLink({
-            url: `${getBaseUrl()}/api/trpc`,
+            url: `${getBaseUrl(/* websocket = */ false)}/api/trpc`,
           }),
         }),
       ],
