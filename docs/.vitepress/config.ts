@@ -5,12 +5,12 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
   title: "SchoolConnect",
   description: "Documentation for the mobile application SchoolConnect",
-  base: "/schoolconnect/",
+  base: "/",
 
   head: [
     [
       "link",
-      { rel: "icon", href: "/schoolconnect/favicon.ico" },
+      { rel: "icon", href: "/favicon.ico" },
     ],
   ],
 
