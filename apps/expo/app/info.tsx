@@ -25,8 +25,8 @@ const Settings: React.FC = () => {
   const [token, setToken] = useAtom(tokenAtom);
 
   // Queries for getting the user's data
-  const selfQuery = api.user.self.useQuery({ token });
-  const schoolQuery = api.school.get.useQuery({ token });
+  const selfQuery = api.user.self.useQuery({ token }, { enabled: !!token });
+  const schoolQuery = api.school.get.useQuery({ token }, { enabled: !!token });
 
   // Mutation for unregistering a device
   const unregisterDeviceMutation = api.user.unregisterDevice.useMutation();

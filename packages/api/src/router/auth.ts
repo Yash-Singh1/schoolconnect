@@ -5,7 +5,12 @@ import * as bcrypt from "bcryptjs";
 import { AuthorizationCode, type AccessToken } from "simple-oauth2";
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+  weaklyProtectedProcedure,
+} from "../trpc";
 import { getGitHubUser } from "../utils/getGitHubUser";
 
 // Retrieve authentication token given client-side temporary code
@@ -29,8 +34,9 @@ async function retrieveAuthToken(code: string) {
    */
   const accessToken: AccessToken = await client.getToken({
     code,
-    redirect_uri: "schoolconnect://10.0.0.62:19000",
+    redirect_uri: "exp://10.0.0.62:19000",
   });
+
   const userInfo = await getGitHubUser(
     accessToken.token.access_token as string,
   );
@@ -61,10 +67,10 @@ export const authRouter = createTRPCRouter({
     }),
 
   // Verification procedure, protected procedure does all the heavy lifting, so we just return true
-  verify: protectedProcedure
+  verify: weaklyProtectedProcedure
     .input(z.object({ token: z.string().min(1) }))
-    .query(() => {
-      return true;
+    .query(({ ctx }) => {
+      return ctx.user;
     }),
 
   // Signup mutation, creates user or account in database

@@ -1,6 +1,6 @@
 // Backend router for managing posts
 
-import { Expo } from "expo-server-sdk";
+import { Expo, type ExpoPushMessage } from "expo-server-sdk";
 import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
@@ -26,7 +26,7 @@ export const postRouter = createTRPCRouter({
       const posts = await ctx.prisma.post.findMany({
         where: {
           // Filter by class if classId is provided
-          classId: input.classId || {},
+          ...(input.classId ? { classId: input.classId } : {}),
 
           // Filter by date if upOnly is true
           createdAt: input.upOnly
@@ -191,7 +191,7 @@ export const postRouter = createTRPCRouter({
       const expo = new Expo();
 
       // Prepare messages
-      const messages = [];
+      const messages: ExpoPushMessage[] = [];
       for (const receivingDevice of receivingDevices) {
         if (!Expo.isExpoPushToken(receivingDevice.pushToken)) {
           await ctx.prisma.device.delete({
@@ -204,6 +204,7 @@ export const postRouter = createTRPCRouter({
 
         messages.push({
           to: receivingDevice.pushToken,
+          priority: "high",
           sound: "default" as const,
           title: title,
           subtitle: `Sent by ${ctx.user.name}`,

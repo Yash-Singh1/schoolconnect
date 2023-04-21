@@ -19,9 +19,7 @@ export const Navbar = () => {
   const [token] = useAtom(tokenAtom);
 
   // Queries for getting the user's data
-  const selfQuery = api.user.self.useQuery({
-    token,
-  });
+  const selfQuery = api.user.self.useQuery({ token }, { enabled: !!token });
 
   return (
     <View className="flex h-[12%] w-full flex-row flex-nowrap justify-between bg-pink-400 py-2 px-4">

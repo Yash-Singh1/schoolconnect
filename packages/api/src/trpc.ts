@@ -8,7 +8,7 @@ import superjson from "superjson";
 import type ws from "ws";
 import { ZodError } from "zod";
 
-import { prisma } from "@acme/db";
+import { User, prisma } from "@acme/db";
 
 import { RedisEventEmitter } from "./utils/eventEmitter";
 
@@ -74,51 +74,69 @@ function isTokened(input: unknown): input is { token: string } {
 /**
  * Reusable middleware that enforces users are logged in before running the procedure
  */
-const enforceUserIsAuthed = t.middleware(async ({ ctx, next, rawInput }) => {
-  if (!isTokened(rawInput)) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "Missing token parameter",
-    });
-  }
-  const { token } = rawInput;
+const enforceUserIsAuthed = <T>({ strong }: { strong: T }) =>
+  t.middleware(async ({ ctx, next, rawInput, path }) => {
+    if (!isTokened(rawInput)) {
+      if (!strong) {
+        return next({
+          ctx: {
+            ...ctx,
+            user: null as (T extends true ? User : null),
+          },
+        });
+      }
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Missing token parameter",
+      });
+    }
+    const { token } = rawInput;
 
-  const userFound = await ctx.prisma.user.findFirst({
-    where: {
-      sessions: {
-        some: {
-          sessionToken: token,
-          expires: {
-            gte: new Date(),
+    const userFound = await ctx.prisma.user.findFirst({
+      where: {
+        sessions: {
+          some: {
+            sessionToken: token,
+            expires: {
+              gte: new Date(),
+            },
           },
         },
       },
-    },
-  });
-
-  if (userFound) {
-    await ctx.prisma.session.update({
-      where: {
-        sessionToken: token,
-      },
-      data: {
-        expires: new Date(new Date().setMonth(new Date().getMonth() + 12)),
-      },
     });
 
-    return next({
-      ctx: {
-        ...ctx,
-        user: userFound,
-      },
-    });
-  }
+    if (userFound) {
+      await ctx.prisma.session.update({
+        where: {
+          sessionToken: token,
+        },
+        data: {
+          expires: new Date(new Date().setMonth(new Date().getMonth() + 12)),
+        },
+      });
 
-  throw new TRPCError({
-    code: "NOT_FOUND",
-    message: "User not found in database",
+      return next({
+        ctx: {
+          ...ctx,
+          user: userFound,
+        },
+      });
+    }
+
+    if (!strong) {
+      return next({
+        ctx: {
+          ...ctx,
+          user: null as (T extends true ? User : null),
+        },
+      });
+    }
+
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: `User not found in database from ${path}`,
+    });
   });
-});
 
 /**
  * Protected (authorized) procedure
@@ -128,6 +146,12 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next, rawInput }) => {
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+export const protectedProcedure = t.procedure.use(
+  enforceUserIsAuthed({ strong: true } as const),
+);
+
+export const weaklyProtectedProcedure = t.procedure.use(
+  enforceUserIsAuthed({ strong: false } as const),
+);
 
 export const ee = new RedisEventEmitter();

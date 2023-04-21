@@ -9,6 +9,11 @@ import {
 import { GITHUB_CLIENT_ID, discovery } from "./constants";
 
 export default function useCode(antiState: string, path: string) {
+  const redirect_uri = makeRedirectUri({
+    scheme: "exp",
+    path,
+  });
+
   // Here we are simply wrapping the `useAuthRequest` hook
   // This makes there less duplication configuration when using GitHub authentication
   const [request, response, promptAsync] = useAuthRequest(
@@ -16,10 +21,7 @@ export default function useCode(antiState: string, path: string) {
       clientId: GITHUB_CLIENT_ID,
       scopes: ["user"],
       state: antiState,
-      redirectUri: makeRedirectUri({
-        scheme: "exp",
-        path,
-      }),
+      redirectUri: redirect_uri,
       responseType: ResponseType.Token,
     },
     discovery,

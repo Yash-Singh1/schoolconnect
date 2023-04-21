@@ -28,8 +28,8 @@ const Landing: React.FC = () => {
   const [token] = useAtom(tokenAtom);
 
   // Query information on the user
-  const selfQuery = api.user.self.useQuery({ token });
-  const schoolQuery = api.school.get.useQuery({ token });
+  const selfQuery = api.user.self.useQuery({ token }, { enabled: !!token });
+  const schoolQuery = api.school.get.useQuery({ token }, { enabled: !!token });
 
   // Query the social media that the user is using
   const socialMedia = useMemo(() => {
@@ -186,18 +186,24 @@ const Announcements: React.FC<{ userId: string }> = ({ userId }) => {
 
   // Fetch recent events and posts
 
-  const recentEventsQuery = api.events.all.useQuery({
-    token,
-    take: 10,
-    upOnly: true,
-    includeSource: true,
-  });
+  const recentEventsQuery = api.events.all.useQuery(
+    {
+      token,
+      take: 10,
+      upOnly: true,
+      includeSource: true,
+    },
+    { enabled: !!token },
+  );
 
-  const recentPostsQuery = api.post.all.useQuery({
-    token,
-    take: 10,
-    upOnly: true,
-  });
+  const recentPostsQuery = api.post.all.useQuery(
+    {
+      token,
+      take: 10,
+      upOnly: true,
+    },
+    { enabled: !!token },
+  );
 
   const util = api.useContext();
 
@@ -239,7 +245,10 @@ const Announcements: React.FC<{ userId: string }> = ({ userId }) => {
   // Combine the two into one array, sorted by date using two pointers (linear time)
 
   const recentAnnouncements = useMemo(() => {
-    if (recentEventsQuery.data && recentPostsQuery.data) {
+    if (typeof recentEventsQuery.data !== 'undefined' && typeof recentPostsQuery.data !== 'undefined') {
+      if (!recentEventsQuery.data.length) {
+        return recentPostsQuery.data;
+      }
       const result = [];
       let recentPostI = 0;
       for (
@@ -323,7 +332,7 @@ const Announcement: React.FC<{
           ? "School" in item!
             ? item.School!.name
             : item!.Class!.name
-          : item.title}
+          : item.author.name}
       </Text>
     </View>
   );
@@ -421,6 +430,8 @@ const Index: React.FC = () => {
         } catch (error) {
           setVerifyStatus("error");
         }
+      } else if (verifyQuery.isSuccess) {
+        await verifyQuery.refetch();
       }
       if (verifyStatus !== "success") {
         const val = await SecureStore.getItemAsync(TOKEN_KEY);
