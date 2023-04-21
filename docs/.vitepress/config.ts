@@ -51,7 +51,7 @@ export default defineConfig({
     ],
 
     logo: {
-      src: "https://raw.githubusercontent.com/Yash-Singh1/schoolconnect/main/docs/assets/logo.png",
+      src: "/logo.png",
     },
 
     socialLinks: [

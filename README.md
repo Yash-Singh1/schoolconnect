@@ -36,4 +36,4 @@ For more information on the specifics of the packages, check out the READMEs in 
 
 ## Getting Started
 
-To get started running this application, check out the [instructions](./INSTRUCTIONS.md).
+To get started running this application, check out the [instructions](./INSTRUCTIONS.md). For more information this application, view our [documentation](https://schoolconnect-docs.vercel.app/).

@@ -10,7 +10,7 @@ To setup a social media integration, first copy the URL to the social media acco
 
 ## Modify Members
 
-TODO
+Administrators also have the ability to modify members inside their school. This can be done through the Members tab found in the navigation bar. There are two types of members of an application, pending or invited. Pending users are users that are invited and are awaiting registration. Invited users are users that have already registered to the school. Creating pending users can allow administrators to manage students in advance, for example, assigning the parent's accounts. Administrators have the ability to change any user's name, email, or role.
 
 ## Modify Schedule
 
