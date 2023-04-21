@@ -31,15 +31,15 @@ const NewEvent: React.FC = () => {
   const util = api.useContext();
   const createEvent = api.events.create.useMutation({
     async onSuccess() {
-      // Reset form state
-      setTitle("");
-      setContent("");
-
       // Invalidate cache on events
       await util.events.all.invalidate();
 
       // Navigate back to the events page
       router.back();
+
+      // Reset form state
+      setTitle("");
+      setContent("");
     },
   });
 

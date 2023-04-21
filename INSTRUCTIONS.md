@@ -30,10 +30,6 @@ Now, to sync the schema with the client and the database, run the following comm
 pnpm db:push
 ```
 
-#### Production
-
-If you would like to deploy a production version of the database, 
-
 ### 3. Setup GitHub OAuth
 
 To setup GitHub OAuth, you will need to create a new OAuth app on GitHub. To do this, follow the instructions on GitHub's [guide](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app) and copy the client ID and client secret to their respective places in the `.env` file. For the callback URL, use `exp://[YOUR_IP]:19000`.
@@ -50,7 +46,7 @@ To get your QStash keys, create a new Upstash account and navigate to the [QStas
 
 The process of this step depends on whether you choose to run the application on a physical device or an emulator.
 
-### Emulator
+#### Emulator
 
 If you are using an emulator for running the application, follow the instructions to setup your emulator on the Expo documentation:
 
@@ -73,7 +69,7 @@ pnpm run dev
 
 Now refresh the application by accessing the [Developer Menu](https://docs.expo.dev/debugging/tools/#developer-menu) and clicking the refresh button. We do this so the server connection can be reestablished.
 
-### Physical Device
+#### Physical Device
 
 If you are running the application on a physical device, the first step is to install [Expo Go](https://docs.expo.dev/get-started/expo-go/) from your application distribution store on your physical device. Once you have that installed, you can first go into the application directory and start up Expo so we can get the QR Code:
 
@@ -91,7 +87,17 @@ pnpm run dev
 
 This will restart the process, but this time with the server and the database up and running. Now, reload the application on your device through the [Developer Menu](https://docs.expo.dev/debugging/tools/#developer-menu).
 
-### 7. Start the server
+### 7. Start up Redis Server
+
+We need to start up a redis server for the event emitter for synchronization between the websocket server and the Next.js server. Start off by [installing](https://redis.io/docs/getting-started/installation/) Redis.
+
+Then run the following command in a seperate terminal window to start up the redis server. Make sure the directory when running this command is the same as for `pnpm run dev`:
+
+```sh
+redis-server
+```
+
+### 8. Start the server
 
 To start the server, run the following command:
 
@@ -100,3 +106,25 @@ pnpm dev
 ```
 
 All the packages will be built and run. Expo will give instructions on how to run the application on your device.
+
+## Production
+
+For setting the application up for deployment, you have to setup a few services for deploying the database, event emitter, HTTP server, and websocket server.
+
+### Database
+
+To start up the database, create a PostgresSQL provision on [Railway](https://railway.app/).
+
+Next, click on the provision and copy the `DATABASE_URL` environment variable from the "Connect" tab. Set the environment variable of `DATABASE_URL` in the `.env` file.
+
+### Event Emitter
+
+To setup the event emitter, setup a Redis instance on Upstash. You can do this on the [Upstash Console](https://console.upstash.com/). Copy the URL from the Upstash Console. Set the environment variable of `REDIS_URL` with the copied text in the `.env` file.
+
+### HTTP Server
+
+To start up the HTTP server, deploy the application onto Vercel with the environment variables from the `.env`.
+
+### Websocket Server
+
+To start up the WebSocket server, deploy the application onto Railway with the environment variables from the `.env`.

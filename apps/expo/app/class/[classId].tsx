@@ -134,13 +134,11 @@ const Board: React.FC = () => {
 
           {/* TODO: Pagination for posts */}
           <FlashList
-            data={postQuery.data}
+            data={[...postQuery.data, null]}
             ItemSeparatorComponent={() => <View className="h-3" />}
             estimatedItemSize={117}
-            renderItem={({ item }) => <PostCard item={item} />}
+            renderItem={({ item }) => item ? <PostCard item={item} /> : <View className="h-10" />}
           />
-
-          <View className="h-10" />
         </View>
         <Navbar />
       </View>

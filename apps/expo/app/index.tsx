@@ -122,12 +122,12 @@ const Landing: React.FC = () => {
 
           {tab === "news" ? (
             // Recent announcements tab, uses Announcments component
-            <>
-              <Text className="w-full pb-2 text-center text-xl font-bold text-white mt-2">
+            <View className="flex flex-col">
+              <Text className="w-full pb-2 text-center text-xl font-bold text-white mt-2 flex-grow-0">
                 Recent Announcements
               </Text>
               <Announcements userId={selfQuery.data.id} />
-            </>
+            </View>
           ) : tab === "social" ? (
             // Social tab, embeds configured social
             <WebView
@@ -245,7 +245,10 @@ const Announcements: React.FC<{ userId: string }> = ({ userId }) => {
   // Combine the two into one array, sorted by date using two pointers (linear time)
 
   const recentAnnouncements = useMemo(() => {
-    if (typeof recentEventsQuery.data !== 'undefined' && typeof recentPostsQuery.data !== 'undefined') {
+    if (
+      typeof recentEventsQuery.data !== "undefined" &&
+      typeof recentPostsQuery.data !== "undefined"
+    ) {
       if (!recentEventsQuery.data.length) {
         return recentPostsQuery.data;
       }
@@ -276,15 +279,19 @@ const Announcements: React.FC<{ userId: string }> = ({ userId }) => {
   return recentAnnouncements ? (
     recentAnnouncements.length ? (
       <View
+        className="flex-grow"
         style={{
-          height: Dimensions.get("screen").height * 0.7,
+          minHeight: Dimensions.get("screen").height * 0.5,
+          maxHeight: Dimensions.get("screen").height * 0.5,
           width: Dimensions.get("screen").width,
         }}
       >
         <FlashList
-          data={recentAnnouncements}
+          data={[...recentAnnouncements, null]}
           ItemSeparatorComponent={() => <View className="h-3" />}
-          renderItem={({ item }) => <Announcement item={item} />}
+          renderItem={({ item }) =>
+            item ? <Announcement item={item} /> : <View className="h-20" />
+          }
           estimatedItemSize={46}
         />
       </View>

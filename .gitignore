@@ -50,3 +50,6 @@ yarn-error.log*
 
 # Redis Dump
 *.rdb
+
+# Unneccessary Scripts
+scripts/

@@ -42,16 +42,16 @@ const NewClass: React.FC = () => {
   const util = api.useContext();
   const createClass = api.class.create.useMutation({
     async onSuccess() {
-      // Resret form state
-      setName("");
-      setDescription("");
-      setFileError(false);
-
       // Invalidate cached class data
       await util.class.all.invalidate();
 
       // Navigate back to the classes page
       router.back();
+
+      // Reset form state
+      setName("");
+      setDescription("");
+      setFileError(false);      
     },
   });
 

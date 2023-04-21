@@ -182,7 +182,13 @@ export const postRouter = createTRPCRouter({
         })),
         ...(await ctx.prisma.device.findMany({
           where: {
-            userId: ctx.user.id,
+            user: {
+              classesOwned: {
+                some: {
+                  id: classId,
+                }
+              }
+            }
           },
         })),
       ];
