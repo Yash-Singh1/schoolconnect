@@ -189,7 +189,7 @@ const Personal: React.FC = () => {
                     value={newName}
                     onChangeText={setNewName}
                     secureTextEntry={modalVisible === "password"}
-                    // @ts-expect-error -- TODO: Contribute to react-native typings, they support enterKeyHint but didn't document it
+                    // @ts-expect-error -- React Native doesn't have enterKeyHint because it thinks this is web
                     enterKeyHint="done"
                     placeholder={`Your new ${modalVisible}`}
                   />

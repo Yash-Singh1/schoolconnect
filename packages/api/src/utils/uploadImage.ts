@@ -53,17 +53,25 @@ export async function uploadImage(image: string) {
   const urlencoded = new URLSearchParams();
   urlencoded.append("image", image);
 
-  const imageOutput: ImgbbApiResponse = (await (
-    await fetch(
-      `https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}`,
-      {
-        method: "POST",
-        headers: myHeaders,
-        body: urlencoded,
-        redirect: "follow",
-      },
-    )
-  ).json()) as ImgbbApiResponse;
+  const imageOutput: ImgbbApiResponse = (await fetch(
+    `https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}`,
+    {
+      method: "POST",
+      headers: myHeaders,
+      body: urlencoded,
+      redirect: "follow",
+    },
+  ).then((response) => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      return response.json().then((json) => {
+        throw new Error(
+          `Imgbb Uploading Error (${response.status}): ${JSON.stringify(json)}`,
+        );
+      });
+    }
+  })) as ImgbbApiResponse;
 
   return imageOutput;
 }

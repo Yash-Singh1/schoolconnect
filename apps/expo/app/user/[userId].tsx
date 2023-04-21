@@ -113,7 +113,7 @@ const ModifyUser: React.FC = () => {
               placeholderTextColor="rgba(255, 255, 255, 0.5)"
               value={newName!}
               onChangeText={setNewName}
-              // @ts-expect-error -- TODO: Contribute to react-native typings, they support enterKeyHint but didn't document it
+              // @ts-expect-error -- React Native doesn't have enterKeyHint because it thinks this is web
               enterKeyHint="done"
               placeholder="New name"
             />
@@ -129,7 +129,7 @@ const ModifyUser: React.FC = () => {
                 placeholderTextColor="rgba(255, 255, 255, 0.5)"
                 value={newEmail!}
                 onChangeText={setNewEmail}
-                // @ts-expect-error -- TODO: Contribute to react-native typings, they support enterKeyHint but didn't document it
+                // @ts-expect-error -- React Native doesn't have enterKeyHint because it thinks this is web
                 enterKeyHint="done"
                 placeholder="New email"
               />

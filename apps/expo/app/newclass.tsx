@@ -55,8 +55,6 @@ const NewClass: React.FC = () => {
     },
   });
 
-  // TODO: Validate that a teacher or admin is doing this client-side
-
   return (
     <SafeAreaView className="bg-[#101010]">
       <Stack.Screen options={{ title: "New Class" }} />

@@ -79,7 +79,7 @@ const NewPost: React.FC = () => {
           placeholderTextColor="rgba(255, 255, 255, 0.5)"
           value={title}
           onChangeText={setTitle}
-          // @ts-expect-error -- TODO: Contribute to react-native typings, they support enterKeyHint but didn't document it
+          // @ts-expect-error -- React Native doesn't have enterKeyHint because it thinks this is web
           enterKeyHint="done"
           placeholder="Title of the post"
         />
@@ -94,7 +94,7 @@ const NewPost: React.FC = () => {
           placeholderTextColor="rgba(255, 255, 255, 0.5)"
           value={content}
           textAlignVertical="top"
-          // @ts-expect-error -- TODO: See above comment
+          // @ts-expect-error -- See above
           enterKeyHint="done"
           onChangeText={setContent}
           placeholder="Content of the post"

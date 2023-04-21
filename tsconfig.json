@@ -17,6 +17,6 @@
     "incremental": true,
     "noUncheckedIndexedAccess": true
   },
-  "include": [".eslintrc.js", "prettier.config.cjs", "module.d.ts"],
+  "include": [".eslintrc.js", "prettier.config.cjs"],
   "extends": "expo/tsconfig.base"
 }

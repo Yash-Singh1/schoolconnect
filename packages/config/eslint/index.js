@@ -28,6 +28,7 @@ const config = {
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/require-await": "off",
     "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/consistent-type-imports": "off",
     "react-hooks/exhaustive-deps": "off",
   },
   ignorePatterns: ["**/*.config.js", "**/*.config.cjs", "packages/config/**"],

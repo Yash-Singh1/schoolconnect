@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "jsx": "react-native",
-    "types": ["nativewind/types"]
+    "types": ["nativewind/types"],
   },
   "include": [
     "module.d.ts",

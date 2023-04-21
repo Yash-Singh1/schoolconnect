@@ -97,7 +97,6 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next, rawInput }) => {
   });
 
   if (userFound) {
-    // TODO: Test to make sure this session renewal works (don't want to mess up authentication)
     await ctx.prisma.session.update({
       where: {
         sessionToken: token,
