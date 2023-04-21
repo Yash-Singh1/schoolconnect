@@ -139,6 +139,8 @@ const Board: React.FC = () => {
             estimatedItemSize={117}
             renderItem={({ item }) => <PostCard item={item} />}
           />
+
+          <View className="h-10" />
         </View>
         <Navbar />
       </View>

@@ -11,11 +11,14 @@ import "../src/icons";
 
 // Set notification handler for the application
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
+  handleNotification: async () => {
+    return {
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+      priority: Notifications.AndroidNotificationPriority.HIGH,
+    };
+  },
 });
 
 const RootLayout = () => {
