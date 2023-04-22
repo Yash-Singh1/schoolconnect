@@ -7,6 +7,7 @@ const config = {
   theme: {
     screens: {
       xs: "100px",
+      sm: "640px",
     },
     extend: {},
   },

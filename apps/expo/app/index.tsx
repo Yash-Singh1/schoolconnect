@@ -71,7 +71,7 @@ const Landing: React.FC = () => {
       <View className="flex h-full w-full flex-col content-center items-center justify-end self-center">
         <View className="h-[88%] w-full p-2">
           {/* Header */}
-          <Text className="mx-auto pb-2 text-center text-2xl font-bold text-white">
+          <Text className="mx-auto pb-2 text-center text-2xl sm:text-4xl font-bold text-white">
             Welcome{" "}
             <Text className="text-pink-400">
               {selfQuery.data.name || "Anonymous"}
@@ -88,7 +88,7 @@ const Landing: React.FC = () => {
               style={{ borderBottomWidth: tab === "news" ? 1 : 0 }}
             >
               <FontAwesomeIcon icon="newspaper" color="white" />
-              <Text className="ml-2 text-lg font-bold text-white">News</Text>
+              <Text className="ml-2 text-lg sm:text-2xl font-bold text-white">News</Text>
             </TouchableOpacity>
 
             {socialMedia ? (
@@ -99,7 +99,7 @@ const Landing: React.FC = () => {
                 style={{ borderBottomWidth: tab === "social" ? 1 : 0 }}
               >
                 <FontAwesomeIcon icon={socialMedia.icon} color="white" />
-                <Text className="ml-2 text-lg font-bold text-white">
+                <Text className="ml-2 text-lg sm:text-2xl font-bold text-white">
                   {socialMedia.name}
                 </Text>
               </TouchableOpacity>
@@ -123,7 +123,7 @@ const Landing: React.FC = () => {
           {tab === "news" ? (
             // Recent announcements tab, uses Announcments component
             <View className="flex flex-col">
-              <Text className="w-full pb-2 text-center text-xl font-bold text-white mt-2 flex-grow-0">
+              <Text className="w-full pb-2 text-center text-xl sm:text-2xl sm:mb-4 font-bold text-white mt-2 flex-grow-0">
                 Recent Announcements
               </Text>
               <Announcements userId={selfQuery.data.id} />
@@ -297,7 +297,7 @@ const Announcements: React.FC<{ userId: string }> = ({ userId }) => {
       </View>
     ) : (
       // No view when there aren't any announcements
-      <Text className="text-white text-center mt-2">
+      <Text className="text-white text-center mt-2 sm:text-lg">
         No Recent Announcements
       </Text>
     )
@@ -329,12 +329,12 @@ const Announcement: React.FC<{
       className="mb-2 rounded-lg border-2 border-violet-400/50 bg-violet-400/40 p-2"
     >
       {/* Title */}
-      <Text className="text-base font-bold text-white">
+      <Text className="text-base sm:text-xl font-bold text-white">
         {eventItem ? item!.name : item.title}
       </Text>
 
       {/* Source */}
-      <Text className="italic text-white">
+      <Text className="italic text-white sm:text-lg">
         {eventItem
           ? "School" in item!
             ? item.School!.name

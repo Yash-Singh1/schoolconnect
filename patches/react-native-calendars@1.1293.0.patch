@@ -1,0 +1,30 @@
+diff --git a/src/day-state-manager.js b/src/day-state-manager.js
+index 514e854c86fbb4bf2f16675a321c8d95689b3038..23e11e257adc3b3d38d7a96de3ae8c51d5e90857 100644
+--- a/src/day-state-manager.js
++++ b/src/day-state-manager.js
+@@ -3,7 +3,7 @@ const { toMarkingFormat } = require('./interface');
+ export function getState(day, current, props, disableDaySelection) {
+     const { minDate, maxDate, disabledByDefault, context } = props;
+     let state = '';
+-    if (!disableDaySelection && ((context?.date ?? toMarkingFormat(current)) === toMarkingFormat(day))) {
++    if (!disableDaySelection && (context?.date === toMarkingFormat(day))) {
+         state = 'selected';
+     }
+     else if (isToday(day)) {
+diff --git a/src/types.d.ts b/src/types.d.ts
+index 31103ce7ccc86e9befa3b3c86046ef15e3d43a51..38eb99c4603e7b7b1e45f9a978a383eea4f9a659 100644
+--- a/src/types.d.ts
++++ b/src/types.d.ts
+@@ -97,11 +97,7 @@ export interface Theme {
+         };
+     };
+ }
+-export type AgendaEntry = {
+-    name: string;
+-    height: number;
+-    day: string;
+-};
++export type AgendaEntry = any;
+ export type AgendaSchedule = {
+     [date: string]: AgendaEntry[];
+ };

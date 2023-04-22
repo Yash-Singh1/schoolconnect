@@ -1,5 +1,10 @@
 lockfileVersion: '6.0'
 
+patchedDependencies:
+  react-native-calendars@1.1293.0:
+    hash: vnh6js34mqjv67af7opvgphbfy
+    path: patches/react-native-calendars@1.1293.0.patch
+
 importers:
 
   .:
@@ -132,7 +137,7 @@ importers:
         version: 0.71.3(@babel/core@7.20.12)(@babel/preset-env@7.20.2)(react@18.2.0)
       react-native-calendars:
         specifier: ^1.1293.0
-        version: 1.1294.0(react-native@0.71.3)(react@18.2.0)
+        version: 1.1293.0(patch_hash=vnh6js34mqjv67af7opvgphbfy)(react-native@0.71.3)(react@18.2.0)
       react-native-dropdown-picker:
         specifier: ^5.4.4
         version: 5.4.4(react-native@0.71.3)(react@18.2.0)
@@ -7284,6 +7289,10 @@ packages:
     hasBin: true
     dev: false
 
+  /immutable@4.3.0:
+    resolution: {integrity: sha512-0AOCmOip+xgJwEVTQj1EfiDDOkPmuyllDuTuEX+DDXUgapLAsBIfkg3sxCYyCEA8mQqZrrxPUGjcOQ2JS3WLkg==}
+    dev: false
+
   /import-fresh@2.0.0:
     resolution: {integrity: sha512-eZ5H8rcgYazHbKC3PG4ClHNykCSxtAhxSSEM+2mb+7evD2CKF5V7c0dNum7AdpDh0ZdICwZY9sRSn8f+KH96sg==}
     engines: {node: '>=4'}
@@ -10466,10 +10475,11 @@ packages:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
     dev: false
 
-  /react-native-calendars@1.1294.0(react-native@0.71.3)(react@18.2.0):
-    resolution: {integrity: sha512-LJtXTdju9x4h3XjNS1gFne7TqH3BfylPEYyDJoCZFofID/lrjMr188SEIpL7Gu3aYfgi4EywZXXVSONWmC7scQ==}
+  /react-native-calendars@1.1293.0(patch_hash=vnh6js34mqjv67af7opvgphbfy)(react-native@0.71.3)(react@18.2.0):
+    resolution: {integrity: sha512-/wWBlNOooHAVTCDhZptdeZEa1+DTUW1E3cI9auEPblJ56t1TXqe0gVK1UTchPDsA5d2eIXxdhTThpFD846yq7g==}
     dependencies:
       hoist-non-react-statics: 3.3.2
+      immutable: 4.3.0
       lodash: 4.17.21
       memoize-one: 5.2.1
       prop-types: 15.8.1
@@ -10482,6 +10492,7 @@ packages:
       - react
       - react-native
     dev: false
+    patched: true
 
   /react-native-codegen@0.71.5(@babel/preset-env@7.20.2):
     resolution: {integrity: sha512-rfsuc0zkuUuMjFnrT55I1mDZ+pBRp2zAiRwxck3m6qeGJBGK5OV5JH66eDQ4aa+3m0of316CqrJDRzVlYufzIg==}

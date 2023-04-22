@@ -1,6 +1,6 @@
 // Class page, shows posts and allows teachers to post
 
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter, useSearchParams } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -11,6 +11,8 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { useAtom } from "jotai";
 
 import "dayjs/locale/en";
+import { useRef, useState } from "react";
+
 import LoadingWrapper from "../../src/components/LoadingWrapper";
 import { Navbar } from "../../src/components/Navbar";
 import { tokenAtom } from "../../src/store";
@@ -24,22 +26,40 @@ dayjs.locale("en");
 const PostCard: React.FC<{ item: Post & { author: User } }> = ({ item }) => {
   // NOTE: We don't want to do any queries here because that would lead us to the n+1 query problem
 
+  const imageRef = useRef<Image | null>(null);
+  const [width, setWidth] = useState<number | null>(null);
+
   return (
     <TouchableOpacity
       activeOpacity={0.5}
       className="mx-4 rounded-lg border-2 border-violet-400/50 bg-violet-400/40"
     >
       <View className="flex gap-y-2 px-4 py-2">
-        <Text className="text-base font-bold text-white">{item.title}</Text>
-        <Text className="text-sm font-semibold text-white">{item.content}</Text>
+        <Text className="text-base sm:text-lg font-bold text-white">
+          {item.title}
+        </Text>
+        <Text className="text-sm sm:text-base font-semibold text-white">
+          {item.content}
+        </Text>
         {item.image && (
-          <Image
-            source={{ uri: item.image }}
-            alt={item.title}
-            className="h-[150px] w-full"
-          />
+          <View className="flex flex-col">
+            <Image
+              resizeMode="contain"
+              onLoadEnd={() => {
+                // Some ratio algebra to get the width of the image with the aspect ratio in place
+                Image.getSize(item.image!, (width, height) => {
+                  setWidth((Dimensions.get('screen').height / 10) / height * width);
+                });
+              }}
+              ref={imageRef}
+              style={{ width: width || "100%" }}
+              source={{ uri: item.image }}
+              alt={item.title}
+              className="h-[10vh] flex-grow"
+            />
+          </View>
         )}
-        <Text className="text-xs font-medium italic text-white">
+        <Text className="text-xs sm:text-sm font-medium italic text-white">
           Posted by {item.author.name} {dayjs(item.createdAt).fromNow()}
         </Text>
       </View>
@@ -137,7 +157,9 @@ const Board: React.FC = () => {
             data={[...postQuery.data, null]}
             ItemSeparatorComponent={() => <View className="h-3" />}
             estimatedItemSize={117}
-            renderItem={({ item }) => item ? <PostCard item={item} /> : <View className="h-10" />}
+            renderItem={({ item }) =>
+              item ? <PostCard item={item} /> : <View className="h-10" />
+            }
           />
         </View>
         <Navbar />

@@ -30,11 +30,11 @@ const ClassCard: React.FC<{ item: Class & { owner: User } }> = ({ item }) => {
         />
       )}
       <View className="px-4 py-2">
-        <Text className="text-2xl font-bold text-white">
+        <Text className="text-2xl sm:text-3xl font-bold text-white">
           {item.name}
           {item.owner.name ? ` - ${item.owner.name}` : ""}
         </Text>
-        <Text className="text-lg text-white">{item.description}</Text>
+        <Text className="text-lg sm:text-xl text-white">{item.description}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -62,7 +62,7 @@ const Classes: React.FC = () => {
           {selfQuery.data.role === "teacher" ? (
             <Text
               onPress={() => router.push("/newclass")}
-              className="mx-4 mt-4 rounded-lg bg-blue-500/80 py-2 text-center text-lg font-bold text-white"
+              className="mx-4 mt-4 rounded-lg bg-blue-500/80 py-2 text-center text-lg sm:text-xl font-bold text-white"
               style={{ width: Dimensions.get("screen").width - 32 }}
             >
               Create New Class
@@ -86,7 +86,7 @@ const Classes: React.FC = () => {
             </View>
           ) : (
             // Show a piece of text if the user doesn't have any classes
-            <Text className="mt-4 w-full text-center text-xl font-semibold text-white">
+            <Text className="mt-4 w-full text-center text-xl sm:text-2xl font-semibold text-white">
               No classes
             </Text>
           )}

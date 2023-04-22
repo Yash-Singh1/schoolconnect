@@ -1,7 +1,7 @@
 // Main navigation bar
 // Some pages are only shown to certain roles
 
-import { Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import { useNavigation, useRouter } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useAtom } from "jotai";
@@ -21,16 +21,20 @@ export const Navbar = () => {
   // Queries for getting the user's data
   const selfQuery = api.user.self.useQuery({ token }, { enabled: !!token });
 
+  const iconSize = Dimensions.get("screen").width > 640 ? 60 : 30;
+
   return (
-    <View className="flex h-[12%] w-full flex-row flex-nowrap justify-between bg-pink-400 py-2 px-4">
+    <View className="flex h-[12%] w-full flex-row flex-nowrap justify-around bg-pink-400 py-2 px-4">
       {selfQuery.data && selfQuery.data.role === "admin" ? (
         <TouchableOpacity
           onPress={() => resetStack({ router, navigation }, "/amembers")}
           activeOpacity={0.5}
           className="flex flex-col flex-wrap items-center justify-center w-15"
         >
-          <FontAwesomeIcon icon="users" size={30} color="white" />
-          <Text className="text-center text-xs text-white">Members</Text>
+          <FontAwesomeIcon icon="users" size={iconSize} color="white" />
+          <Text className="text-center text-xs text-white sm:text-lg sm:mt-1">
+            Members
+          </Text>
         </TouchableOpacity>
       ) : null}
 
@@ -42,8 +46,10 @@ export const Navbar = () => {
           activeOpacity={0.5}
           className="flex flex-col flex-wrap items-center justify-center w-15"
         >
-          <FontAwesomeIcon icon="school" size={30} color="white" />
-          <Text className="text-center text-xs text-white">Classes</Text>
+          <FontAwesomeIcon icon="school" size={iconSize} color="white" />
+          <Text className="text-center text-xs text-white sm:text-lg sm:mt-1">
+            Classes
+          </Text>
         </TouchableOpacity>
       ) : null}
 
@@ -57,10 +63,12 @@ export const Navbar = () => {
         >
           <FontAwesomeIcon
             icon="person-circle-question"
-            size={30}
+            size={iconSize}
             color="white"
           />
-          <Text className="text-center text-xs text-white">Absences</Text>
+          <Text className="text-center text-xs text-white sm:text-lg sm:mt-1">
+            Absences
+          </Text>
         </TouchableOpacity>
       ) : null}
 
@@ -69,8 +77,10 @@ export const Navbar = () => {
         activeOpacity={0.5}
         className="flex flex-col flex-wrap items-center justify-center w-15"
       >
-        <FontAwesomeIcon icon="clock" size={30} color="white" />
-        <Text className="text-center text-xs text-white">Schedule</Text>
+        <FontAwesomeIcon icon="clock" size={iconSize} color="white" />
+        <Text className="text-center text-xs text-white sm:text-lg sm:mt-1">
+          Schedule
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -78,8 +88,10 @@ export const Navbar = () => {
         activeOpacity={0.5}
         className="flex flex-col flex-wrap items-center justify-center w-15"
       >
-        <FontAwesomeIcon icon="calendar" size={30} color="white" />
-        <Text className="text-center text-xs text-white">Events</Text>
+        <FontAwesomeIcon icon="calendar" size={iconSize} color="white" />
+        <Text className="text-center text-xs text-white sm:text-lg sm:mt-1">
+          Events
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -87,8 +99,10 @@ export const Navbar = () => {
         activeOpacity={0.5}
         className="flex flex-col flex-wrap items-center justify-center w-15"
       >
-        <FontAwesomeIcon icon="gear" size={30} color="white" />
-        <Text className="text-center text-xs text-white">Settings</Text>
+        <FontAwesomeIcon icon="gear" size={iconSize} color="white" />
+        <Text className="text-center text-xs text-white sm:text-lg sm:mt-1">
+          Settings
+        </Text>
       </TouchableOpacity>
     </View>
   );

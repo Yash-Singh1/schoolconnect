@@ -1,17 +1,10 @@
 // Events page, displays calendar with posted events
 
 import { useEffect, useState } from "react";
+import { Modal, Text, TouchableOpacity, View } from "react-native";
 import {
-  Modal,
-  Text,
-  TouchableOpacity,
-  View,
-  type ImageURISource,
-} from "react-native";
-import {
-  AgendaList,
+  Agenda,
   CalendarProvider,
-  ExpandableCalendar,
 } from "react-native-calendars";
 import { type MarkedDates } from "react-native-calendars/src/types";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -20,10 +13,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import dayjs from "dayjs";
 import { atom, useAtom } from "jotai";
 
-// @ts-expect-error -- TODO: Figure out how to configure these modules correctly
-import nextIcon from "../assets/next.png";
-// @ts-expect-error -- Also should cause ESLint errors fix
-import previousIcon from "../assets/previous.png";
 import LoadingWrapper from "../src/components/LoadingWrapper";
 import { Navbar } from "../src/components/Navbar";
 import { tokenAtom } from "../src/store";
@@ -32,8 +21,7 @@ import { api, type RouterOutputs } from "../src/utils/api";
 // Data type for an event to be displayed
 type DataEntry = {
   hour: string;
-  duration: string;
-  title: string;
+  name: string;
 };
 
 // Temporary atom to store events data fetching response
@@ -63,7 +51,7 @@ const AgendaItem: React.FC<{
   const [events] = useAtom(eventsAtom);
 
   // Memoize the event we are currently displaying
-  const event = events[Number(item.title)]!;
+  const event = events[Number(item.name)]!;
 
   // Modal state
   const [modalVisible, setModalVisible] = useState(false);
@@ -72,7 +60,7 @@ const AgendaItem: React.FC<{
     <TouchableOpacity
       activeOpacity={0.5}
       onPress={() => setModalVisible(true)}
-      className="border-b border-[lightgray] bg-white pb-4"
+      className="border-b border-[lightgray] bg-white pb-4 -z-10"
     >
       {/* Card for the event */}
       <View className="ml-4 flex flex-col">
@@ -161,16 +149,24 @@ const Events: React.FC = () => {
 
   // All of the events preprocessed for input into react-native-calendars
   const [eventsGrouped, setEventsGrouped] = useState<
-    | null
-    | {
-        title: string;
-        data: DataEntry[];
-      }[]
-  >(null);
-  const [markedDates, setMarkedDates] = useState<MarkedDates | null>(null);
+    Record<
+      // | {
+      //     title: string;
+      //     data: DataEntry[];
+      //   }[]
+      string,
+      DataEntry[]
+    >
+  >({});
+  const [markedDates, setMarkedDates] = useState<MarkedDates | undefined>(
+    undefined,
+  );
+  const [currentDate, setCurrentDate] = useState<Date | null>(null);
 
   // Preprocessed the events for usage in calendars when fetched
   useEffect(() => {
+    if (!currentDate) return;
+
     // Initialize event query data
     if (!eventsQuery.data) return;
     setEvents(eventsQuery.data);
@@ -181,24 +177,31 @@ const Events: React.FC = () => {
     const hs = eventsQuery.data.reduce<Record<string, DataEntry[]>>(
       (acc, event, eventIdx) => {
         const date = event!.start.toISOString().split("T")[0] as string;
-        const hr = event!.start.getHours();
+        marked[date] = { marked: true };
+        if (
+          !(
+            event?.start.getMonth() === currentDate.getMonth() ||
+            event?.end.getMonth() === currentDate.getMonth()
+          )
+        ) {
+          return acc;
+        }
+        const hr = event.start.getHours();
         if (!acc[date]) acc[date] = [];
         acc[date]!.push({
           hour: `${hr > 12 ? hr - 12 : hr}${hr >= 12 ? "pm" : "am"}`,
-          duration: "1h",
-          title: eventIdx.toString(),
+          name: eventIdx.toString(),
         });
-        marked[date] = { marked: true };
         return acc;
       },
       {},
     );
-    const keys = Object.keys(hs).sort();
 
     // Set the preprocessed data into the state
     setMarkedDates(marked);
-    setEventsGrouped(keys.map((key) => ({ title: key, data: hs[key]! })));
-  }, [eventsQuery.data]);
+    // setEventsGrouped(keys.map((key) => ({ title: key, data: hs[key]! })));
+    setEventsGrouped(hs);
+  }, [eventsQuery.data, currentDate]);
 
   // Show a loading indicator if the data is still fetching
   return eventsQuery.data && selfQuery.data ? (
@@ -228,19 +231,49 @@ const Events: React.FC = () => {
             <CalendarProvider
               date={new Date().toISOString().split("T")[0]!}
               showTodayButton
-              className="mt-4"
+              className="mt-4 mb-[10%]"
             >
-              <ExpandableCalendar
-                firstDay={1}
-                markedDates={markedDates || {}}
-                leftArrowImageSource={previousIcon as ImageURISource}
-                rightArrowImageSource={nextIcon as ImageURISource}
-              />
-              <AgendaList
-                sections={eventsGrouped}
-                renderItem={({ item }: { item: DataEntry }) => (
-                  <AgendaItem item={item} />
-                )}
+              <Agenda
+                // initialDate="2023-04-24"
+                items={eventsGrouped}
+                markedDates={markedDates}
+                showClosingKnob={true}
+                loadItemsForMonth={(date) => {
+                  setCurrentDate(new Date(date.dateString));
+                }}
+                renderEmptyData={() => {
+                  return (
+                    <View className="p-4">
+                      <Text className="text-6xl w-full text-center">🗓️</Text>
+                      <Text className="text-base font-semibold w-full text-center">
+                        No events scheduled for this date
+                      </Text>
+                    </View>
+                  );
+                }}
+                renderDay={(day: Date | undefined, item: DataEntry) => {
+                  return (
+                    <View className={`w-full ${day ? "mt-4" : ""}`}>
+                      {day ? (
+                        <View className="mb-2">
+                          <Text className="text-xl text-slate-600/80 px-4">
+                            {day.getDate()}
+                          </Text>
+                          <Text className="text-base text-slate-600/80 px-4">
+                            {dayjs(day).format("ddd")}
+                          </Text>
+                        </View>
+                      ) : null}
+                      {item ? (
+                        <AgendaItem item={item} />
+                      ) : (
+                        <Text>There are no events on this day</Text>
+                      )}
+                    </View>
+                  );
+                }}
+                pastScrollRange={10}
+                futureScrollRange={10}
               />
             </CalendarProvider>
           ) : null}
