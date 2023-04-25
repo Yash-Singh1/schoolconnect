@@ -29,6 +29,7 @@ const config = {
     "@typescript-eslint/require-await": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/consistent-type-imports": "off",
+    "@typescript-eslint/no-var-requires": "off",
     "react-hooks/exhaustive-deps": "off",
   },
   ignorePatterns: ["**/*.config.js", "**/*.config.cjs", "packages/config/**"],
