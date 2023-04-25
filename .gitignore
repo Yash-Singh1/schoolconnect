@@ -53,3 +53,13 @@ yarn-error.log*
 
 # Unneccessary Scripts
 scripts/
+
+# Vitepress build files
+docs/.vitepress/cache
+docs/.vitepress/dist
+
+# Android builds
+apps/expo/android/
+
+# Local Database
+packages/db/prisma/db.sqlites

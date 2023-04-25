@@ -2,10 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
-import {
-  Agenda,
-  CalendarProvider,
-} from "react-native-calendars";
+import { Agenda, CalendarProvider } from "react-native-calendars";
 import { type MarkedDates } from "react-native-calendars/src/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";

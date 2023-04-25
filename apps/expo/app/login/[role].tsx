@@ -26,7 +26,7 @@ const antiState = Math.random().toString();
 const Login: React.FC = () => {
   // Initialize router helper
   const router = useRouter();
-  const navigation = useNavigation() as NavigatorOverride;
+  const navigation = useNavigation() as unknown as NavigatorOverride;
 
   // Get role from the URL
   const params = useSearchParams();

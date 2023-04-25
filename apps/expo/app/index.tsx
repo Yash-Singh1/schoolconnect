@@ -88,7 +88,9 @@ const Landing: React.FC = () => {
               style={{ borderBottomWidth: tab === "news" ? 1 : 0 }}
             >
               <FontAwesomeIcon icon="newspaper" color="white" />
-              <Text className="ml-2 text-lg sm:text-2xl font-bold text-white">News</Text>
+              <Text className="ml-2 text-lg sm:text-2xl font-bold text-white">
+                News
+              </Text>
             </TouchableOpacity>
 
             {socialMedia ? (

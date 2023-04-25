@@ -26,7 +26,9 @@ const getBaseUrl = (websocket = false) => {
   console.log("Debugger host", localhost);
 
   if (!localhost) {
-    return websocket ? "wss://schoolconnect-production.up.railway.app" : "https://schoolconnect-mu.vercel.app";
+    return websocket
+      ? "wss://schoolconnect-production.up.railway.app"
+      : "https://schoolconnect-mu.vercel.app";
   }
   return `${websocket ? "ws" : "http"}://${localhost}:${
     websocket ? 3001 : 3000

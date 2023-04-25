@@ -45,7 +45,7 @@ const Signup = () => {
   );
 
   const router = useRouter();
-  const navigation = useNavigation() as NavigatorOverride;
+  const navigation = useNavigation() as unknown as NavigatorOverride;
 
   const [_, setToken] = useAtom(tokenAtom);
 

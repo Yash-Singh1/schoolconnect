@@ -81,7 +81,7 @@ const enforceUserIsAuthed = <T>({ strong }: { strong: T }) =>
         return next({
           ctx: {
             ...ctx,
-            user: null as (T extends true ? User : null),
+            user: null as T extends true ? User : null,
           },
         });
       }
@@ -127,7 +127,7 @@ const enforceUserIsAuthed = <T>({ strong }: { strong: T }) =>
       return next({
         ctx: {
           ...ctx,
-          user: null as (T extends true ? User : null),
+          user: null as T extends true ? User : null,
         },
       });
     }

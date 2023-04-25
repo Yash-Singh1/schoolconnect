@@ -7,12 +7,7 @@ export default defineConfig({
   description: "Documentation for the mobile application SchoolConnect",
   base: "/",
 
-  head: [
-    [
-      "link",
-      { rel: "icon", href: "/favicon.ico" },
-    ],
-  ],
+  head: [["link", { rel: "icon", href: "/favicon.ico" }]],
 
   themeConfig: {
     // https://vitepress.vuejs.org/reference/default-theme-config

@@ -22,7 +22,9 @@ export async function getGitHubUser(
 
   // Check if the response is valid
   if (response.status >= 400) {
-    throw new Error(`GitHub API error (${response.status}): ${JSON.stringify(response.body)}`);
+    throw new Error(
+      `GitHub API error (${response.status}): ${JSON.stringify(response.body)}`,
+    );
   }
 
   // Return the user data

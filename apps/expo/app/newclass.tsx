@@ -51,7 +51,7 @@ const NewClass: React.FC = () => {
       // Reset form state
       setName("");
       setDescription("");
-      setFileError(false);      
+      setFileError(false);
     },
   });
 

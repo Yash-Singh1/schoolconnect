@@ -19,7 +19,7 @@ import { resetStack, type NavigatorOverride } from "../src/utils/resetStack";
 const Settings: React.FC = () => {
   // Initialize router helpers
   const router = useRouter();
-  const navigation = useNavigation() as NavigatorOverride;
+  const navigation = useNavigation() as unknown as NavigatorOverride;
 
   // Get token from store
   const [token, setToken] = useAtom(tokenAtom);

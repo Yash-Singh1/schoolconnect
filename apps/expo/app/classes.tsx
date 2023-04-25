@@ -34,7 +34,9 @@ const ClassCard: React.FC<{ item: Class & { owner: User } }> = ({ item }) => {
           {item.name}
           {item.owner.name ? ` - ${item.owner.name}` : ""}
         </Text>
-        <Text className="text-lg sm:text-xl text-white">{item.description}</Text>
+        <Text className="text-lg sm:text-xl text-white">
+          {item.description}
+        </Text>
       </View>
     </TouchableOpacity>
   );

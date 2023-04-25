@@ -13,7 +13,7 @@ import { resetStack, type NavigatorOverride } from "../utils/resetStack";
 export const Navbar = () => {
   // Initialize router helpers
   const router = useRouter();
-  const navigation = useNavigation() as NavigatorOverride;
+  const navigation = useNavigation() as unknown as NavigatorOverride;
 
   // Get token from store
   const [token] = useAtom(tokenAtom);

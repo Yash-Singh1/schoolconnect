@@ -186,9 +186,9 @@ export const postRouter = createTRPCRouter({
               classesOwned: {
                 some: {
                   id: classId,
-                }
-              }
-            }
+                },
+              },
+            },
           },
         })),
       ];

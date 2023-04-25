@@ -17,7 +17,7 @@ const server = z.object({
   QSTASH_TOKEN: z.string().min(1),
   QSTASH_NEXT_SIGNING_KEY: z.string().min(1),
   QSTASH_CURRENT_SIGNING_KEY: z.string().min(1),
-  REDIS_URL: z.string().url()
+  REDIS_URL: z.string().url(),
 });
 
 /**

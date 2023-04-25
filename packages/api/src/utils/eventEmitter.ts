@@ -57,7 +57,10 @@ export class RedisEventEmitter {
    * @param listener The listener for the channel, takes a
    * @returns
    */
-  async on(eventName: string, listener: (...args: any[]) => any): Promise<string> {
+  async on(
+    eventName: string,
+    listener: (...args: any[]) => any,
+  ): Promise<string> {
     // Generate an ID for the listener
     const id = `${uuid()}-${await bcrypt.hash(Date.now().toString(), 10)}`;
 

@@ -42,7 +42,7 @@ const Member: React.FC<{ item: User; pending: boolean }> = ({
 
   // Initialize router helper
   const router = useRouter();
-  const navigation = useNavigation() as NavigatorOverride;
+  const navigation = useNavigation() as unknown as NavigatorOverride;
 
   return (
     <>

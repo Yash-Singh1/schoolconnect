@@ -30,7 +30,8 @@ Notifications.setNotificationHandler({
   },
 });
 
-const brandImage = require("../assets/icon_no_bg_no_gap.png") as ImageSourcePropType;
+const brandImage =
+  require("../assets/icon_no_bg_no_gap.png") as ImageSourcePropType;
 
 const RootLayout = () => {
   const router = useRouter();
