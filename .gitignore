@@ -62,4 +62,4 @@ docs/.vitepress/dist
 apps/expo/android/
 
 # Local Database
-packages/db/prisma/db.sqlites
+packages/db/prisma/db.sqlite
