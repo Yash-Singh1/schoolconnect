@@ -28,14 +28,16 @@ async function retrieveAuthToken(code: string) {
     },
   });
 
+  // TODO: Remove this hard-coded IP address
+  const ip = '10.20.84.54';
+
   /**
    * Exchange temporary code for access token
    * @see https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#2-users-are-redirected-back-to-your-site-by-github
    */
   const accessToken: AccessToken = await client.getToken({
     code,
-    // TODO: Auto detect IP
-    redirect_uri: "exp://10.20.88.128:19000",
+    redirect_uri: `exp://${ip}:19000`,
   });
 
   const userInfo = await getGitHubUser(
