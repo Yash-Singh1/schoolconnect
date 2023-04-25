@@ -2,9 +2,7 @@
 
 The main interface for the API of the application. This package contains the tRPC server that is then used by the Next.js app to host the API.
 
-For an introduction to tRPC, the best resource to get started is Theo's video on it:
-
-[![tRPC - The React Framework for APIs](https://i.ytimg.com/vi/cHWFwtX0TLU/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBSm-WF5fDfd9asRZpZ9m0JAmEVOQ)](https://www.youtube.com/watch?v=0ZJgIjIuY7U)
+For an introduction to tRPC, the best resource to get started is Theo's [video](https://www.youtube.com/watch?v=0ZJgIjIuY7U) on it:
 
 ## Directory Structure
 
