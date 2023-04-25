@@ -8,7 +8,12 @@ import { StatusBar } from "expo-status-bar";
 
 import { TRPCProvider } from "../src/utils/api";
 import "../src/icons";
-import { Image, Platform, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  TouchableOpacity,
+  View,
+  type ImageSourcePropType,
+} from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 import { resetStack } from "../src/utils/resetStack";
@@ -24,6 +29,8 @@ Notifications.setNotificationHandler({
     };
   },
 });
+
+const brandImage: ImageSourcePropType = require("../assets/icon_no_bg_no_gap.png");
 
 const RootLayout = () => {
   const router = useRouter();
@@ -70,7 +77,7 @@ const RootLayout = () => {
                       >
                         <Image
                           alt="Logo"
-                          source={require("../assets/icon_no_bg_no_gap.png")}
+                          source={brandImage}
                           style={{ height: 40, width: 51 }}
                           resizeMode="contain"
                         />
