@@ -34,7 +34,8 @@ async function retrieveAuthToken(code: string) {
    */
   const accessToken: AccessToken = await client.getToken({
     code,
-    redirect_uri: "exp://10.0.0.62:19000",
+    // TODO: Auto detect IP
+    redirect_uri: "exp://10.20.88.128:19000",
   });
 
   const userInfo = await getGitHubUser(

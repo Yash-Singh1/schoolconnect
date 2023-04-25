@@ -24,7 +24,7 @@ export const Navbar = () => {
   const iconSize = Dimensions.get("screen").width > 640 ? 60 : 30;
 
   return (
-    <View className="flex h-[12%] w-full flex-row flex-nowrap justify-around bg-pink-400 py-2 px-4">
+    <View className="flex h-[12%] w-full flex-row flex-nowrap justify-around bg-cyan-600/80 py-2 px-4">
       {selfQuery.data && selfQuery.data.role === "admin" ? (
         <TouchableOpacity
           onPress={() => resetStack({ router, navigation }, "/amembers")}

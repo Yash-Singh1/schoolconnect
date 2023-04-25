@@ -1,15 +1,15 @@
 // Reset the stack to the root and optionally push a new route
 
-import { type useNavigation, type useRouter } from "expo-router";
-import { type StackActions } from "@react-navigation/native";
+import { type useRouter } from "expo-router";
+import { type ParamListBase } from "@react-navigation/native";
+import { type NativeStackNavigationProp } from "@react-navigation/native-stack/src/types";
 
 // Typescript generic to get the return type of a function
 type GetReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
 
 // Overrides the default navigation object
 // This is safe because we know we are using a StackNavigator
-export type NavigatorOverride = GetReturnType<typeof useNavigation> &
-  typeof StackActions;
+export type NavigatorOverride = NativeStackNavigationProp<ParamListBase>;
 
 /**
  * @param ctx Contains the router and navigation objects, each from `useRouter` and `useNavigation` respectively
