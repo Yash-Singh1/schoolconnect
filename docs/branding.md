@@ -30,8 +30,8 @@ Background Color:
 
 Primary Accent Background:
 
-<div style="background-color: #F472B6; width: 100%; height: 256px; border-radius: 2%; display: flex; justify-content: end; align-items: end; padding: 8px;">
-  <div style="font-weight: 600;">#F472B6</div>
+<div style="background-color: #0B7792; width: 100%; height: 256px; border-radius: 2%; display: flex; justify-content: end; align-items: end; padding: 8px;">
+  <div style="font-weight: 600;">#0B7792</div>
 </div>
 
 Secondary Accent Background:

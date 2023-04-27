@@ -29,7 +29,7 @@ async function retrieveAuthToken(code: string) {
   });
 
   // TODO: Remove this hard-coded IP address
-  const ip = "10.20.84.54";
+  const ip = "10.20.80.176";
 
   /**
    * Exchange temporary code for access token

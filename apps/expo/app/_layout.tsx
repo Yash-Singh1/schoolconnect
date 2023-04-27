@@ -9,6 +9,7 @@ import { StatusBar } from "expo-status-bar";
 import { TRPCProvider } from "../src/utils/api";
 import "../src/icons";
 import {
+  Dimensions,
   Image,
   TouchableOpacity,
   View,
@@ -79,7 +80,14 @@ const RootLayout = () => {
                         <Image
                           alt="Logo"
                           source={brandImage}
-                          style={{ height: 40, width: 51 }}
+                          style={{
+                            height:
+                              40 *
+                              (Dimensions.get("window").width > 768 ? 1.25 : 1),
+                            width:
+                              51 *
+                              (Dimensions.get("window").width > 768 ? 1.25 : 1),
+                          }}
                           resizeMode="contain"
                         />
                       </TouchableOpacity>

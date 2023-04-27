@@ -175,14 +175,7 @@ const Events: React.FC = () => {
       (acc, event, eventIdx) => {
         const date = event!.start.toISOString().split("T")[0] as string;
         marked[date] = { marked: true };
-        if (
-          !(
-            event?.start.getMonth() === currentDate.getMonth() ||
-            event?.end.getMonth() === currentDate.getMonth()
-          )
-        ) {
-          return acc;
-        }
+        if (!event) return acc;
         const hr = event.start.getHours();
         if (!acc[date]) acc[date] = [];
         acc[date]!.push({
