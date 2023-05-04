@@ -1,5 +1,6 @@
 // Manage linked social accounts
 
+import { useEffect } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
@@ -10,6 +11,10 @@ import LoadingWrapper from "../../src/components/LoadingWrapper";
 import { Navbar } from "../../src/components/Navbar";
 import { tokenAtom } from "../../src/store";
 import { api } from "../../src/utils/api";
+import useCode from "../../src/utils/useCode";
+
+// Anti-state to prevent CSRF attacks
+const antiState = Math.random().toString();
 
 const Linked: React.FC = () => {
   // Get token from store
@@ -21,6 +26,39 @@ const Linked: React.FC = () => {
 
   // Query for getting the user's linked accounts
   const linkedAccountsQuery = api.user.linkedAccounts.useQuery({ token });
+
+  // Cache invalidation utilities
+  const util = api.useContext();
+
+  // Mutation for linking a social account
+  const { mutate: linkAccount } = api.auth.link.useMutation({
+    onSuccess() {
+      void util.user.linkedAccounts.refetch();
+      void linkedAccountsQuery.refetch();
+    },
+  });
+
+  // Use authentication helper hook
+  const [_request, response, promptAsync] = useCode(
+    antiState,
+    `/settings/linked`,
+  );
+
+  // First step of authentication on client-side over, relay to backend
+  useEffect(() => {
+    if (response && response?.type === "success") {
+      // Check if anti-state matches
+      if (response.params.state !== antiState) {
+        throw new Error("State mismatch, possible CSRF Attack");
+      }
+
+      // Relay to backend
+      linkAccount({
+        token,
+        code: response.params.code!,
+      });
+    }
+  }, [response]);
 
   return selfQuery.data && schoolQuery.data && linkedAccountsQuery.data ? (
     <SafeAreaView className="bg-[#101010]">
@@ -49,7 +87,7 @@ const Linked: React.FC = () => {
               <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={() => {
-                  // TODO: Implement account linking
+                  void promptAsync();
                 }}
               >
                 <FontAwesomeIcon icon="plus" size={30} color="white" />

@@ -403,4 +403,25 @@ export const authRouter = createTRPCRouter({
       // Return the session token
       return newSession.sessionToken;
     }),
+
+  link: protectedProcedure
+    .input(z.object({ token: z.string().min(1), code: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      // Destructure input
+      const { code } = input;
+
+      // Retrieve user info from GitHub
+      const { userInfo, accessToken } = await retrieveAuthToken(code);
+
+      await ctx.prisma.account.create({
+        data: {
+          type: "github",
+          provider: "github",
+          providerAccountId: userInfo.id.toString(),
+          access_token: accessToken.token.access_token as string,
+          scope: "user",
+          userId: ctx.user.id,
+        },
+      });
+    }),
 });
