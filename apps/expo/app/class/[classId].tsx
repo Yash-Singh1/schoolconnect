@@ -1,6 +1,7 @@
 // Class page, shows posts and allows teachers to post
 
 import {
+  Alert,
   Dimensions,
   Image,
   Modal,
@@ -26,14 +27,17 @@ import { StatusBar } from "expo-status-bar";
 import LoadingWrapper from "../../src/components/LoadingWrapper";
 import { Navbar } from "../../src/components/Navbar";
 import { tokenAtom } from "../../src/store";
-import { api } from "../../src/utils/api";
+import { RouterOutputs, api } from "../../src/utils/api";
 
 // Initialize dayjs for relative time
 dayjs.extend(relativeTime);
 dayjs.locale("en");
 
 // Card to show for each post inside a class
-const PostCard: React.FC<{ item: Post & { author: User } }> = ({ item }) => {
+const PostCard: React.FC<{
+  item: Post & { author: User };
+  self: RouterOutputs["user"]["self"];
+}> = ({ item, self }) => {
   // NOTE: We don't want to do any queries here because that would lead us to the n+1 query problem
 
   // State for resizing the image (we can't anticipate aspect ratio, so expect layout shifts)
@@ -45,21 +49,66 @@ const PostCard: React.FC<{ item: Post & { author: User } }> = ({ item }) => {
   // Whether or not the pan/zoom modal is open
   const [modalOpen, setModalOpen] = useState(false);
 
+  // Get the token from the store
+  const [token] = useAtom(tokenAtom);
+
+  // Get utilities for cache invalidation
+  const util = api.useContext();
+
+  // Mutation for deleting a post
+  const deletePost = api.post.delete.useMutation({
+    onSuccess() {
+      void util.post.invalidate();
+    },
+  });
+
   return (
-    <TouchableOpacity
-      activeOpacity={0.5}
-      onPress={() => setModalOpen(true)}
-      className="mx-4 rounded-lg border-2 border-violet-400/50 bg-violet-400/40"
-    >
+    <View className="mx-4 rounded-lg border-2 border-violet-400/50 bg-violet-400/40">
       <View className="flex gap-y-2 px-4 py-2">
-        <Text className="text-base sm:text-lg font-bold text-white">
-          {item.title}
-        </Text>
+        <View className="w-full flex flex-row justify-between items-center">
+          <Text className="text-base sm:text-lg font-bold text-white">
+            {item.title}
+          </Text>
+          {item.authorId === self!.id ? (
+            <TouchableOpacity
+              onPress={() => {
+                Alert.alert(
+                  "Delete post",
+                  "Are you sure you want to delete this post?",
+                  [
+                    {
+                      text: "Cancel",
+                      style: "cancel",
+                    },
+                    {
+                      text: "Delete",
+                      style: "destructive",
+                      onPress: () => {
+                        void deletePost.mutate({
+                          token,
+                          postId: item.id,
+                        });
+                      },
+                    },
+                  ],
+                  { cancelable: true },
+                );
+              }}
+              activeOpacity={0.8}
+            >
+              <FontAwesomeIcon size={18} color="#EF4444" icon="trash-can" />
+            </TouchableOpacity>
+          ) : null}
+        </View>
         <Text className="text-sm sm:text-base font-semibold text-white">
           {item.content}
         </Text>
         {item.image && (
-          <View className="flex flex-col">
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => setModalOpen(true)}
+            className="flex flex-col"
+          >
             <Image
               resizeMode="contain"
               onLoadEnd={() => {
@@ -115,13 +164,13 @@ const PostCard: React.FC<{ item: Post & { author: User } }> = ({ item }) => {
                 </View>
               </SafeAreaView>
             </Modal>
-          </View>
+          </TouchableOpacity>
         )}
         <Text className="text-xs sm:text-sm font-medium italic text-white">
           Posted by {item.author.name} {dayjs(item.createdAt).fromNow()}
         </Text>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
@@ -216,7 +265,11 @@ const Board: React.FC = () => {
             ItemSeparatorComponent={() => <View className="h-3" />}
             estimatedItemSize={117}
             renderItem={({ item }) =>
-              item ? <PostCard item={item} /> : <View className="h-10" />
+              item ? (
+                <PostCard item={item} self={selfQuery.data} />
+              ) : (
+                <View className="h-10" />
+              )
             }
           />
         </View>

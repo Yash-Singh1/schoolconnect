@@ -1,5 +1,6 @@
 // Form to create a new class
 
+import { Buffer } from "buffer";
 import { useCallback, useState } from "react";
 import { Dimensions, Image, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,10 +12,12 @@ import { useAtom } from "jotai";
 import LoadingWrapper from "../src/components/LoadingWrapper";
 import { tokenAtom } from "../src/store";
 import { api } from "../src/utils/api";
+import { uploadThing } from "../src/utils/uploadThing";
 
 const NewClass: React.FC = () => {
   // Form data states
   const [file, setFile] = useState<ImagePicker.ImagePickerResult | null>(null);
+  const [fileUri, setFileUri] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [fileError, setFileError] = useState(false);
@@ -28,8 +31,15 @@ const NewClass: React.FC = () => {
       const response = await ImagePicker.launchImageLibraryAsync({
         base64: true,
         mediaTypes: MediaTypeOptions.Images,
+        allowsEditing: true,
       });
-      if (!response.canceled) setFile(response);
+      if (!response.canceled) {
+        setFile(response);
+        setFileUri(await uploadThing(response));
+      } else {
+        setFile(null);
+        setFileUri(null);
+      }
     } catch (error) {
       console.warn(error);
     }
@@ -156,7 +166,7 @@ const NewClass: React.FC = () => {
                 token,
                 name,
                 description,
-                image: file.assets[0]?.base64 as string,
+                image: fileUri as string,
               });
             }}
           >

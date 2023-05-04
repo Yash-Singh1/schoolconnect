@@ -11,10 +11,12 @@ import { useAtom } from "jotai";
 import LoadingWrapper from "../../src/components/LoadingWrapper";
 import { tokenAtom } from "../../src/store";
 import { api } from "../../src/utils/api";
+import { uploadThing } from "../../src/utils/uploadThing";
 
 const NewPost: React.FC = () => {
   // Form state
   const [file, setFile] = useState<ImagePicker.ImagePickerResult | null>(null);
+  const [fileUri, setFileUri] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
@@ -28,7 +30,13 @@ const NewPost: React.FC = () => {
         base64: true,
         mediaTypes: MediaTypeOptions.Images,
       });
-      if (!response.canceled) setFile(response);
+      if (!response.canceled) {
+        setFile(response);
+        setFileUri(await uploadThing(response));
+      } else {
+        setFile(null);
+        setFileUri(null);
+      }
     } catch (error) {
       console.warn(error);
     }
@@ -151,10 +159,7 @@ const NewPost: React.FC = () => {
                 classId: classQuery.data.id,
                 title,
                 content,
-                image:
-                  file && file.assets
-                    ? (file.assets[0]?.base64 as string)
-                    : undefined,
+                image: file && file.assets ? fileUri! : undefined,
               });
             }}
           >

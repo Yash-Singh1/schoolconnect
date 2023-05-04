@@ -34,9 +34,9 @@ pnpm db:push
 
 To setup GitHub OAuth, you will need to create a new OAuth app on GitHub. To do this, follow the instructions on GitHub's [guide](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app) and copy the client ID and client secret to their respective places in the `.env` file. For the callback URL, use `exp://[YOUR_IP]:19000`.
 
-### 4. Setup Imgbb API
+### 4. Setup UploadThing
 
-To do this, simply navigate to [Imgbb](https://imgbb.com/) and create an account. Then, create and copy the API key from the [dashboard](https://api.imgbb.com/) to the `.env` file.
+To do this, sign up for [UploadThing](https://uploadthing.com/) and create a new application. Copy the API key and paste it into the environment variables.
 
 ### 5. Setup QStash
 

@@ -1,0 +1,56 @@
+diff --git a/dist/client.d.ts b/dist/client.d.ts
+index 435d9d870da24a8e413880eeaaef9d7ce8ae746b..93a5ae09eab301c96cff8180682c283ec38a07c2 100644
+--- a/dist/client.d.ts
++++ b/dist/client.d.ts
+@@ -1,10 +1,12 @@
+ import { F as FileRouter } from './types-dbaf1b46.js';
+ 
+-declare const DANGEROUS__uploadFiles: <T extends string>(files: File[], endpoint: T, config?: {
++type FileType = File | { uri: string; name: string; type: string };
++
++declare const DANGEROUS__uploadFiles: <T extends string>(files: FileType[], endpoint: T, config?: {
+     url?: string;
+ }) => Promise<any[]>;
+ type UploadFileType<T extends string> = typeof DANGEROUS__uploadFiles<T>;
+-declare const genUploader: <TRouter extends FileRouter>() => (files: File[], endpoint: keyof TRouter extends string ? keyof TRouter : string, config?: {
++declare const genUploader: <TRouter extends FileRouter>() => (files: FileType[], endpoint: keyof TRouter extends string ? keyof TRouter : string, config?: {
+     url?: string;
+ }) => Promise<any[]>;
+ 
+diff --git a/dist/client.mjs b/dist/client.mjs
+index 4d2c0b5e87848c2cd4d1000a4e0a10f4a76809b6..ae3ebfb3870d9e00aedd0969c0878e79b9d5c5b1 100644
+--- a/dist/client.mjs
++++ b/dist/client.mjs
+@@ -37,7 +37,7 @@ var DANGEROUS__uploadFiles = async (files, endpoint, config) => {
+       })
+     });
+     if (!upload.ok)
+-      throw new Error("Upload failed.");
++      throw new Error(`Upload failed (${upload.status}): ${await upload.text()}`);
+     const genUrl = "https://uploadthing.com/f/" + encodeURIComponent(fields["key"]);
+     console.log("URL for uploaded image", genUrl);
+     return {
+diff --git a/package.json b/package.json
+index feaa919352470771e4604e677a840d8b7f1efe80..9eb4830cfe839c76bf9dae0e224404806c10311d 100644
+--- a/package.json
++++ b/package.json
+@@ -10,12 +10,18 @@
+     },
+     "./server": {
+       "import": "./dist/server.mjs",
+-      "types": "./dist/server.d.ts"
++      "types": "./dist/server.d.ts",
++      "node": "./dist/server.mjs"
+     }
+   },
+   "files": [
+     "dist"
+   ],
++  "react-native": {
++    "./package.json": "./package.json",
++    "./client": "./dist/client.mjs",
++    "./server": "./dist/server.mjs"
++  },
+   "typesVersions": {
+     "*": {
+       "*": [

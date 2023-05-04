@@ -32,7 +32,7 @@ export const Navbar = () => {
           className="flex flex-col flex-wrap items-center justify-center w-15"
         >
           <FontAwesomeIcon icon="users" size={iconSize} color="white" />
-          <Text className="text-center text-xs text-white sm:text-lg sm:mt-1">
+          <Text className="text-center sm:font-semibold text-xs text-white sm:text-lg sm:mt-1">
             Members
           </Text>
         </TouchableOpacity>
@@ -47,7 +47,7 @@ export const Navbar = () => {
           className="flex flex-col flex-wrap items-center justify-center w-15"
         >
           <FontAwesomeIcon icon="school" size={iconSize} color="white" />
-          <Text className="text-center text-xs text-white sm:text-lg sm:mt-1">
+          <Text className="text-center sm:font-semibold text-xs text-white sm:text-lg sm:mt-1">
             Classes
           </Text>
         </TouchableOpacity>
@@ -66,7 +66,7 @@ export const Navbar = () => {
             size={iconSize}
             color="white"
           />
-          <Text className="text-center text-xs text-white sm:text-lg sm:mt-1">
+          <Text className="text-center sm:font-semibold text-xs text-white sm:text-lg sm:mt-1">
             Absences
           </Text>
         </TouchableOpacity>
@@ -78,7 +78,7 @@ export const Navbar = () => {
         className="flex flex-col flex-wrap items-center justify-center w-15"
       >
         <FontAwesomeIcon icon="clock" size={iconSize} color="white" />
-        <Text className="text-center text-xs text-white sm:text-lg sm:mt-1">
+        <Text className="text-center sm:font-semibold text-xs text-white sm:text-lg sm:mt-1">
           Schedule
         </Text>
       </TouchableOpacity>
@@ -89,7 +89,7 @@ export const Navbar = () => {
         className="flex flex-col flex-wrap items-center justify-center w-15"
       >
         <FontAwesomeIcon icon="calendar" size={iconSize} color="white" />
-        <Text className="text-center text-xs text-white sm:text-lg sm:mt-1">
+        <Text className="text-center sm:font-semibold text-xs text-white sm:text-lg sm:mt-1">
           Events
         </Text>
       </TouchableOpacity>
@@ -100,7 +100,7 @@ export const Navbar = () => {
         className="flex flex-col flex-wrap items-center justify-center w-15"
       >
         <FontAwesomeIcon icon="gear" size={iconSize} color="white" />
-        <Text className="text-center text-xs text-white sm:text-lg sm:mt-1">
+        <Text className="text-center sm:font-semibold text-xs text-white sm:text-lg sm:mt-1">
           Settings
         </Text>
       </TouchableOpacity>

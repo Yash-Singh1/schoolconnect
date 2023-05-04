@@ -7,7 +7,6 @@ import { type Class } from "@acme/db";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { getUserFromId } from "../utils/getUserFromId";
-import { uploadImage } from "../utils/uploadImage";
 
 export const classRouter = createTRPCRouter({
   // Gets all classes for a certain user, entire school for admin
@@ -140,15 +139,13 @@ export const classRouter = createTRPCRouter({
 
       const { image, name, description } = input;
 
-      const imageOutput = await uploadImage(image);
-
       const newClass = await ctx.prisma.class.create({
         data: {
           name,
           description,
           schoolId: ctx.user.schoolId,
           ownerId: ctx.user.id,
-          banner: imageOutput.data.url,
+          banner: image,
         },
       });
       return newClass.id;

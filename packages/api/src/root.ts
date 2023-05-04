@@ -1,5 +1,7 @@
 // The root router, contains subrouters of all the different parts of the API
 
+import { createFilething, type FileRouter } from "uploadthing/server";
+
 import { absenceRouter } from "./router/absence";
 import { authRouter } from "./router/auth";
 import { classRouter } from "./router/class";
@@ -22,3 +24,12 @@ export const appRouter = createTRPCRouter({
 
 // export type definition of API
 export type AppRouter = typeof appRouter;
+
+// UploadThing router
+const f = createFilething();
+
+export const UploadRouter = {
+  upload: f.fileTypes(["image"]).maxSize("128MB").onUploadComplete(console.log),
+} satisfies FileRouter;
+
+export type UploadRouterType = typeof UploadRouter;

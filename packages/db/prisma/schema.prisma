@@ -4,7 +4,8 @@
 // This contains the schema of my entire database structure
 
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
+    previewFeatures = ["jsonProtocol"]
 }
 
 datasource db {
@@ -39,12 +40,12 @@ model Session {
 }
 
 model Absence {
-    id             String   @id @default(cuid())
-    createdAt      DateTime @default(now())
-    dateTill       DateTime
-    userId         String
-    reason         String?
-    user           User     @relation(fields: [userId], references: [id])
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    dateTill  DateTime
+    userId    String
+    reason    String?
+    user      User     @relation(fields: [userId], references: [id])
 }
 
 model User {

@@ -8,7 +8,6 @@ import { z } from "zod";
 import { type Post } from "@acme/db";
 
 import { createTRPCRouter, ee, protectedProcedure } from "../trpc";
-import { uploadImage } from "../utils/uploadImage";
 
 export const postRouter = createTRPCRouter({
   // Gets all posts, allows taking specific amount and filtering by class
@@ -70,6 +69,49 @@ export const postRouter = createTRPCRouter({
       });
 
       return posts;
+    }),
+
+  // Deletes a post
+  delete: protectedProcedure
+    .input(
+      z.object({
+        token: z.string().min(1),
+        postId: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Destructure input
+      const { postId } = input;
+
+      // Find post in database
+      const post = await ctx.prisma.post.findUnique({
+        where: {
+          id: postId,
+        },
+      });
+
+      // Check if post exists
+      if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Post not found",
+        });
+      }
+
+      // Check if user is authorized to delete post
+      if (post.authorId !== ctx.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You are not authorized to delete this post",
+        });
+      }
+
+      // Delete post from database
+      await ctx.prisma.post.delete({
+        where: {
+          id: postId,
+        },
+      });
     }),
 
   onPost: protectedProcedure
@@ -142,17 +184,13 @@ export const postRouter = createTRPCRouter({
         });
       }
 
-      // Upload image if provided
-      let imageOutput = null;
-      if (image) imageOutput = await uploadImage(image);
-
       const dbInput = {
         classId,
         createdAt: new Date(),
         title,
         content,
         authorId: ctx.user.id,
-        ...(imageOutput ? { image: imageOutput.data.url } : {}),
+        ...(image ? { image } : {}),
       };
 
       // Create post in database
