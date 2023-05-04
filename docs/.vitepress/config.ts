@@ -41,6 +41,10 @@ export default defineConfig({
             text: "Storyboard",
             link: "https://translucent-marscapone-8f7.notion.site/c0ad09dfab0a445c97ed59c41bf617ef?v=ca94f7c03b004d0082cd1d7c68ce5e29",
           },
+          {
+            text: "API",
+            link: "https://documenter.getpostman.com/view/11867361/2s93eVXDeJ",
+          },
         ],
       },
     ],
