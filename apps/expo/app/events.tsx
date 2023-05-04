@@ -57,7 +57,7 @@ const AgendaItem: React.FC<{
     <TouchableOpacity
       activeOpacity={0.5}
       onPress={() => setModalVisible(true)}
-      className="border-b border-[lightgray]/10 bg-white/[0.01] pb-4 -z-10"
+      className="border-b border-[lightgray]/10 bg-white/[0.025] pb-4 -z-10"
     >
       {/* Card for the event */}
       <View className="ml-4 flex flex-col">
