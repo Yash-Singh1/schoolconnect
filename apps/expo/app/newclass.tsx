@@ -1,6 +1,5 @@
 // Form to create a new class
 
-import { Buffer } from "buffer";
 import { useCallback, useState } from "react";
 import { Dimensions, Image, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

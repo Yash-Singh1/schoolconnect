@@ -16,18 +16,20 @@ export const uploadThing = async (
     "image.jpeg";
 
   return (
-    await uploadFiles(
-      [
+    (
+      await uploadFiles(
+        [
+          {
+            uri: file.assets[0]!.uri,
+            name: fileName,
+            type: `image/${fileName.split(".").pop()}`,
+          },
+        ],
+        "upload",
         {
-          uri: file.assets[0]!.uri,
-          name: fileName,
-          type: `image/${fileName.split(".").pop()}`,
+          url: `${getBaseUrl(/* websocket = */ false)}/api/uploadthing`,
         },
-      ],
-      "upload",
-      {
-        url: `${getBaseUrl(/* websocket = */ false)}/api/uploadthing`
-      }
-    )
-  )[0].fileUrl;
+      )
+    )[0] as { fileUrl: string }
+  ).fileUrl;
 };
