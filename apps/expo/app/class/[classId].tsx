@@ -14,7 +14,7 @@ import ImageZoom from "react-native-image-pan-zoom";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter, useSearchParams } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { type Post, type User } from "@prisma/client";
+import type { Post, User } from "@prisma/client";
 import { FlashList } from "@shopify/flash-list";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -27,7 +27,7 @@ import { StatusBar } from "expo-status-bar";
 import LoadingWrapper from "../../src/components/LoadingWrapper";
 import { Navbar } from "../../src/components/Navbar";
 import { tokenAtom } from "../../src/store";
-import { RouterOutputs, api } from "../../src/utils/api";
+import { api } from "../../src/utils/api";
 
 // Initialize dayjs for relative time
 dayjs.extend(relativeTime);
@@ -36,7 +36,7 @@ dayjs.locale("en");
 // Card to show for each post inside a class
 const PostCard: React.FC<{
   item: Post & { author: User };
-  self: RouterOutputs["user"]["self"];
+  self: { id: string };
 }> = ({ item, self }) => {
   // NOTE: We don't want to do any queries here because that would lead us to the n+1 query problem
 
@@ -63,13 +63,13 @@ const PostCard: React.FC<{
   });
 
   return (
-    <View className="mx-4 rounded-lg border-2 border-violet-400/50 bg-violet-400/40">
+    <View className="mx-4 rounded-lg border-2 border-sky-400/50 bg-sky-400/40">
       <View className="flex gap-y-2 px-4 py-2">
         <View className="w-full flex flex-row justify-between items-center">
           <Text className="text-base sm:text-lg font-bold text-white">
             {item.title}
           </Text>
-          {item.authorId === self!.id ? (
+          {item.authorId === self.id ? (
             <TouchableOpacity
               onPress={() => {
                 Alert.alert(
@@ -166,9 +166,11 @@ const PostCard: React.FC<{
             </Modal>
           </TouchableOpacity>
         )}
-        <Text className="text-xs sm:text-sm font-medium italic text-white">
-          Posted by {item.author.name} {dayjs(item.createdAt).fromNow()}
-        </Text>
+        {item.author && (
+          <Text className="text-xs sm:text-sm font-medium italic text-white">
+            Posted by {item.author.name} {dayjs(item.createdAt).fromNow()}
+          </Text>
+        )}
       </View>
     </View>
   );
@@ -250,23 +252,27 @@ const Board: React.FC = () => {
               className="mt-4 mx-4 rounded-lg bg-blue-500 p-2"
               onPress={() => router.push(`/members/${classQuery.data.id}`)}
             >
-              <Text className="font-xl w-full text-center font-bold text-white">
+              <Text className="text-xl w-full text-center font-bold text-white">
                 Adjust Members
               </Text>
             </TouchableOpacity>
           )}
 
-          {/* List of all posts and ability for students and teachers to create posts */}
-          <View className="mb-4 mt-4 flex flex-row items-center">
-            <Text className="ml-8 text-2xl font-bold text-white">Posts</Text>
-            <TouchableOpacity
-              activeOpacity={0.5}
-              className="ml-2 rounded-lg bg-blue-500 p-1"
-              onPress={() => router.push(`/newpost/${classId}`)}
-            >
-              <FontAwesomeIcon icon="plus" size={24} color="white" />
-            </TouchableOpacity>
-          </View>
+          {/* List of all posts and ability to create posts */}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => router.push(`/newpost/${classId}`)}
+            className="mx-4 mt-4 rounded-lg border-2 border-sky-400/50 bg-sky-400/40"
+          >
+            <View className="flex gap-y-2 px-4 py-2">
+              <View className="w-full flex flex-row justify-between items-center">
+                <Text className="text-sm sm:text-base font-semibold text-gray-100">
+                  Write a post...
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+          <View className="h-3" />
 
           <FlashList
             data={[
@@ -277,7 +283,7 @@ const Board: React.FC = () => {
             estimatedItemSize={117}
             renderItem={({ item }) =>
               item ? (
-                <PostCard item={item} self={selfQuery.data} />
+                <PostCard item={item} self={selfQuery.data!} />
               ) : (
                 <View className="h-10" />
               )

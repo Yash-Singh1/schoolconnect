@@ -20,7 +20,7 @@ const ClassCard: React.FC<{ item: Class & { owner: User } }> = ({ item }) => {
     <TouchableOpacity
       activeOpacity={0.5}
       onPress={() => router.push(`/class/${item.id}`)}
-      className="mb-2 rounded-lg border-2 border-violet-400/50 bg-violet-400/40"
+      className="mb-2 rounded-lg border-2 border-sky-400/50 bg-sky-400/40"
     >
       {item.banner && (
         <Image

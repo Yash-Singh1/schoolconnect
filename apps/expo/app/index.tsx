@@ -345,7 +345,7 @@ const Announcement: React.FC<{
       style={{
         width: Dimensions.get("screen").width - 32,
       }}
-      className="mb-2 rounded-lg border-2 border-violet-400/50 bg-violet-400/40 p-2"
+      className="mb-2 rounded-lg border-2 border-sky-400/50 bg-sky-400/40 p-2"
     >
       {/* Title */}
       <Text className="text-base sm:text-xl font-bold text-white">
