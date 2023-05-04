@@ -1,9 +1,9 @@
 // Events page, displays calendar with posted events
 
 import { useEffect, useState } from "react";
-import { Modal, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Modal, Text, TouchableOpacity, View } from "react-native";
 import { Agenda, CalendarProvider } from "react-native-calendars";
-import { type MarkedDates } from "react-native-calendars/src/types";
+import type { MarkedDates, Theme } from "react-native-calendars/src/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -57,16 +57,16 @@ const AgendaItem: React.FC<{
     <TouchableOpacity
       activeOpacity={0.5}
       onPress={() => setModalVisible(true)}
-      className="border-b border-[lightgray] bg-white pb-4 -z-10"
+      className="border-b border-[lightgray]/10 bg-white/[0.01] pb-4 -z-10"
     >
       {/* Card for the event */}
       <View className="ml-4 flex flex-col">
-        <Text className="text-lg font-bold text-black">{event.name}</Text>
-        <Text className="mb-1 text-sm font-light italic text-[lightgray]">
+        <Text className="text-lg font-bold text-white">{event.name}</Text>
+        <Text className="mb-1 text-sm font-light italic text-gray-100">
           Posted by {"School" in event ? event.School!.name : event.Class!.name}
         </Text>
         <View className="flex flex-row items-center">
-          <Text className="text-black">
+          <Text className="text-white">
             {formatTwo(event.start, event.end)}
           </Text>
         </View>
@@ -105,6 +105,31 @@ const AgendaItem: React.FC<{
     </TouchableOpacity>
   );
 };
+
+const calendarTheme = {
+  calendarBackground: "#101010",
+  backgroundColor: "#101010",
+  stylesheet: {
+    agenda: {
+      main: {
+        backgroundColor: "#101010",
+      },
+    },
+  },
+  contentStyle: {
+    backgroundColor: "#101010",
+  },
+  dayTextColor: "white",
+  monthTextColor: "white",
+  textMonthFontWeight: "800",
+  todayBackgroundColor: "#101010",
+  "stylesheet.agenda.list": {
+    container: {
+      flexDirection: "row",
+      backgroundColor: "#101010",
+    },
+  },
+} satisfies Theme;
 
 // Calendar and agenda list containing all the events
 const Events: React.FC = () => {
@@ -146,14 +171,7 @@ const Events: React.FC = () => {
 
   // All of the events preprocessed for input into react-native-calendars
   const [eventsGrouped, setEventsGrouped] = useState<
-    Record<
-      // | {
-      //     title: string;
-      //     data: DataEntry[];
-      //   }[]
-      string,
-      DataEntry[]
-    >
+    Record<string, DataEntry[]>
   >({});
   const [markedDates, setMarkedDates] = useState<MarkedDates | undefined>(
     undefined,
@@ -221,21 +239,26 @@ const Events: React.FC = () => {
             <CalendarProvider
               date={new Date().toISOString().split("T")[0]!}
               showTodayButton
-              className="mt-4 mb-[10%]"
+              todayButtonStyle={{
+                backgroundColor: "#101010",
+              }}
+              todayBottomMargin={Dimensions.get("screen").height * 0.1}
+              theme={calendarTheme}
+              className="mt-4 mb-[10%] bg-[#101010] border border-white rounded-lg mx-2"
             >
               <Agenda
-                // initialDate="2023-04-24"
                 items={eventsGrouped}
                 markedDates={markedDates}
                 showClosingKnob={true}
                 loadItemsForMonth={(date) => {
                   setCurrentDate(new Date(date.dateString));
                 }}
+                theme={calendarTheme}
                 renderEmptyData={() => {
                   return (
-                    <View className="p-4">
+                    <View className="p-4 h-full bg-[#101010]">
                       <Text className="text-6xl w-full text-center">🗓️</Text>
-                      <Text className="text-base font-semibold w-full text-center">
+                      <Text className="text-base font-semibold w-full text-center text-white">
                         No events scheduled for this date
                       </Text>
                     </View>
@@ -243,13 +266,13 @@ const Events: React.FC = () => {
                 }}
                 renderDay={(day: Date | undefined, item: DataEntry) => {
                   return (
-                    <View className={`w-full ${day ? "mt-4" : ""}`}>
+                    <View className={`w-full h-full bg-[#101010]`}>
                       {day ? (
                         <View className="mb-2">
-                          <Text className="text-xl text-slate-600/80 px-4">
+                          <Text className="text-xl text-white/80 px-4">
                             {day.getDate()}
                           </Text>
-                          <Text className="text-base text-slate-600/80 px-4">
+                          <Text className="text-base text-white/80 px-4">
                             {dayjs(day).format("ddd")}
                           </Text>
                         </View>

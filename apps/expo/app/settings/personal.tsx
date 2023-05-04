@@ -36,6 +36,11 @@ function formatRole(role: string) {
   }
 }
 
+const emailClamp = Math.min(
+  Math.max(Dimensions.get("window").width / 50, 15),
+  30,
+);
+
 const Personal: React.FC = () => {
   // Get token from store
   const [token] = useAtom(tokenAtom);
@@ -112,8 +117,10 @@ const Personal: React.FC = () => {
           >
             <Text className="text-lg font-bold text-white">Email</Text>
             <Text className="text-lg font-normal text-white">
-              {selfQuery.data.email!.slice(0, 15) +
-                (selfQuery.data.email!.length > 17 ? "..." : "")}
+              {selfQuery.data.email!.slice(0, emailClamp) +
+                (selfQuery.data.email!.length > emailClamp + 2
+                  ? "..."
+                  : selfQuery.data.email!.slice(emailClamp, emailClamp + 2))}
             </Text>
           </TouchableOpacity>
 

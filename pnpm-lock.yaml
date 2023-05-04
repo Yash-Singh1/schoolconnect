@@ -2,7 +2,7 @@ lockfileVersion: '6.0'
 
 patchedDependencies:
   react-native-calendars@1.1293.0:
-    hash: vnh6js34mqjv67af7opvgphbfy
+    hash: epb3zz2qpobnrrrz5pfj6qzg44
     path: patches/react-native-calendars@1.1293.0.patch
   uploadthing@2.0.1:
     hash: 274dzi4csvont2giuvswmd7nfa
@@ -146,7 +146,7 @@ importers:
         version: 0.71.3(@babel/core@7.20.12)(@babel/preset-env@7.20.2)(react@18.2.0)
       react-native-calendars:
         specifier: ^1.1293.0
-        version: 1.1293.0(patch_hash=vnh6js34mqjv67af7opvgphbfy)(react-native@0.71.3)(react@18.2.0)
+        version: 1.1293.0(patch_hash=epb3zz2qpobnrrrz5pfj6qzg44)(react-native@0.71.3)(react@18.2.0)
       react-native-dropdown-picker:
         specifier: ^5.4.4
         version: 5.4.4(react-native@0.71.3)(react@18.2.0)
@@ -11307,7 +11307,7 @@ packages:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
     dev: false
 
-  /react-native-calendars@1.1293.0(patch_hash=vnh6js34mqjv67af7opvgphbfy)(react-native@0.71.3)(react@18.2.0):
+  /react-native-calendars@1.1293.0(patch_hash=epb3zz2qpobnrrrz5pfj6qzg44)(react-native@0.71.3)(react@18.2.0):
     resolution: {integrity: sha512-/wWBlNOooHAVTCDhZptdeZEa1+DTUW1E3cI9auEPblJ56t1TXqe0gVK1UTchPDsA5d2eIXxdhTThpFD846yq7g==}
     dependencies:
       hoist-non-react-statics: 3.3.2

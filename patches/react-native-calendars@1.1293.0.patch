@@ -1,3 +1,16 @@
+diff --git a/src/agenda/reservation-list/index.js b/src/agenda/reservation-list/index.js
+index 3917729cfa859a73082677397ee023fc6cec43b5..c26dabfef8680b184985509822866c055507f360 100644
+--- a/src/agenda/reservation-list/index.js
++++ b/src/agenda/reservation-list/index.js
+@@ -190,7 +190,7 @@ class ReservationList extends Component {
+             }
+             return <ActivityIndicator style={this.style.indicator} color={theme?.indicatorColor}/>;
+         }
+-        return (<FlatList ref={this.list} style={style} contentContainerStyle={this.style.content} data={this.state.reservations} renderItem={this.renderRow} keyExtractor={this.keyExtractor} showsVerticalScrollIndicator={false} scrollEventThrottle={200} onMoveShouldSetResponderCapture={this.onMoveShouldSetResponderCapture} onScroll={this.onScroll} refreshControl={this.props.refreshControl} refreshing={this.props.refreshing} onRefresh={this.props.onRefresh} onScrollBeginDrag={this.props.onScrollBeginDrag} onScrollEndDrag={this.props.onScrollEndDrag} onMomentumScrollBegin={this.props.onMomentumScrollBegin} onMomentumScrollEnd={this.props.onMomentumScrollEnd}/>);
++        return (<FlatList ref={this.list} style={{ ...style, backgroundColor: "#101010" }} contentContainerStyle={this.style.content} data={this.state.reservations} renderItem={this.renderRow} keyExtractor={this.keyExtractor} showsVerticalScrollIndicator={false} scrollEventThrottle={200} onMoveShouldSetResponderCapture={this.onMoveShouldSetResponderCapture} onScroll={this.onScroll} refreshControl={this.props.refreshControl} refreshing={this.props.refreshing} onRefresh={this.props.onRefresh} onScrollBeginDrag={this.props.onScrollBeginDrag} onScrollEndDrag={this.props.onScrollEndDrag} onMomentumScrollBegin={this.props.onMomentumScrollBegin} onMomentumScrollEnd={this.props.onMomentumScrollEnd}/>);
+     }
+ }
+ export default ReservationList;
 diff --git a/src/day-state-manager.js b/src/day-state-manager.js
 index 514e854c86fbb4bf2f16675a321c8d95689b3038..23e11e257adc3b3d38d7a96de3ae8c51d5e90857 100644
 --- a/src/day-state-manager.js
@@ -12,12 +25,16 @@ index 514e854c86fbb4bf2f16675a321c8d95689b3038..23e11e257adc3b3d38d7a96de3ae8c51
      }
      else if (isToday(day)) {
 diff --git a/src/types.d.ts b/src/types.d.ts
-index 31103ce7ccc86e9befa3b3c86046ef15e3d43a51..38eb99c4603e7b7b1e45f9a978a383eea4f9a659 100644
+index 31103ce7ccc86e9befa3b3c86046ef15e3d43a51..3d210d39567edba1572b39141c2c245ab7b727c4 100644
 --- a/src/types.d.ts
 +++ b/src/types.d.ts
-@@ -97,11 +97,7 @@ export interface Theme {
+@@ -96,12 +96,11 @@ export interface Theme {
+             main?: object;
          };
      };
++    "stylesheet.agenda.list": {
++        container: object;
++    }
  }
 -export type AgendaEntry = {
 -    name: string;
