@@ -191,10 +191,19 @@ const Board: React.FC = () => {
   });
 
   // Post query for all the posts in the class
-  const postQuery = api.post.all.useQuery({
-    token,
-    classId: classId as string,
-  });
+  const postQuery = api.post.all.useInfiniteQuery(
+    {
+      token,
+      classId: classId as string,
+      take: 10,
+    },
+    {
+      // Get the next cursor for paginating
+      getNextPageParam(lastPage) {
+        return lastPage.nextCursor;
+      },
+    },
+  );
 
   // Subscribe to the posts in this class
   const util = api.useContext();
@@ -259,9 +268,11 @@ const Board: React.FC = () => {
             </TouchableOpacity>
           </View>
 
-          {/* TODO: Pagination for posts */}
           <FlashList
-            data={[...postQuery.data, null]}
+            data={[
+              ...postQuery.data.pages.map((page) => page.posts).flat(),
+              null,
+            ]}
             ItemSeparatorComponent={() => <View className="h-3" />}
             estimatedItemSize={117}
             renderItem={({ item }) =>
@@ -271,6 +282,9 @@ const Board: React.FC = () => {
                 <View className="h-10" />
               )
             }
+            onEndReached={() => {
+              void postQuery.fetchNextPage();
+            }}
           />
         </View>
         <Navbar />

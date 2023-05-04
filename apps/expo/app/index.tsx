@@ -198,13 +198,19 @@ const Announcements: React.FC<{ userId: string }> = ({ userId }) => {
     { enabled: !!token },
   );
 
-  const recentPostsQuery = api.post.all.useQuery(
+  const recentPostsQuery = api.post.all.useInfiniteQuery(
     {
       token,
       take: 10,
       upOnly: true,
     },
-    { enabled: !!token },
+    {
+      enabled: !!token,
+      // Send the next cursor for pagination
+      getNextPageParam(lastPage) {
+        return lastPage.nextCursor;
+      },
+    },
   );
 
   const util = api.useContext();
@@ -251,8 +257,12 @@ const Announcements: React.FC<{ userId: string }> = ({ userId }) => {
       typeof recentEventsQuery.data !== "undefined" &&
       typeof recentPostsQuery.data !== "undefined"
     ) {
+      const posts = recentPostsQuery.data.pages
+        .map((page) => page.posts)
+        .flat();
+
       if (!recentEventsQuery.data.length) {
-        return recentPostsQuery.data;
+        return posts;
       }
       const result = [];
       let recentPostI = 0;
@@ -262,11 +272,11 @@ const Announcements: React.FC<{ userId: string }> = ({ userId }) => {
         recentEventI++
       ) {
         while (
-          recentPostI < recentPostsQuery.data.length &&
-          recentPostsQuery.data[recentPostI]!.createdAt <
+          recentPostI < posts.length &&
+          posts[recentPostI]!.createdAt <
             recentEventsQuery.data[recentEventI]!.start
         ) {
-          result.push(recentPostsQuery.data[recentPostI]!);
+          result.push(posts[recentPostI]!);
           recentPostI++;
         }
         result.push(recentEventsQuery.data[recentEventI]!);
@@ -295,6 +305,9 @@ const Announcements: React.FC<{ userId: string }> = ({ userId }) => {
             item ? <Announcement item={item} /> : <View className="h-20" />
           }
           estimatedItemSize={46}
+          onEndReached={() => {
+            void recentPostsQuery.fetchNextPage();
+          }}
         />
       </View>
     ) : (
@@ -306,9 +319,13 @@ const Announcements: React.FC<{ userId: string }> = ({ userId }) => {
   ) : null;
 };
 
+type AnnouncementType =
+  | RouterOutputs["post"]["all"]["posts"][number]
+  | RouterOutputs["events"]["all"][number];
+
 // Helper function checking if the union of an Event and a Post is a Event (acts as a type guard)
 const isEvent = (
-  item: RouterOutputs["events" | "post"]["all"][number],
+  item: AnnouncementType,
 ): item is RouterOutputs["events"]["all"][number] => {
   if (item && Object.hasOwn(item, "start")) {
     return true;
@@ -318,7 +335,7 @@ const isEvent = (
 
 // Component for displaying a specific announcement
 const Announcement: React.FC<{
-  item: RouterOutputs["events" | "post"]["all"][number];
+  item: AnnouncementType;
 }> = ({ item }) => {
   // Restrict item to be a Event or a Post using type guard helper
   const eventItem = isEvent(item);

@@ -16,8 +16,9 @@ export const postRouter = createTRPCRouter({
       z.object({
         token: z.string().min(1),
         classId: z.string().min(1).optional(),
-        take: z.number().int().min(0).optional(),
+        take: z.number().int().min(0).nullish(),
         upOnly: z.boolean().default(false),
+        cursor: z.string().nullish(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -54,8 +55,11 @@ export const postRouter = createTRPCRouter({
               }),
         },
 
+        // Enter cursor for pagination
+        cursor: input.cursor ? { id: input.cursor } : undefined,
+
         // Take the specified amount of posts
-        ...(input.take ? { take: input.take } : {}),
+        ...(input.take ? { take: input.take + 1 } : {}),
 
         // Order by date
         orderBy: {
@@ -68,7 +72,17 @@ export const postRouter = createTRPCRouter({
         },
       });
 
-      return posts;
+      // Send back next cursor so user can paginate
+      let nextCursor: typeof input.cursor;
+      if (input.take && posts.length > input.take) {
+        const nextItem = posts.pop();
+        nextCursor = nextItem!.id;
+      }
+
+      return {
+        posts,
+        nextCursor,
+      };
     }),
 
   // Deletes a post
