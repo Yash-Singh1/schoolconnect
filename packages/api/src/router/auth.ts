@@ -413,6 +413,7 @@ export const authRouter = createTRPCRouter({
       // Retrieve user info from GitHub
       const { userInfo, accessToken } = await retrieveAuthToken(code);
 
+      // Create a new GitHub account in DB linked to the user's current account
       await ctx.prisma.account.create({
         data: {
           type: "github",
