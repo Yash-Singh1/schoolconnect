@@ -142,7 +142,7 @@ const Settings: React.FC = () => {
             <Text className="text-xl font-bold text-red-500">Logout</Text>
           </TouchableOpacity>
 
-          {/* Links to licenses, privacy policy, etc. */}
+          {/* Links to privacy policy, etc. */}
           <Links />
         </ScrollView>
         <Navbar />

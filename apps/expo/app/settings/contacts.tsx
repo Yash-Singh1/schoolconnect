@@ -57,7 +57,7 @@ const Contacts: React.FC = () => {
               Issue Tracker
             </Text>
 
-            {/* Links to licenses, privacy policy, etc. */}
+            {/* Links to privacy policy, etc. */}
             <Links />
           </View>
         </ScrollView>

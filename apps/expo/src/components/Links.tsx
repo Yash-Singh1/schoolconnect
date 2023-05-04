@@ -5,18 +5,7 @@ import { Linking, Text, View } from "react-native";
 const Links: React.FC = () => {
   return (
     <>
-      {/* MIT License */}
       <Text className="mt-4 w-full text-center text-lg text-white">
-        Based on the{" "}
-        <Text
-          onPress={() =>
-            void Linking.openURL("https://opensource.org/license/mit/")
-          }
-          className="text-blue-500"
-        >
-          MIT License
-        </Text>
-        {"\n"}
         {/* Copyright */}
         &#169; 2023 Yash Singh
       </Text>
