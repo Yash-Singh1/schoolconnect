@@ -12,6 +12,7 @@ import LoadingWrapper from "../src/components/LoadingWrapper";
 import { tokenAtom } from "../src/store";
 import { api } from "../src/utils/api";
 import { uploadThing } from "../src/utils/uploadThing";
+import { useHUD } from "../src/components/HUDProvider";
 
 const NewClass: React.FC = () => {
   // Form data states
@@ -47,10 +48,19 @@ const NewClass: React.FC = () => {
   // Initialize router helper
   const router = useRouter();
 
+  // HUD Helpers
+  const { showHUD } = useHUD();
+
   // Mutation to create a new class, invalidates current cached data
   const util = api.useContext();
   const createClass = api.class.create.useMutation({
     async onSuccess() {
+      // Show success HUD
+      showHUD({
+        type: "success",
+        title: "Class created",
+      });
+
       // Invalidate cached class data
       await util.class.all.invalidate();
 

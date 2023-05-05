@@ -17,6 +17,7 @@ import {
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
+import { HUDProvider } from "../src/components/HUDProvider";
 import { resetStack } from "../src/utils/resetStack";
 
 // Set notification handler for the application
@@ -38,7 +39,7 @@ const RootLayout = () => {
   const router = useRouter();
 
   return (
-    // Initialize TRPC Client wrapper
+    // Initialize TRPC client provider
     <TRPCProvider>
       <StatusBar style="light" />
 
@@ -100,6 +101,9 @@ const RootLayout = () => {
           }}
         />
       </SafeAreaProvider>
+
+      {/* Initialize HUD provider for showing in-app notifications on state */}
+      <HUDProvider />
     </TRPCProvider>
   );
 };

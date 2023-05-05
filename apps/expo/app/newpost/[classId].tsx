@@ -8,6 +8,7 @@ import { MediaTypeOptions } from "expo-image-picker";
 import { Stack, useRouter, useSearchParams } from "expo-router";
 import { useAtom } from "jotai";
 
+import { useHUD } from "../../src/components/HUDProvider";
 import LoadingWrapper from "../../src/components/LoadingWrapper";
 import { tokenAtom } from "../../src/store";
 import { api } from "../../src/utils/api";
@@ -54,10 +55,19 @@ const NewPost: React.FC = () => {
     classId: classId as string,
   });
 
+  // HUD Helpers
+  const { showHUD } = useHUD();
+
   // Create post mutation
   const util = api.useContext();
   const createPost = api.post.create.useMutation({
     async onSuccess() {
+      // Show the HUD for success
+      showHUD({
+        type: "success",
+        title: "Created Post",
+      });
+
       // Reset form data
       setTitle("");
       setContent("");

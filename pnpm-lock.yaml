@@ -171,6 +171,9 @@ importers:
       uploadthing:
         specifier: ^2.0.1
         version: 2.0.1(patch_hash=274dzi4csvont2giuvswmd7nfa)
+      uuid:
+        specifier: ^9.0.0
+        version: 9.0.0
     devDependencies:
       '@acme/api':
         specifier: '*'

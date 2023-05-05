@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import dayjs from "dayjs";
 import { atom, useAtom } from "jotai";
 
+import { useHUD } from "../src/components/HUDProvider";
 import LoadingWrapper from "../src/components/LoadingWrapper";
 import { Navbar } from "../src/components/Navbar";
 import { tokenAtom } from "../src/store";
@@ -160,6 +161,7 @@ const Events: React.FC = () => {
     {
       enabled: !!selfQuery.data,
       onData() {
+        // Invalidate cache and refetch
         void eventsQuery.refetch();
         void util.events.all.invalidate();
       },
@@ -176,12 +178,9 @@ const Events: React.FC = () => {
   const [markedDates, setMarkedDates] = useState<MarkedDates | undefined>(
     undefined,
   );
-  const [currentDate, setCurrentDate] = useState<Date | null>(null);
 
   // Preprocessed the events for usage in calendars when fetched
   useEffect(() => {
-    if (!currentDate) return;
-
     // Initialize event query data
     if (!eventsQuery.data) return;
     setEvents(eventsQuery.data);
@@ -209,7 +208,7 @@ const Events: React.FC = () => {
     setMarkedDates(marked);
     // setEventsGrouped(keys.map((key) => ({ title: key, data: hs[key]! })));
     setEventsGrouped(hs);
-  }, [eventsQuery.data, currentDate]);
+  }, [eventsQuery.data]);
 
   // Show a loading indicator if the data is still fetching
   return eventsQuery.data && selfQuery.data ? (
@@ -250,9 +249,6 @@ const Events: React.FC = () => {
                 items={eventsGrouped}
                 markedDates={markedDates}
                 showClosingKnob={true}
-                loadItemsForMonth={(date) => {
-                  setCurrentDate(new Date(date.dateString));
-                }}
                 theme={calendarTheme}
                 renderEmptyData={() => {
                   return (

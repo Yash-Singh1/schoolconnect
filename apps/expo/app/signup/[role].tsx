@@ -16,6 +16,7 @@ import * as SecureStore from "expo-secure-store";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useAtom } from "jotai";
 
+import { useHUD } from "../../src/components/HUDProvider";
 import { tokenAtom } from "../../src/store";
 import { api, type RouterInputs } from "../../src/utils/api";
 import { TOKEN_KEY } from "../../src/utils/constants";
@@ -34,8 +35,37 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // Query schools for dropdown
   const schoolsQuery = api.school.all.useQuery();
-  const signupMutation = api.auth.signup.useMutation();
+
+  // HUD helpers
+  const { showHUD } = useHUD();
+
+  // Mutation for signing up
+  const signupMutation = api.auth.signup.useMutation({
+    // Update HUD state as side-effects
+    onMutate() {
+      showHUD(
+        {
+          type: "loading",
+          title: "Signing up...",
+        },
+        "none",
+      );
+    },
+    onError(error) {
+      showHUD({
+        type: "error",
+        title: error.message,
+      });
+    },
+    onSuccess() {
+      showHUD({
+        type: "success",
+        title: "Signed up",
+      });
+    },
+  });
 
   const params = useSearchParams();
 

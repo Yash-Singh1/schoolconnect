@@ -1,4 +1,4 @@
-// Load all of the FontAwesome icons we use in one file for tree-shaking (performance)
+// Load all of the FontAwesome icons we use in   one file for tree-shaking (performance)
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
@@ -13,6 +13,9 @@ import {
   faChevronDown,
   faChevronLeft,
   faChevronRight,
+  faCircleCheck,
+  faCircleExclamation,
+  faCircleInfo,
   faCircleNotch,
   faClock,
   faEllipsisVertical,
@@ -28,6 +31,7 @@ import {
   faSchool,
   faSquareXmark,
   faTrashCan,
+  faTriangleExclamation,
   faUser,
   faUserPlus,
   faUserSecret,
@@ -63,4 +67,8 @@ library.add(
   faCircleNotch,
   faPen,
   faEllipsisVertical,
+  faCircleInfo,
+  faCircleExclamation,
+  faTriangleExclamation,
+  faCircleCheck,
 );

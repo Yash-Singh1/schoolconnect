@@ -14,6 +14,7 @@ import * as SecureStore from "expo-secure-store";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useAtom } from "jotai";
 
+import { useHUD } from "../../src/components/HUDProvider";
 import { tokenAtom } from "../../src/store";
 import { api } from "../../src/utils/api";
 import { TOKEN_KEY } from "../../src/utils/constants";
@@ -28,6 +29,9 @@ const Login: React.FC = () => {
   const router = useRouter();
   const navigation = useNavigation() as unknown as NavigatorOverride;
 
+  // HUD helpers
+  const { showHUD } = useHUD();
+
   // Get role from the URL
   const params = useSearchParams();
 
@@ -38,7 +42,30 @@ const Login: React.FC = () => {
   );
 
   // Login mutation
-  const loginMutation = api.auth.login.useMutation();
+  const loginMutation = api.auth.login.useMutation({
+    // Update HUD state as side-effects
+    onMutate() {
+      showHUD(
+        {
+          type: "loading",
+          title: "Logging in...",
+        },
+        "none",
+      );
+    },
+    onError(error) {
+      showHUD({
+        type: "error",
+        title: error.message,
+      });
+    },
+    onSuccess() {
+      showHUD({
+        type: "success",
+        title: "Logged in",
+      });
+    },
+  });
 
   // Store token in store
   const [_token, setToken] = useAtom(tokenAtom);
