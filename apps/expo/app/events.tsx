@@ -10,7 +10,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import dayjs from "dayjs";
 import { atom, useAtom } from "jotai";
 
-import { useHUD } from "../src/components/HUDProvider";
 import LoadingWrapper from "../src/components/LoadingWrapper";
 import { Navbar } from "../src/components/Navbar";
 import { tokenAtom } from "../src/store";

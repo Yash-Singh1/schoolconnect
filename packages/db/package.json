@@ -7,7 +7,8 @@
     "clean": "rm -rf .turbo node_modules",
     "db:generate": "prisma generate",
     "db:push": "prisma db push --skip-generate",
-    "dev": "prisma studio --port 5556"
+    "dev": "prisma studio --port 5556",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@prisma/client": "^4.13.0"

@@ -1,9 +1,17 @@
 // Provider wrapper for the HUD
 
-import { useEffect, useRef, useState } from "react";
-import { Animated, Dimensions, Easing, Text, View } from "react-native";
+import { useEffect, useRef } from "react";
+import {
+  Alert,
+  Animated,
+  Easing,
+  Linking,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
+import { atom, useAtomValue, useSetAtom } from "jotai";
 
 type HUD =
   | false
@@ -38,7 +46,15 @@ export function useHUD() {
   }
 
   function hideHUD(id = "all") {
-    setHUD(false);
+    if (id === "all") setHUD(false);
+    else {
+      setHUD((currentHUD) => {
+        if (currentHUD && currentHUD.id === id) {
+          return false;
+        }
+        return currentHUD;
+      });
+    }
   }
 
   return {
@@ -51,16 +67,7 @@ export const HUDProvider: React.FC<{ children?: React.ReactNode }> = ({
   children,
 }) => {
   const hud = useAtomValue(hudAtom);
-  const hudContainerRef = useRef<View>(null);
-  const [hudWidth, setWidth] = useState(Dimensions.get('screen').width / 2);
-
-  useEffect(() => {
-    if (hudContainerRef.current) {
-      hudContainerRef.current.measure((_x, _y, width) => {
-        // setWidth(width);
-      });
-    }
-  }, [hud]);
+  const { hideHUD } = useHUD();
 
   // Setup the animation
   const spinAnim = useRef(new Animated.Value(0)).current;
@@ -92,13 +99,33 @@ export const HUDProvider: React.FC<{ children?: React.ReactNode }> = ({
     <>
       {children}
       {hud && (
-        <View
-          ref={hudContainerRef}
-          className={`absolute bg-slate-900 rounded-xl flex flex-row justify-center items-center py-2 px-4 bottom-20 left-1/2`}
-          style={{
-            left: (Dimensions.get("screen").width - hudWidth) / 2,
-            width: hudWidth,
+        <TouchableOpacity
+          activeOpacity={hud.type === "error" ? 0.8 : 1}
+          onPress={() => {
+            hideHUD(hud.id);
+            if (hud.type === "error") {
+              Alert.alert(
+                "Report error?",
+                `Would you like to report this error? ${hud.title}`,
+                [
+                  {
+                    text: "No",
+                    style: "cancel",
+                  },
+                  {
+                    text: "Yes",
+                    onPress: () => {
+                      void Linking.openURL(
+                        "https://github.com/Yash-Singh1/schoolconnect/issues/new?assignees=Yash-Singh1&labels=bug%2Ctriage&projects=&template=bug_report.yml&title=%5BBUG%5D%3A+",
+                      );
+                    },
+                  },
+                ],
+                { cancelable: true },
+              );
+            }
           }}
+          className={`absolute bg-slate-900 rounded-xl flex flex-row justify-center items-center py-2 px-8 bottom-20 w-1/2 left-1/4`}
         >
           {hud.type === "loading" ? (
             <Animated.View
@@ -142,8 +169,10 @@ export const HUDProvider: React.FC<{ children?: React.ReactNode }> = ({
               />
             </View>
           )}
-          <Text className="text-white text-xl font-semibold">{hud.title}</Text>
-        </View>
+          <Text numberOfLines={1} className="text-white text-xl font-semibold">
+            {hud.title}
+          </Text>
+        </TouchableOpacity>
       )}
     </>
   );

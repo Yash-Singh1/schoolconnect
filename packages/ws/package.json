@@ -6,7 +6,8 @@
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
     "dev": "tsx watch --clear-screen=false index.ts",
-    "start": "tsx index.ts"
+    "start": "tsx index.ts",
+    "type-check": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/ws": "^8.5.4",
@@ -15,6 +16,7 @@
   "dependencies": {
     "@acme/api": "*",
     "@trpc/server": "^10.14.0",
+    "typescript": "^5.0.4",
     "ws": "^8.13.0"
   }
 }

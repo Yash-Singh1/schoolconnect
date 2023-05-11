@@ -446,6 +446,9 @@ importers:
       '@trpc/server':
         specifier: ^10.14.0
         version: 10.14.0
+      typescript:
+        specifier: ^5.0.4
+        version: 5.0.4
       ws:
         specifier: ^8.13.0
         version: 8.13.0
