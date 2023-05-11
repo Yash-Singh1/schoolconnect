@@ -106,7 +106,8 @@ const enforceUserIsAuthed = <T>({ strong }: { strong: T }) =>
     });
 
     if (userFound) {
-      await ctx.prisma.session.update({
+      // Note: non-blocking session update so we don't have performance bottleneck on database writes
+      void ctx.prisma.session.update({
         where: {
           sessionToken: token,
         },
