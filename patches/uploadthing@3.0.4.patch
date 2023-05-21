@@ -1,0 +1,62 @@
+diff --git a/dist/client.d.ts b/dist/client.d.ts
+index 50f11008f19b77d14970baa56390022bf3117f1d..d181707110c76b1ac4f3aa0225430c631968024c 100644
+--- a/dist/client.d.ts
++++ b/dist/client.d.ts
+@@ -2,14 +2,16 @@ import { F as FileRouter } from './types-77ec4068.js';
+ import 'next';
+ import 'next/server';
+ 
+-declare const DANGEROUS__uploadFiles: <T extends string>(files: File[], endpoint: T, config?: {
++type FileType = File | { uri: string, name: string, type: string };
++
++declare const DANGEROUS__uploadFiles: <T extends string>(files: FileType[], endpoint: T, config?: {
+     url?: string;
+ }) => Promise<{
+     fileUrl: string;
+     fileKey: string;
+ }[]>;
+ type UploadFileType<T extends string> = typeof DANGEROUS__uploadFiles<T>;
+-declare const genUploader: <TRouter extends FileRouter>() => (files: File[], endpoint: keyof TRouter extends string ? keyof TRouter : string, config?: {
++declare const genUploader: <TRouter extends FileRouter>() => (files: FileType[], endpoint: keyof TRouter extends string ? keyof TRouter : string, config?: {
+     url?: string;
+ }) => Promise<{
+     fileUrl: string;
+diff --git a/package.json b/package.json
+index 99e3ab45bd1cf1379623c3f311c9331706970981..0f3eef833d1332f20c0e0141871795daf8bf70d2 100644
+--- a/package.json
++++ b/package.json
+@@ -6,7 +6,8 @@
+     "./package.json": "./package.json",
+     "./client": {
+       "import": "./dist/client.mjs",
+-      "types": "./dist/client.d.ts"
++      "types": "./dist/client.d.ts",
++      "default": "./dist/client.mjs"
+     },
+     "./server": {
+       "import": "./dist/server.mjs",
+@@ -15,13 +16,22 @@
+     },
+     "./next": {
+       "import": "./dist/next.mjs",
+-      "types": "./dist/next.d.ts"
++      "types": "./dist/next.d.ts",
++      "default": "./dist/next.mjs"
+     },
+     "./next-legacy": {
+       "import": "./dist/next-legacy.mjs",
+-      "types": "./dist/next-legacy.d.ts"
++      "types": "./dist/next-legacy.d.ts",
++      "default": "./dist/next-legacy.mjs"
+     }
+   },
++  "react-native": {
++    "./package.json": "./package.json",
++    "./client": "./dist/client.mjs",
++    "./server": "./dist/server.mjs",
++    "./next": "./dist/next.mjs",
++    "./next-legacy": "./dist/next-legacy.mjs"
++  },
+   "files": [
+     "dist"
+   ],

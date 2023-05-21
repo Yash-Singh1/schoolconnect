@@ -39,7 +39,7 @@ export class RedisEventEmitter {
         for (const id of this.eventToID[channel]!) {
           if (typeof this.idToListener[id] !== "undefined") {
             newIds.push(id);
-            this.idToListener[id]!(message);
+            this.idToListener[id]!(superjson.parse<{ json: any }>(message));
           }
         }
         if (newIds.length) {
@@ -98,6 +98,13 @@ export class RedisEventEmitter {
   }
 
   emit(eventName: string, message: object) {
+    console.log(
+      "Emitting",
+      eventName,
+      "with message",
+      superjson.stringify(message),
+    );
+
     // Publish the message
     void this.redis.publish(eventName, superjson.stringify(message));
 

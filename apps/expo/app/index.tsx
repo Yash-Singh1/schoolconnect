@@ -14,13 +14,14 @@ import { Stack, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { FlashList } from "@shopify/flash-list";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 
 import LoadingWrapper from "../src/components/LoadingWrapper";
 import { Navbar } from "../src/components/Navbar";
-import { tokenAtom } from "../src/store/";
+import { tokenAtom, userIdAtom } from "../src/store/";
 import { api, type RouterOutputs } from "../src/utils/api";
 import { TOKEN_KEY, supportedSocialMedia } from "../src/utils/constants";
+import { usePostSubscription } from "../src/utils/usePostSubscription";
 
 // Main landing page when logged in
 const Landing: React.FC = () => {
@@ -30,6 +31,14 @@ const Landing: React.FC = () => {
   // Query information on the user
   const selfQuery = api.user.self.useQuery({ token }, { enabled: !!token });
   const schoolQuery = api.school.get.useQuery({ token }, { enabled: !!token });
+
+  // Store the user ID for synchronous use in future
+  const setUserId = useSetAtom(userIdAtom);
+  useEffect(() => {
+    if (selfQuery.data) {
+      setUserId(selfQuery.data.id);
+    }
+  }, [selfQuery.data]);
 
   // Query the social media that the user is using
   const socialMedia = useMemo(() => {
@@ -184,63 +193,50 @@ const Landing: React.FC = () => {
 
 // Component for fetching and displaying announcements
 const Announcements: React.FC<{ userId: string }> = ({ userId }) => {
+  // Get token from store
   const [token] = useAtom(tokenAtom);
 
   // Fetch recent events and posts
 
-  const recentEventsQuery = api.events.all.useQuery(
-    {
-      token,
-      take: 10,
-      upOnly: true,
-      includeSource: true,
-    },
-    { enabled: !!token },
-  );
+  const recentEventsParams = {
+    token,
+    take: 10,
+    includeSource: true,
+  };
+  const recentEventsQuery = api.events.all.useQuery(recentEventsParams, {
+    enabled: !!token,
+  });
 
-  const recentPostsQuery = api.post.all.useInfiniteQuery(
-    {
-      token,
-      take: 10,
-      upOnly: true,
+  const recentPostsParams = {
+    token,
+    take: 10,
+  };
+  const recentPostsQuery = api.post.all.useInfiniteQuery(recentPostsParams, {
+    enabled: !!token,
+    // Send the next cursor for pagination
+    getNextPageParam(lastPage) {
+      return lastPage.nextCursor;
     },
-    {
-      enabled: !!token,
-      // Send the next cursor for pagination
-      getNextPageParam(lastPage) {
-        return lastPage.nextCursor;
-      },
-    },
-  );
+  });
 
+  // Cache utilities
   const util = api.useContext();
 
   // Subscribe to posts
-  api.post.onPost.useSubscription(
-    {
-      token,
-      userId,
-    },
-    {
-      onData() {
-        void util.post.all.invalidate();
-        void recentPostsQuery.refetch();
-      },
-      onError(err) {
-        console.error("Subscription error", err);
-        void util.post.all.invalidate();
-        void recentPostsQuery.refetch();
-      },
-    },
-  );
+  usePostSubscription(recentPostsParams, userId, recentPostsQuery);
 
   // Subscribe to events
   api.events.onCreate.useSubscription(
     { token, userId },
     {
-      onData() {
-        void util.post.all.invalidate();
-        void recentPostsQuery.refetch();
+      onData(data) {
+        const events = util.events.all.getData(recentEventsParams);
+        if (events) {
+          util.events.all.setData(recentEventsParams, [data, ...events]);
+        } else {
+          void util.post.all.invalidate();
+          void recentPostsQuery.refetch();
+        }
       },
       onError(err) {
         console.error("Subscription error", err);
@@ -273,7 +269,7 @@ const Announcements: React.FC<{ userId: string }> = ({ userId }) => {
       ) {
         while (
           recentPostI < posts.length &&
-          posts[recentPostI]!.createdAt <
+          posts[recentPostI]!.createdAt >
             recentEventsQuery.data[recentEventI]!.start
         ) {
           result.push(posts[recentPostI]!);
@@ -293,8 +289,7 @@ const Announcements: React.FC<{ userId: string }> = ({ userId }) => {
       <View
         className="flex-grow"
         style={{
-          minHeight: Dimensions.get("screen").height * 0.5,
-          maxHeight: Dimensions.get("screen").height * 0.5,
+          height: Dimensions.get("screen").height,
           width: Dimensions.get("screen").width,
         }}
       >

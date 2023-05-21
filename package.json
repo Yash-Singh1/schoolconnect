@@ -38,7 +38,8 @@
   "pnpm": {
     "patchedDependencies": {
       "react-native-calendars@1.1293.0": "patches/react-native-calendars@1.1293.0.patch",
-      "uploadthing@2.0.1": "patches/uploadthing@2.0.1.patch"
+      "uploadthing@3.0.4": "patches/uploadthing@3.0.4.patch",
+      "react-native-image-pan-zoom@2.1.12": "patches/react-native-image-pan-zoom@2.1.12.patch"
     }
   }
 }

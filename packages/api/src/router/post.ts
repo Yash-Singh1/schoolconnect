@@ -5,7 +5,7 @@ import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
-import { type Post } from "@acme/db";
+import type { Post, User } from "@acme/db";
 
 import { createTRPCRouter, ee, protectedProcedure } from "../trpc";
 
@@ -152,10 +152,12 @@ export const postRouter = createTRPCRouter({
         });
       }
 
-      return observable<Post>((emit) => {
+      type WSData = Post & { author: User };
+
+      return observable<WSData>((emit) => {
         void (async () => {
-          const onPost = (data: Post) => emit.next(data);
-          const listener = await ee.on(`post:${key}`, onPost);
+          const onPost = (data: WSData) => emit.next(data);
+          const listener = await ee.on(`post:create:${key}`, onPost);
           return () => {
             ee.off(listener);
           };
@@ -163,7 +165,7 @@ export const postRouter = createTRPCRouter({
       });
     }),
 
-  // Creates a post, requires a tittle, content, class, and image
+  // Creates a post, requires a title, content, class, and image
   create: protectedProcedure
     .input(
       z.object({
@@ -210,13 +212,16 @@ export const postRouter = createTRPCRouter({
       // Create post in database
       const newPost = await ctx.prisma.post.create({
         data: dbInput,
+        include: {
+          author: true,
+        },
       });
 
-      ee.emit(`post:class:${classId}`, newPost);
-      ee.emit(`post:school:${ctx.user.schoolId}`, newPost);
-      ee.emit(`post:user:${ctx.user.id}`, newPost);
+      ee.emit(`post:create:class:${classId}`, newPost);
+      ee.emit(`post:create:school:${ctx.user.schoolId}`, newPost);
+      ee.emit(`post:create:user:${classFound.ownerId}`, newPost);
       for (const member of classFound.members) {
-        ee.emit(`post:user:${member.id}`, newPost);
+        ee.emit(`post:create:user:${member.id}`, newPost);
       }
 
       // Send push notifications to all devices in the class
@@ -235,11 +240,7 @@ export const postRouter = createTRPCRouter({
         ...(await ctx.prisma.device.findMany({
           where: {
             user: {
-              classesOwned: {
-                some: {
-                  id: classId,
-                },
-              },
+              id: classFound.ownerId,
             },
           },
         })),
@@ -281,5 +282,7 @@ export const postRouter = createTRPCRouter({
           console.error(error);
         }
       }
+
+      return newPost;
     }),
 });

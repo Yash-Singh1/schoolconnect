@@ -61,7 +61,7 @@ const NewPost: React.FC = () => {
   // Create post mutation
   const util = api.useContext();
   const createPost = api.post.create.useMutation({
-    async onSuccess() {
+    async onSuccess(data) {
       // Show the HUD for success
       showHUD({
         type: "success",
@@ -72,8 +72,28 @@ const NewPost: React.FC = () => {
       setTitle("");
       setContent("");
 
-      // Invalidate post queries
-      await util.post.all.invalidate();
+      // Update cache with optimistic update
+      for (const classIdPart of [classId, undefined]) {
+        util.post.all.setInfiniteData(
+          {
+            token,
+            classId: classIdPart,
+            take: 10,
+          },
+          (postsData) => {
+            return {
+              ...postsData!,
+              pages: [
+                {
+                  ...postsData!.pages[0]!,
+                  posts: [data, ...postsData!.pages[0]!.posts],
+                },
+                ...postsData!.pages.slice(1),
+              ],
+            };
+          },
+        );
+      }
 
       // Go back to class page
       router.back();

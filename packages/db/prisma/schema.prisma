@@ -3,16 +3,20 @@
 
 // This contains the schema of my entire database structure
 
+// Client generator configuration
+// Using `jsonProtocol` for better perf
 generator client {
     provider        = "prisma-client-js"
     previewFeatures = ["jsonProtocol"]
 }
 
+// Configuration on accessing the database
 datasource db {
     provider = "postgresql"
     url      = env("DATABASE_URL")
 }
 
+// OAuth Accounts linked to a user
 model Account {
     id                String  @id @default(cuid())
     userId            String
@@ -31,6 +35,7 @@ model Account {
     @@unique([provider, providerAccountId])
 }
 
+// User sessions
 model Session {
     id           String   @id @default(cuid())
     sessionToken String   @unique
@@ -41,6 +46,7 @@ model Session {
     @@index([id, sessionToken])
 }
 
+// Absences reported by parents
 model Absence {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
@@ -50,6 +56,7 @@ model Absence {
     user      User     @relation(fields: [userId], references: [id])
 }
 
+// User model
 model User {
     id            String    @id @default(cuid())
     name          String?
@@ -72,6 +79,8 @@ model User {
     children      User[]    @relation("Parental")
     parents       User[]    @relation("Parental")
     absences      Absence[]
+
+    @@index([id, email, pending])
 }
 
 // Devices registered for notifications
@@ -80,8 +89,11 @@ model Device {
     userId    String
     user      User   @relation(fields: [userId], references: [id])
     pushToken String
+
+    @@index([id, userId, pushToken])
 }
 
+// Schools registered for our application
 model School {
     id      String  @id @default(cuid())
     domain  String  @unique @default("gmail.com")
@@ -92,6 +104,7 @@ model School {
     social  String?
 }
 
+// Class model
 model Class {
     id          String  @id @default(cuid())
     name        String
@@ -106,6 +119,7 @@ model Class {
     posts       Post[]
 }
 
+// Events posted by a school or class
 model Event {
     id          String   @id @default(cuid())
     name        String
@@ -119,6 +133,7 @@ model Event {
     schoolId    String?
 }
 
+// Posts posted in classes
 model Post {
     id        String   @id @default(cuid())
     title     String
@@ -131,8 +146,11 @@ model Post {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     reported  Boolean? @default(false)
+
+    @@index([id, classId])
 }
 
+// Verification tokens, will use for email verification
 model VerificationToken {
     identifier String
     token      String   @unique

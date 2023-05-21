@@ -21,11 +21,14 @@ const Linked: React.FC = () => {
   const [token] = useAtom(tokenAtom);
 
   // Queries for getting the user's data
-  const selfQuery = api.user.self.useQuery({ token });
-  const schoolQuery = api.school.get.useQuery({ token });
+  const selfQuery = api.user.self.useQuery({ token }, { enabled: !!token });
+  const schoolQuery = api.school.get.useQuery({ token }, { enabled: !!token });
 
   // Query for getting the user's linked accounts
-  const linkedAccountsQuery = api.user.linkedAccounts.useQuery({ token });
+  const linkedAccountsQuery = api.user.linkedAccounts.useQuery(
+    { token },
+    { enabled: !!token },
+  );
 
   // Cache invalidation utilities
   const util = api.useContext();

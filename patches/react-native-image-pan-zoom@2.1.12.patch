@@ -1,0 +1,22 @@
+diff --git a/built/image-zoom/image-zoom.type.d.ts b/built/image-zoom/image-zoom.type.d.ts
+index 01ab96514aa018724735faad838b6bd2d8a35efb..2be091c8d44cb7543ada50cf9709f58d124230dc 100644
+--- a/built/image-zoom/image-zoom.type.d.ts
++++ b/built/image-zoom/image-zoom.type.d.ts
+@@ -1,4 +1,6 @@
+ import { GestureResponderEvent, PanResponderGestureState, LayoutChangeEvent, ViewStyle } from 'react-native';
++import type * as React from 'react';
++
+ export interface ICenterOn {
+     x: number;
+     y: number;
+@@ -27,6 +29,10 @@ export declare class ImageZoomProps {
+      * 操作区域高度
+      */
+     cropHeight: number;
++    /**
++     * The image you want to display
++     */
++    children?: React.ReactNode;
+     /**
+      * 图片宽度
+      */

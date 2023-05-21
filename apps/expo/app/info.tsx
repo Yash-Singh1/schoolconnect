@@ -5,12 +5,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useNavigation, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 
 import Links from "../src/components/Links";
 import LoadingWrapper from "../src/components/LoadingWrapper";
 import { Navbar } from "../src/components/Navbar";
-import { tokenAtom } from "../src/store";
+import { tokenAtom, userIdAtom } from "../src/store";
 import { api } from "../src/utils/api";
 import { TOKEN_KEY } from "../src/utils/constants";
 import { getPushToken } from "../src/utils/getPushToken";
@@ -23,6 +23,12 @@ const Settings: React.FC = () => {
 
   // Get token from store
   const [token, setToken] = useAtom(tokenAtom);
+
+  // Setter for user ID
+  const setUserId = useSetAtom(userIdAtom);
+
+  // Cache utilities
+  const util = api.useContext();
 
   // Queries for getting the user's data
   const selfQuery = api.user.self.useQuery({ token }, { enabled: !!token });
@@ -121,8 +127,9 @@ const Settings: React.FC = () => {
             onPress={() => {
               // Delete the token from written store
               void SecureStore.deleteItemAsync(TOKEN_KEY).then(async () => {
-                // Delete the token from the in-memory store
+                // Delete the token and user ID from the in-memory store
                 setToken("");
+                setUserId("");
 
                 // Unregister notifications from this device
                 const pushToken = await getPushToken(false);
@@ -132,6 +139,9 @@ const Settings: React.FC = () => {
                     device: pushToken,
                   });
                 }
+
+                // Invalidate cache
+                void util.invalidate();
 
                 // Reset the route back to the login screen
                 resetStack({ router, navigation });

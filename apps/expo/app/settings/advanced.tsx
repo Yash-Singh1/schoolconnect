@@ -3,11 +3,13 @@
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useNavigation, useRouter } from "expo-router";
-import { useAtom } from "jotai";
+import * as SecureStore from "expo-secure-store";
+import { useAtom, useSetAtom } from "jotai";
 
 import { Navbar } from "../../src/components/Navbar";
-import { tokenAtom } from "../../src/store";
+import { tokenAtom, userIdAtom } from "../../src/store";
 import { api } from "../../src/utils/api";
+import { TOKEN_KEY } from "../../src/utils/constants";
 import { resetStack, type NavigatorOverride } from "../../src/utils/resetStack";
 
 const Advanced: React.FC = () => {
@@ -16,10 +18,31 @@ const Advanced: React.FC = () => {
   const navigation = useNavigation() as unknown as NavigatorOverride;
 
   // Get token from store
-  const [token] = useAtom(tokenAtom);
+  const [token, setToken] = useAtom(tokenAtom);
+
+  // Setter for user ID
+  const setUserId = useSetAtom(userIdAtom);
+
+  // Caching utilities
+  const util = api.useContext();
 
   // Mutation for deleting the user
-  const deleteMutation = api.user.delete.useMutation();
+  const deleteMutation = api.user.delete.useMutation({
+    onSuccess() {
+      // Delete token from persistent store
+      void SecureStore.deleteItemAsync(TOKEN_KEY).then(async () => {
+        // Delete token and data on user from in-memory store
+        setToken("");
+        setUserId("");
+
+        // Invalidate all cache
+        void util.invalidate();
+
+        // Reset router to login page
+        resetStack({ router, navigation });
+      });
+    },
+  });
 
   return (
     <SafeAreaView className="bg-[#101010]">
@@ -45,7 +68,6 @@ const Advanced: React.FC = () => {
                   )
                 ) {
                   deleteMutation.mutate({ token });
-                  resetStack({ router, navigation });
                 }
               }}
             >

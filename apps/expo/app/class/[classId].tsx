@@ -18,7 +18,7 @@ import type { Post, User } from "@prisma/client";
 import { FlashList } from "@shopify/flash-list";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 
 import "dayjs/locale/en";
 import { useRef, useState } from "react";
@@ -26,8 +26,9 @@ import { StatusBar } from "expo-status-bar";
 
 import LoadingWrapper from "../../src/components/LoadingWrapper";
 import { Navbar } from "../../src/components/Navbar";
-import { tokenAtom } from "../../src/store";
+import { tokenAtom, userIdAtom } from "../../src/store";
 import { api } from "../../src/utils/api";
+import { usePostSubscription } from "../../src/utils/usePostSubscription";
 
 // Initialize dayjs for relative time
 dayjs.extend(relativeTime);
@@ -52,12 +53,39 @@ const PostCard: React.FC<{
   // Get the token from the store
   const [token] = useAtom(tokenAtom);
 
+  // Get classId from the URL
+  const { classId } = useSearchParams();
+
   // Get utilities for cache invalidation
   const util = api.useContext();
 
   // Mutation for deleting a post
   const deletePost = api.post.delete.useMutation({
     onSuccess() {
+      util.post.all.setInfiniteData(
+        {
+          token,
+          classId,
+          take: 10,
+        },
+        (data) => {
+          if (!data) {
+            return {
+              pageParams: [],
+              pages: [],
+            };
+          }
+          return {
+            ...data,
+            pages: data.pages.map((page) => ({
+              ...page,
+              posts: page.posts.filter((post) => post.id !== item.id),
+            })),
+          };
+        },
+      );
+    },
+    onError() {
       void util.post.invalidate();
     },
   });
@@ -145,7 +173,6 @@ const PostCard: React.FC<{
                       />
                     </TouchableOpacity>
                   </View>
-                  {/* @ts-expect-error -- Typings don't contain children prop, need to patch that */}
                   <ImageZoom
                     cropWidth={Dimensions.get("window").width}
                     cropHeight={Dimensions.get("window").height - 50}
@@ -193,42 +220,24 @@ const Board: React.FC = () => {
   });
 
   // Post query for all the posts in the class
-  const postQuery = api.post.all.useInfiniteQuery(
-    {
-      token,
-      classId: classId as string,
-      take: 10,
+  const postParams = {
+    token,
+    classId: classId as string,
+    take: 10,
+  };
+  const postQuery = api.post.all.useInfiniteQuery(postParams, {
+    // Get the next cursor for paginating
+    getNextPageParam(lastPage) {
+      return lastPage.nextCursor;
     },
-    {
-      // Get the next cursor for paginating
-      getNextPageParam(lastPage) {
-        return lastPage.nextCursor;
-      },
-    },
-  );
-
-  // Subscribe to the posts in this class
-  const util = api.useContext();
-  api.post.onPost.useSubscription(
-    {
-      token,
-      classId: classId as string,
-    },
-    {
-      onData() {
-        void util.post.all.invalidate();
-        void postQuery.refetch();
-      },
-      onError(error) {
-        console.error("Subscription error", error);
-        void util.post.all.invalidate();
-        void postQuery.refetch();
-      },
-    },
-  );
+  });
 
   // Self query for the user's role
   const selfQuery = api.user.self.useQuery({ token });
+
+  // Subscribe to the posts in this class
+  const userId = useAtomValue(userIdAtom);
+  usePostSubscription(postParams, userId, postQuery);
 
   // Show a loading screen while the queries are loading
   return selfQuery.data && postQuery.data && classQuery.data ? (

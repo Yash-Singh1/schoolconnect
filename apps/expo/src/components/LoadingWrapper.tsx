@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 type LoadingWrapperProps = {
   safeAreaViewClass?: string;
@@ -62,7 +61,17 @@ const LoadingWrapper: React.FC<LoadingWrapperProps> = (props = {}) => {
         }}
         className="flex h-0 w-0 justify-center items-center"
       >
-        <FontAwesomeIcon icon="circle-notch" color="white" />
+        <View
+          style={{
+            width: 20,
+            height: 20,
+            borderWidth: 2,
+            borderColor: "white",
+            borderRadius: 10,
+            borderStyle: "solid",
+            borderTopColor: "transparent",
+          }}
+        />
       </Animated.View>
       {props.children || null}
     </View>
@@ -80,10 +89,22 @@ const LoadingWrapper: React.FC<LoadingWrapperProps> = (props = {}) => {
           ],
         }}
       >
-        <FontAwesomeIcon icon="circle-notch" color="white" />
+        <View
+          style={{
+            width: 20,
+            height: 20,
+            borderWidth: 2,
+            borderColor: "white",
+            borderRadius: 10,
+            borderStyle: "solid",
+            borderTopColor: "transparent",
+          }}
+        />
       </Animated.View>
     </SafeAreaView>
   );
 };
+
+LoadingWrapper.displayName = "LoadingWrapper";
 
 export default LoadingWrapper;

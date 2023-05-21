@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useNavigation, useRouter, useSearchParams } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { useAtom } from "jotai";
+import { useSetAtom } from "jotai";
 
 import { useHUD } from "../../src/components/HUDProvider";
 import { tokenAtom } from "../../src/store";
@@ -68,7 +68,7 @@ const Login: React.FC = () => {
   });
 
   // Store token in store
-  const [_token, setToken] = useAtom(tokenAtom);
+  const setToken = useSetAtom(tokenAtom);
 
   // First step of authentication on client-side over, relay to backend
   useEffect(() => {

@@ -3,7 +3,14 @@
 import React from "react";
 import Constants from "expo-constants";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createWSClient, httpBatchLink, splitLink, wsLink } from "@trpc/client";
+import {
+  createTRPCProxyClient,
+  createWSClient,
+  httpBatchLink,
+  splitLink,
+  wsLink,
+  type CreateTRPCClientOptions,
+} from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import superjson from "superjson";
 
@@ -39,6 +46,28 @@ const wsClient = createWSClient({
   url: getBaseUrl(/* websocket = */ true),
 });
 
+const clientConfiguration: CreateTRPCClientOptions<AppRouter> = {
+  // superjson transformer allows data types such as Date to be serialized
+  transformer: superjson,
+
+  // The URL of the API (this is where the API is hosted)
+  links: [
+    splitLink({
+      condition(op) {
+        return op.type === "subscription";
+      },
+      true: wsLink({
+        client: wsClient,
+      }),
+      false: httpBatchLink({
+        url: `${getBaseUrl(/* websocket = */ false)}/api/trpc`,
+      }),
+    }),
+  ],
+};
+
+export const trpc = createTRPCProxyClient<AppRouter>(clientConfiguration);
+
 /**
  * A wrapper for your app that provides the TRPC context.
  * Use only in _app.tsx
@@ -48,25 +77,7 @@ export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [queryClient] = React.useState(() => new QueryClient());
   const [trpcClient] = React.useState(() =>
-    api.createClient({
-      // superjson transformer allows data types such as Date to be serialized
-      transformer: superjson,
-
-      // The URL of the API (this is where the API is hosted)
-      links: [
-        splitLink({
-          condition(op) {
-            return op.type === "subscription";
-          },
-          true: wsLink({
-            client: wsClient,
-          }),
-          false: httpBatchLink({
-            url: `${getBaseUrl(/* websocket = */ false)}/api/trpc`,
-          }),
-        }),
-      ],
-    }),
+    api.createClient(clientConfiguration),
   );
 
   return (

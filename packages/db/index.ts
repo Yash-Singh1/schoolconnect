@@ -13,10 +13,11 @@ export const prisma =
         : ["error"],
   });
 
-  prisma.$use(async (params, next) => {
+// Middleware for benchmarking performance bottlenecks
+prisma.$use(async (params, next) => {
   const before = Date.now();
 
-  const result = await next(params);
+  const result = await next(params) as unknown;
 
   const after = Date.now();
 

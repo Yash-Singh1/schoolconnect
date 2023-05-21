@@ -8,7 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useRouter } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import dayjs from "dayjs";
-import { atom, useAtom } from "jotai";
+import { atom, useAtom, useSetAtom } from "jotai";
 
 import LoadingWrapper from "../src/components/LoadingWrapper";
 import { Navbar } from "../src/components/Navbar";
@@ -137,7 +137,7 @@ const Events: React.FC = () => {
   const [token] = useAtom(tokenAtom);
 
   // Setter for temporary state on events data fetching result
-  const [_, setEvents] = useAtom(eventsAtom);
+  const setEvents = useSetAtom(eventsAtom);
 
   // Get information on the user
   const selfQuery = api.user.self.useQuery({ token });
@@ -148,7 +148,7 @@ const Events: React.FC = () => {
     includeSource: true,
   });
 
-  // Cache-invalidation utility
+  // Cache utilities
   const util = api.useContext();
 
   // Subscribe to event changes

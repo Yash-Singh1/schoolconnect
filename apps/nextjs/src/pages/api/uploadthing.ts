@@ -1,6 +1,6 @@
 // Handler for uploading files to S3
 
-import { createNextPageApiHandler } from "uploadthing/server";
+import { createNextPageApiHandler } from "uploadthing/next-legacy";
 
 import { UploadRouter } from "@acme/api/src/root";
 

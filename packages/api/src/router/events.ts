@@ -4,6 +4,8 @@ import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
+import type { Class, Event, School } from "@acme/db";
+
 import { createTRPCRouter, ee, protectedProcedure } from "../trpc";
 import { registerSchedule } from "../utils/registerSchedule";
 
@@ -70,7 +72,7 @@ export const eventsRouter = createTRPCRouter({
       for (let schoolI = 0; schoolI < schoolEvents.length; schoolI++) {
         while (
           classI < classEvents.length &&
-          classEvents[classI]!.start.getTime() <
+          classEvents[classI]!.start.getTime() >
             schoolEvents[schoolI]!.start.getTime()
         ) {
           events.push(classEvents[classI]);
@@ -106,10 +108,12 @@ export const eventsRouter = createTRPCRouter({
         });
       }
 
-      return observable<Event>((emit) => {
+      type WSType = Event & { School: School | null; Class: Class | null };
+
+      return observable<WSType>((emit) => {
         void (async () => {
-          const onEvent = (data: Event) => emit.next(data);
-          const listener = await ee.on(`event:${key}`, onEvent);
+          const onEvent = (data: WSType) => emit.next(data);
+          const listener = await ee.on(`event:create:${key}`, onEvent);
           return () => {
             ee.off(listener);
           };
@@ -195,10 +199,11 @@ export const eventsRouter = createTRPCRouter({
           });
         }
 
-        emissions.push(`event:class:${input.classId}`);
-        emissions.push(`event:school:${ctx.user.schoolId}`);
+        emissions.push(`event:create:class:${input.classId}`);
+        emissions.push(`event:create:school:${ctx.user.schoolId}`);
+        emissions.push(`event:create:user:${classFound.ownerId}`);
         for (const member of classFound.members) {
-          emissions.push(`event:user:${member.id}`);
+          emissions.push(`event:create:user:${member.id}`);
         }
       } else if (ctx.user.role !== "admin") {
         throw new TRPCError({
@@ -226,15 +231,19 @@ export const eventsRouter = createTRPCRouter({
           });
         }
 
-        emissions.push(`event:school:${ctx.user.schoolId}`);
+        emissions.push(`event:create:school:${ctx.user.schoolId}`);
         for (const member of schoolFound.members) {
-          emissions.push(`event:user:${member.id}`);
+          emissions.push(`event:create:user:${member.id}`);
         }
       }
 
       // Create the event in the database
       const event = await ctx.prisma.event.create({
         data: dbInput,
+        include: {
+          Class: true,
+          School: true,
+        },
       });
 
       // Emit the event to all listeners

@@ -34,7 +34,7 @@
     "remark-gfm": "^3.0.1",
     "remark-remove-comments": "^1.0.1",
     "superjson": "1.9.1",
-    "uploadthing": "^2.0.1",
+    "uploadthing": "^3.0.4",
     "zod": "^3.20.6"
   },
   "devDependencies": {

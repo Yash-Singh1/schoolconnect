@@ -101,3 +101,5 @@ export const DatePicker = ({
     </View>
   );
 };
+
+DatePicker.displayName = "DatePicker";

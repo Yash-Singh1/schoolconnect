@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useNavigation, useRouter, useSearchParams } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { useAtom } from "jotai";
+import { useSetAtom } from "jotai";
 
 import { useHUD } from "../../src/components/HUDProvider";
 import { tokenAtom } from "../../src/store";
@@ -77,7 +77,7 @@ const Signup = () => {
   const router = useRouter();
   const navigation = useNavigation() as unknown as NavigatorOverride;
 
-  const [_, setToken] = useAtom(tokenAtom);
+  const setToken = useSetAtom(tokenAtom);
 
   // Once client-side authentication complete, we pass on to backend to finish authentication and fetch token
   useEffect(() => {

@@ -24,86 +24,83 @@ export const Navbar = () => {
   const iconSize = Dimensions.get("screen").width > 640 ? 60 : 30;
 
   return (
-    <View className="flex h-[12%] w-full flex-row flex-nowrap justify-around bg-cyan-600/80 py-2 px-4">
-      {selfQuery.data && selfQuery.data.role === "admin" ? (
+    <View className="h-[12%] w-full bg-[#101010] py-2 px-4">
+      <View className="flex h-full w-full flex-row flex-nowrap justify-around bg-cyan-600/80">
+        {selfQuery.data && selfQuery.data.role === "admin" ? (
+          <TouchableOpacity
+            onPress={() => resetStack({ router, navigation }, "/amembers")}
+            activeOpacity={0.5}
+            className="flex flex-col flex-wrap items-center justify-center w-15"
+          >
+            <FontAwesomeIcon icon="users" size={iconSize} color="white" />
+            <Text className="text-center sm:font-semibold text-xs text-white sm:text-lg sm:mt-1">
+              Members
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+        {selfQuery.data &&
+        (selfQuery.data.role === "teacher" ||
+          selfQuery.data.role === "student") ? (
+          <TouchableOpacity
+            onPress={() => resetStack({ router, navigation }, "/classes")}
+            activeOpacity={0.5}
+            className="flex flex-col flex-wrap items-center justify-center w-15"
+          >
+            <FontAwesomeIcon icon="school" size={iconSize} color="white" />
+            <Text className="text-center sm:font-semibold text-xs text-white sm:text-lg sm:mt-1">
+              Classes
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+        {selfQuery.data &&
+        selfQuery.data.role !== "teacher" &&
+        selfQuery.data.role !== "student" ? (
+          <TouchableOpacity
+            onPress={() => resetStack({ router, navigation }, "/absences")}
+            activeOpacity={0.5}
+            className="flex flex-col flex-wrap items-center justify-center w-15"
+          >
+            <FontAwesomeIcon
+              icon="person-circle-question"
+              size={iconSize}
+              color="white"
+            />
+            <Text className="text-center sm:font-semibold text-xs text-white sm:text-lg sm:mt-1">
+              Absences
+            </Text>
+          </TouchableOpacity>
+        ) : null}
         <TouchableOpacity
-          onPress={() => resetStack({ router, navigation }, "/amembers")}
+          onPress={() => resetStack({ router, navigation }, "/schedule")}
           activeOpacity={0.5}
           className="flex flex-col flex-wrap items-center justify-center w-15"
         >
-          <FontAwesomeIcon icon="users" size={iconSize} color="white" />
+          <FontAwesomeIcon icon="clock" size={iconSize} color="white" />
           <Text className="text-center sm:font-semibold text-xs text-white sm:text-lg sm:mt-1">
-            Members
+            Schedule
           </Text>
         </TouchableOpacity>
-      ) : null}
-
-      {selfQuery.data &&
-      (selfQuery.data.role === "teacher" ||
-        selfQuery.data.role === "student") ? (
         <TouchableOpacity
-          onPress={() => resetStack({ router, navigation }, "/classes")}
+          onPress={() => resetStack({ router, navigation }, "/events")}
           activeOpacity={0.5}
           className="flex flex-col flex-wrap items-center justify-center w-15"
         >
-          <FontAwesomeIcon icon="school" size={iconSize} color="white" />
+          <FontAwesomeIcon icon="calendar" size={iconSize} color="white" />
           <Text className="text-center sm:font-semibold text-xs text-white sm:text-lg sm:mt-1">
-            Classes
+            Events
           </Text>
         </TouchableOpacity>
-      ) : null}
-
-      {selfQuery.data &&
-      selfQuery.data.role !== "teacher" &&
-      selfQuery.data.role !== "student" ? (
         <TouchableOpacity
-          onPress={() => resetStack({ router, navigation }, "/absences")}
+          onPress={() => resetStack({ router, navigation }, "/info")}
           activeOpacity={0.5}
           className="flex flex-col flex-wrap items-center justify-center w-15"
         >
-          <FontAwesomeIcon
-            icon="person-circle-question"
-            size={iconSize}
-            color="white"
-          />
+          <FontAwesomeIcon icon="gear" size={iconSize} color="white" />
           <Text className="text-center sm:font-semibold text-xs text-white sm:text-lg sm:mt-1">
-            Absences
+            Settings
           </Text>
         </TouchableOpacity>
-      ) : null}
-
-      <TouchableOpacity
-        onPress={() => resetStack({ router, navigation }, "/schedule")}
-        activeOpacity={0.5}
-        className="flex flex-col flex-wrap items-center justify-center w-15"
-      >
-        <FontAwesomeIcon icon="clock" size={iconSize} color="white" />
-        <Text className="text-center sm:font-semibold text-xs text-white sm:text-lg sm:mt-1">
-          Schedule
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={() => resetStack({ router, navigation }, "/events")}
-        activeOpacity={0.5}
-        className="flex flex-col flex-wrap items-center justify-center w-15"
-      >
-        <FontAwesomeIcon icon="calendar" size={iconSize} color="white" />
-        <Text className="text-center sm:font-semibold text-xs text-white sm:text-lg sm:mt-1">
-          Events
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={() => resetStack({ router, navigation }, "/info")}
-        activeOpacity={0.5}
-        className="flex flex-col flex-wrap items-center justify-center w-15"
-      >
-        <FontAwesomeIcon icon="gear" size={iconSize} color="white" />
-        <Text className="text-center sm:font-semibold text-xs text-white sm:text-lg sm:mt-1">
-          Settings
-        </Text>
-      </TouchableOpacity>
+      </View>
     </View>
   );
 };
