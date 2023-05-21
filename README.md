@@ -15,6 +15,7 @@ This is the main repository and source code for the SchoolConnect application. I
 
 - [`patches`](patches) -- Modified dependencies to fix bugs
 - [`docs`](docs) -- The SchoolConnect [documentation](https://schoolconnect-docs.vercel.app/)
+- [`scripts`](scripts) -- Helper scripts for interacting with codebase
 - [`.vscode`](.vscode) -- Editor configuration for VSCode
 - [`.github`](.github) -- Workflows for GitHub
 

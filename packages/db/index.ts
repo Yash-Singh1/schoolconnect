@@ -17,7 +17,7 @@ export const prisma =
 prisma.$use(async (params, next) => {
   const before = Date.now();
 
-  const result = await next(params) as unknown;
+  const result = (await next(params)) as unknown;
 
   const after = Date.now();
 

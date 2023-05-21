@@ -51,9 +51,6 @@ yarn-error.log*
 # Redis Dump
 *.rdb
 
-# Unneccessary Scripts
-scripts/
-
 # Vitepress build files
 docs/.vitepress/cache
 docs/.vitepress/dist

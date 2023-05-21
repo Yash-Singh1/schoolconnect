@@ -10,6 +10,8 @@ To run the SchoolConnect application, you will need to have the following instal
 - `npm`, installed by default along with Node.js
 - `pnpm` 7 or higher, installed by running `npm install -g pnpm`
 
+Use the `scripts/setup.sh` shell script for help in setting up the tooling.
+
 ## Development
 
 ### 1. Install Dependencies
@@ -22,7 +24,7 @@ pnpm install
 
 ### 2. Setup the database
 
-To setup the database, we will be using a local instance of SQLite. To do this, copy the `.env.example` file to `.env`. Then, navigate to `packages/db/prisma/schema.prisma` and change the provider field on line 11 from `postgresql` to `sqlite`.
+To setup the database, we will be using a local instance of SQLite. To do this, copy the `.env.example` file to `.env`. Then, navigate to `packages/db/prisma/schema.prisma` and change the provider field on line 15 from `postgresql` to `sqlite`.
 
 Now, to sync the schema with the client and the database, run the following command:
 
@@ -30,13 +32,15 @@ Now, to sync the schema with the client and the database, run the following comm
 pnpm db:push
 ```
 
+If you don't want to setup a local database, you can [setup](#database) one on the cloud instead.
+
 ### 3. Setup GitHub OAuth
 
-To setup GitHub OAuth, you will need to create a new OAuth app on GitHub. To do this, follow the instructions on GitHub's [guide](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app) and copy the client ID and client secret to their respective places in the `.env` file. For the callback URL, use `exp://[YOUR_IP]:19000`.
+To setup GitHub OAuth, you will need to create a new OAuth app on GitHub. To do this, follow the instructions on GitHub's [guide](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app) and copy the client ID and client secret to their respective places in the `.env` file. For the callback URL, use `exp://[YOUR_IP]:19000`. Setting up OAuth is optional if you are not using the OAuth feature of SchoolConnect.
 
 ### 4. Setup UploadThing
 
-To do this, sign up for [UploadThing](https://uploadthing.com/) and create a new application. Copy the API key and paste it into the environment variables.
+To do this, sign up for [UploadThing](https://uploadthing.com/) and create a new application. Copy the environment variable values for the secret key and the app ID, and paste it into the `.env` file.
 
 ### 5. Setup QStash
 
@@ -97,6 +101,8 @@ Then run the following command in a seperate terminal window to start up the red
 redis-server
 ```
 
+If you don't want to setup a local Redis instance, you can [host one](#event-emitter) on Upstash instead.
+
 ### 8. Start the server
 
 To start the server, run the following command:
@@ -123,8 +129,8 @@ To setup the event emitter, setup a Redis instance on Upstash. You can do this o
 
 ### HTTP Server
 
-To start up the HTTP server, deploy the application onto Vercel with the environment variables from the `.env`.
+To start up the HTTP server, deploy the application onto Vercel with the environment variables from the `.env`. Once you deploy the Vercel application, copy the deployment URL and set it as the `https` base URL in [`apps/expo/src/utils/api.tsx`](./apps/expo/src/utils/api.tsx).
 
 ### Websocket Server
 
-To start up the WebSocket server, deploy the application onto Railway with the environment variables from the `.env`.
+To start up the WebSocket server, deploy the application onto Railway with the environment variables from the `.env`. Once you deploy the Railway application, copy the deployment URL and set it as the `wss` base URL in [`apps/expo/src/utils/api.tsx`](./apps/expo/src/utils/api.tsx).

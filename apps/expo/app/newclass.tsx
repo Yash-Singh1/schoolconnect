@@ -8,11 +8,11 @@ import { MediaTypeOptions } from "expo-image-picker";
 import { Stack, useRouter } from "expo-router";
 import { useAtom } from "jotai";
 
+import { useHUD } from "../src/components/HUDProvider";
 import LoadingWrapper from "../src/components/LoadingWrapper";
 import { tokenAtom } from "../src/store";
 import { api } from "../src/utils/api";
 import { uploadThing } from "../src/utils/uploadThing";
-import { useHUD } from "../src/components/HUDProvider";
 
 const NewClass: React.FC = () => {
   // Form data states
