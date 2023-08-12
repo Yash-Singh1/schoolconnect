@@ -184,7 +184,7 @@ const PostCard: React.FC<{
                         width: realWidth!,
                         height: realHeight!,
                       }}
-                      source={{ uri: item.image }}
+                      source={{ uri: item.image, cache: "force-cache" }}
                       alt={item.title}
                     />
                   </ImageZoom>

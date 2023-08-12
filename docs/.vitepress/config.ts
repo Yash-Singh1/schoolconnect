@@ -25,6 +25,7 @@ export default defineConfig({
           { text: "Features", link: "/features" },
           { text: "Contacts", link: "/contacts" },
           { text: "Admin Guide", link: "/admin" },
+          { text: "Demo", link: "/demo" },
         ],
       },
       {

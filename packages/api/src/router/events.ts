@@ -41,7 +41,7 @@ export const eventsRouter = createTRPCRouter({
       });
 
       // Query all events in the classes the user is in
-      const classEvents = await ctx.prisma.event.findMany({
+      const classMemberEvents = await ctx.prisma.event.findMany({
         where: {
           Class: {
             members: {
@@ -64,6 +64,29 @@ export const eventsRouter = createTRPCRouter({
         },
         ...(input.take ? { take: input.take } : {}),
       });
+
+      // Query all events in the classes the user owns
+      const classOwnerEvents = await ctx.prisma.event.findMany({
+        where: {
+          Class: {
+            ownerId: ctx.user.id,
+          },
+          end: input.upOnly
+            ? {
+                gte: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
+              }
+            : {},
+        },
+        orderBy: {
+          start: "desc",
+        },
+        include: {
+          Class: !!input.includeSource,
+        },
+        ...(input.take ? { take: input.take } : {}),
+      });
+
+      const classEvents = [...classMemberEvents, ...classOwnerEvents];
 
       // Two pointers sorting, runs in O(n) without logarithmic factor
       // Here we combine the two sorted arrays into one sorted array

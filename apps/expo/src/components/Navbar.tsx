@@ -24,7 +24,7 @@ export const Navbar = () => {
   const iconSize = Dimensions.get("screen").width > 640 ? 60 : 30;
 
   return (
-    <View className="h-[12%] w-full bg-[#101010] py-2 px-4">
+    <View className="max-h-[14%] bg-[#101010] px-4 py-2">
       <View className="flex h-full w-full flex-row flex-nowrap justify-around bg-cyan-600/80">
         {selfQuery.data && selfQuery.data.role === "admin" ? (
           <TouchableOpacity

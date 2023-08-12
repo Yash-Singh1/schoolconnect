@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import { useAtom } from "jotai";
 
 import { tokenAtom } from "../store";
@@ -29,6 +30,12 @@ export const usePostSubscription = (
     },
     {
       async onData(data) {
+        console.log(Platform.OS, data);
+
+        if (data.authorId === userId) {
+          return;
+        }
+
         const recentPostsData = util.post.all.getInfiniteData(postsParams)!;
 
         if (recentPostsData.pages.length) {

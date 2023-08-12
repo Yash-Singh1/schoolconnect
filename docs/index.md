@@ -27,3 +27,9 @@ features:
     title: Push Notifications
     details: SchoolConnect automatically notifies you when you need to be informed on new updates in your school
 ---
+
+<script setup>
+  import HomeFeaturesAfter from './.vitepress/theme/home-features-after.vue';
+</script>
+
+<HomeFeaturesAfter />

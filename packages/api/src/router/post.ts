@@ -85,6 +85,25 @@ export const postRouter = createTRPCRouter({
       };
     }),
 
+  // Get a post
+  get: protectedProcedure
+    .input(z.object({ token: z.string().min(1), postId: z.string().min(1) }))
+    .query(async ({ ctx, input }) => {
+      const { postId } = input;
+      const post = await ctx.prisma.post.findUnique({
+        where: { id: postId },
+      });
+
+      if (!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Post not found",
+        });
+      }
+
+      return post;
+    }),
+
   // Deletes a post
   delete: protectedProcedure
     .input(
@@ -151,6 +170,8 @@ export const postRouter = createTRPCRouter({
           message: "You must provide a classId, schoolId, or userId",
         });
       }
+
+      console.log("API Client initializing post subscription", key);
 
       type WSData = Post & { author: User };
 

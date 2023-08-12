@@ -63,7 +63,12 @@ const AgendaItem: React.FC<{
       <View className="ml-4 flex flex-col">
         <Text className="text-lg font-bold text-white">{event.name}</Text>
         <Text className="mb-1 text-sm font-light italic text-gray-100">
-          Posted by {"School" in event ? event.School!.name : event.Class!.name}
+          Posted by{" "}
+          {"School" in event
+            ? event.School
+              ? event.School.name
+              : undefined
+            : event.Class!.name}
         </Text>
         <View className="flex flex-row items-center">
           <Text className="text-white">
@@ -89,7 +94,11 @@ const AgendaItem: React.FC<{
                 </Text>
                 <Text className="mb-1 text-sm font-light italic text-gray-200">
                   Posted by{" "}
-                  {"School" in event ? event.School!.name : event.Class!.name}
+                  {"School" in event
+                    ? event.School
+                      ? event.School.name
+                      : undefined
+                    : event.Class!.name}
                 </Text>
                 <Text className="mt-2 text-left text-lg font-semibold text-white">
                   {event.description}

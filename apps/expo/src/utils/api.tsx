@@ -1,7 +1,6 @@
 // Sets up the tRPC client for use in the app
 
 import React from "react";
-import Constants from "expo-constants";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   createTRPCProxyClient,
@@ -28,18 +27,20 @@ export const getBaseUrl = (websocket = false) => {
    * you'll have to manually set it. NOTE: Port 3000 should work for most but confirm
    * you don't have anything else running on it, or you'd have to change it.
    */
-  const localhost = Constants.manifest?.debuggerHost?.split(":")[0];
+  const localhostWs = "192.168.33.140";
+  const localhostHttp = "192.168.33.140";
+  const tunnel = false;
 
-  console.log("Debugger host", localhost);
+  console.log("Debugger host", localhostHttp);
 
-  if (!localhost) {
+  if (!localhostHttp) {
     return websocket
       ? "wss://schoolconnect-production.up.railway.app"
       : "https://schoolconnect-mu.vercel.app";
   }
-  return `${websocket ? "ws" : "http"}://${localhost}:${
-    websocket ? 3001 : 3000
-  }`;
+  return `${websocket ? "ws" : tunnel ? "https" : "http"}://${
+    websocket ? localhostWs : localhostHttp
+  }${tunnel ? "" : websocket ? ":3001" : ":3000"}`;
 };
 
 const wsClient = createWSClient({
@@ -61,6 +62,9 @@ const clientConfiguration: CreateTRPCClientOptions<AppRouter> = {
       }),
       false: httpBatchLink({
         url: `${getBaseUrl(/* websocket = */ false)}/api/trpc`,
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
       }),
     }),
   ],

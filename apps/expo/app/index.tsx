@@ -68,7 +68,7 @@ const Landing: React.FC = () => {
   });
 
   // Current tab shown
-  const [tab, setTab] = useState<"news" | "social" | "edit">("news");
+  const [tab, setTab] = useState<"feed" | "social" | "edit">("feed");
 
   // Form data for editing the social
   const [profileURL, setProfileURL] = useState("");
@@ -93,12 +93,12 @@ const Landing: React.FC = () => {
             <TouchableOpacity
               className="flex flex-row items-center pb-1 px-1 border-b-pink-400"
               activeOpacity={0.5}
-              onPress={() => setTab("news")}
-              style={{ borderBottomWidth: tab === "news" ? 1 : 0 }}
+              onPress={() => setTab("feed")}
+              style={{ borderBottomWidth: tab === "feed" ? 1 : 0 }}
             >
               <FontAwesomeIcon icon="newspaper" color="white" />
               <Text className="ml-2 text-lg sm:text-2xl font-bold text-white">
-                News
+                Feed
               </Text>
             </TouchableOpacity>
 
@@ -107,7 +107,9 @@ const Landing: React.FC = () => {
                 className="flex flex-row items-center pb-1 px-1 border-b-pink-400"
                 activeOpacity={0.5}
                 onPress={() => setTab("social")}
-                style={{ borderBottomWidth: tab === "social" ? 1 : 0 }}
+                style={{
+                  borderBottomWidth: tab === "social" ? 1 : 0,
+                }}
               >
                 <FontAwesomeIcon icon={socialMedia.icon} color="white" />
                 <Text className="ml-2 text-lg sm:text-2xl font-bold text-white">
@@ -131,7 +133,7 @@ const Landing: React.FC = () => {
             ) : null}
           </View>
 
-          {tab === "news" ? (
+          {tab === "feed" ? (
             // Recent announcements tab, uses Announcments component
             <View className="flex flex-col">
               <Text className="w-full pb-2 text-center text-xl sm:text-2xl sm:mb-4 font-bold text-white mt-2 flex-grow-0">
@@ -286,24 +288,25 @@ const Announcements: React.FC<{ userId: string }> = ({ userId }) => {
   // Render the announcements
   return recentAnnouncements ? (
     recentAnnouncements.length ? (
-      <View
-        className="flex-grow"
-        style={{
-          height: Dimensions.get("screen").height,
-          width: Dimensions.get("screen").width,
-        }}
-      >
-        <FlashList
-          data={[...recentAnnouncements, null]}
-          ItemSeparatorComponent={() => <View className="h-3" />}
-          renderItem={({ item }) =>
-            item ? <Announcement item={item} /> : <View className="h-20" />
-          }
-          estimatedItemSize={46}
-          onEndReached={() => {
-            void recentPostsQuery.fetchNextPage();
+      <View className="flex min-h-0 h-[88%]">
+        <View
+          className="flex-shrink flex-grow basis-1"
+          style={{
+            width: Dimensions.get("screen").width,
           }}
-        />
+        >
+          <FlashList
+            data={[...recentAnnouncements, null]}
+            ItemSeparatorComponent={() => <View className="h-3" />}
+            renderItem={({ item }) =>
+              item ? <Announcement item={item} /> : <View className="h-20" />
+            }
+            estimatedItemSize={46}
+            onEndReached={() => {
+              void recentPostsQuery.fetchNextPage();
+            }}
+          />
+        </View>
       </View>
     ) : (
       // No view when there aren't any announcements
@@ -314,9 +317,11 @@ const Announcements: React.FC<{ userId: string }> = ({ userId }) => {
   ) : null;
 };
 
+type EventType = RouterOutputs["events"]["all"][number];
+type PostType = RouterOutputs["post"]["all"]["posts"][number];
 type AnnouncementType =
-  | RouterOutputs["post"]["all"]["posts"][number]
-  | RouterOutputs["events"]["all"][number];
+  | PostType
+  | EventType;
 
 // Helper function checking if the union of an Event and a Post is a Event (acts as a type guard)
 const isEvent = (
@@ -351,7 +356,7 @@ const Announcement: React.FC<{
       <Text className="italic text-white sm:text-lg">
         {eventItem
           ? "School" in item!
-            ? item.School!.name
+            ? item.School ? item.School.name : undefined
             : item!.Class!.name
           : item.author.name}
       </Text>

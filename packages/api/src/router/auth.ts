@@ -29,7 +29,7 @@ async function retrieveAuthToken(code: string) {
   });
 
   // TODO: Remove this hard-coded IP address
-  const ip = "10.20.80.176";
+  const host = "kowchfk.anonymous.19000.exp.direct";
 
   /**
    * Exchange temporary code for access token
@@ -37,7 +37,7 @@ async function retrieveAuthToken(code: string) {
    */
   const accessToken: AccessToken = await client.getToken({
     code,
-    redirect_uri: `exp://${ip}:19000`,
+    redirect_uri: `exp://${host}`,
   });
 
   const userInfo = await getGitHubUser(

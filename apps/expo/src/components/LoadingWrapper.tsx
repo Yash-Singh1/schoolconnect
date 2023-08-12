@@ -3,12 +3,15 @@
 import { useEffect, useRef } from "react";
 import {
   Animated,
+  Dimensions,
   Easing,
+  Text,
   View,
   type StyleProp,
   type ViewStyle,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import WebView from "react-native-webview";
 import { Stack } from "expo-router";
 
 type LoadingWrapperProps = {
@@ -77,30 +80,24 @@ const LoadingWrapper: React.FC<LoadingWrapperProps> = (props = {}) => {
     </View>
   ) : (
     // Make the loading wrapper fullscreen
-    <SafeAreaView className={`bg-[#101010] ${props.safeAreaViewClass || ""}`}>
+    <SafeAreaView style={{ height: "100%", backgroundColor: "#101010" }}>
       {props.stackName && <Stack.Screen options={{ title: props.stackName }} />}
-      <Animated.View
-        className="flex h-full w-full items-center justify-center"
+      <WebView
+        source={{ uri: "https://rive.app/s/OUXW6BquM0axnjcmijgC4A/embed" }}
         style={{
-          transform: [
-            {
-              rotate: spin,
-            },
-          ],
+          width: Dimensions.get("screen").width,
+          height: Dimensions.get("screen").height * 0.88,
+          backgroundColor: "#101010",
+          // resizeMode: "cover",
         }}
-      >
-        <View
-          style={{
-            width: 20,
-            height: 20,
-            borderWidth: 2,
-            borderColor: "white",
-            borderRadius: 10,
-            borderStyle: "solid",
-            borderTopColor: "transparent",
-          }}
-        />
-      </Animated.View>
+        injectedJavaScript="container.style.backgroundColor = '#101010'; window.observer.disconnect();"
+        injectedJavaScriptBeforeContentLoaded="document.documentElement.style.backgroundColor = '#101010'; window.observer = new MutationObserver(() => document.documentElement.style.backgroundColor = '#101010').observe(document.documentElement, { subtree: true });"
+        startInLoadingState={false}
+        onShouldStartLoadWithRequest={() => true}
+      />
+      <Text className="bg-[#101010] text-white mb-8 text-base text-center">
+        Loading...
+      </Text>
     </SafeAreaView>
   );
 };

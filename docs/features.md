@@ -4,15 +4,19 @@ SchoolConnect is packed with features making it better than most other platforms
 
 ## Secure Authentication
 
-SchoolConnect uses a secure authentication system that allows OAuth with popular providers. It encrypts passwords and tokens to ensure that your data is safe.
+SchoolConnect uses a secure authentication system that allows OAuth with popular providers. It encrypts passwords and tokens using advanced cryptographic algorithms to ensure that your data is safe.
+
+## Realtime UI Updates
+
+The realtime UI updates are powered by a websocket connection to a VPS server hosted on Railway. The events are coordinated between the Vercel serverless functions and the websocket VPS using a Redis instance and its pub/sub feature.
 
 ## Performant
 
-SchoolConnect is built with performance in mind. It implements caching layers and memoization on the client-side and hosts static assets on a CDN to ensure that the application is as fast as possible. It also makes use of algorithms to speed up processes whenever possible. Our backend is hosted on serverless making the server as close to you as possible.
+SchoolConnect is built with performance in mind. It implements caching layers and memoization on the client-side and hosts static assets on a CDN to ensure that the application is as fast as possible. It also makes use of algorithms to speed up processes whenever possible. Our backend is hosted on serverless making the server as close to you as possible. We also make use of indexing on our database to serve your queries faster.
 
 ## Multi-Platform Support
 
-SchoolConnect is able to work on several major platforms. It is available on most devices that run Android and iOS.
+SchoolConnect is able to work on several major platforms. It is available on most devices that run Android or iOS.
 
 ## Push Notifications
 

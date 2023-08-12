@@ -11,6 +11,7 @@ import "../src/icons";
 import {
   Dimensions,
   Image,
+  LogBox,
   TouchableOpacity,
   View,
   type ImageSourcePropType,
@@ -31,6 +32,8 @@ Notifications.setNotificationHandler({
     };
   },
 });
+
+LogBox.ignoreAllLogs();
 
 const brandImage =
   require("../assets/icon_no_bg_no_gap.png") as ImageSourcePropType;
@@ -57,9 +60,10 @@ const RootLayout = () => {
                 <View className="bg-[#101010]">
                   <View className="bg-cyan-600/80">
                     <SafeAreaView
+                      edges={["top", "left", "right"]}
                       className={`flex flex-row flex-nowrap ${
                         back ? "justify-between" : "justify-center"
-                      } items-center pr-4 pl-3 py-1`}
+                      } items-center pr-4 pl-3 py-1 pb-2`}
                     >
                       {back ? (
                         <TouchableOpacity

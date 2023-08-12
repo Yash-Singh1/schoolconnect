@@ -4,13 +4,13 @@
   "main": "index.ts",
   "scripts": {
     "clean": "rm -rf .expo .turbo node_modules",
-    "dev": "expo start",
+    "dev": "expo start --tunnel",
     "dev:android": "expo start --android",
     "dev:ios": "expo start --ios",
     "lint": "eslint .",
     "lint:fix": "pnpm lint --fix",
     "FIXME(no-work):type-check": "tsc --noEmit",
-    "start": "expo start --dev-client",
+    "start": "expo start --dev-client --tunnel",
     "android": "expo run:android",
     "ios": "expo run:ios"
   },
@@ -55,6 +55,7 @@
     "react-native-screens": "~3.20.0",
     "react-native-svg": "13.4.0",
     "react-native-webview": "11.26.0",
+    "rive-react-native": "^4.1.2",
     "superjson": "1.9.1",
     "uploadthing": "^3.0.4",
     "uuid": "^9.0.0"
